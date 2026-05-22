@@ -225,7 +225,7 @@ export function Hero() {
 
         {/* Particulier / Zakelijk bottom bar */}
         <div className="absolute left-4 right-4 bottom-8 md:left-6 md:right-6">
-          <SegmentBar active={segment} onChange={setSegment} />
+          <SegmentBar />
         </div>
       </div>
     </section>
