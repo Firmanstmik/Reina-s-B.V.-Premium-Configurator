@@ -19,39 +19,42 @@ type Slide = {
 const SLIDES: Slide[] = [
   {
     image: slide1,
-    eyebrow: "Particuliere markt · Maatwerk op niveau",
-    titleLead: "Maatwerk kozijnen voor",
-    titleItalic: "de woning",
-    titleTail: "van uw leven.",
+    eyebrow: "Premium maatwerk kozijnen",
+    titleLead: "Kozijnen die uw leefruimte naar een",
+    titleItalic: "hoger niveau",
+    titleTail: "tillen.",
     description:
-      "Van karakteristieke villa tot moderne nieuwbouw — wij ontwerpen, produceren en plaatsen kozijnen, deuren en schuifpuien die uw woning mooier, sterker en zekerder maken.",
-    primaryLabel: "Ontdek ons aanbod",
-    trustTitle: "Mooier · sterker · zekerder",
-    trustBody: "Eigen vakmensen, A-merk materialen en een garantie waar u op kunt bouwen.",
+      "Maatwerk kozijnen, deuren, schuifpuien en meer. Met vakmanschap, kwaliteit en oog voor detail realiseren wij duurzame oplossingen voor particuliere en zakelijke projecten.",
+    primaryLabel: "Bekijk producten",
+    trustTitle: "Betrouwbaar & duurzaam",
+    trustBody:
+      "Hoogwaardige materialen, vakkundige montage en betrouwbare service.",
   },
   {
     image: slide2,
     eyebrow: "Zakelijke markt · Architecturale gevels",
-    titleLead: "Maatwerk kozijnen voor",
-    titleItalic: "de zakelijke",
-    titleTail: "vastgoedmarkt.",
+    titleLead: "Architectuur die",
+    titleItalic: "uw merk",
+    titleTail: "een gezicht geeft.",
     description:
-      "Van kantoor en bedrijfspand tot grootschalige projectbouw — wij realiseren kozijnen, glasgevels en aluminium puien die voldoen aan de hoogste eisen op gebied van design, isolatie en duurzaamheid.",
+      "Van kantoor en bedrijfspand tot grootschalige projectbouw — wij realiseren glasgevels en aluminium puien die voldoen aan de hoogste eisen op gebied van design, isolatie en duurzaamheid.",
     primaryLabel: "Bekijk zakelijke projecten",
     trustTitle: "Partner in projectbouw",
-    trustBody: "Heldere planning, eigen montageteams en complete ontzorging — van eerste tekening tot oplevering.",
+    trustBody:
+      "Heldere planning, eigen montageteams en complete ontzorging — van tekening tot oplevering.",
   },
   {
     image: slide3,
-    eyebrow: "Specialist sinds jaar en dag",
-    titleLead: "Uw betrouwbare partner voor",
-    titleItalic: "kozijnen, rolluiken,",
-    titleTail: "horren, screens & poorten.",
+    eyebrow: "Vakmanschap uit Limburg",
+    titleLead: "Eén specialist voor",
+    titleItalic: "uw complete",
+    titleTail: "gevel & buitenruimte.",
     description:
-      "Eén specialist voor het volledige plaatje rond uw woning of pand. Hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail.",
+      "Kozijnen, rolluiken, horren, screens en poorten — hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail. Persoonlijk geleverd, vakkundig geplaatst.",
     primaryLabel: "Vraag direct uw offerte aan",
     trustTitle: "Vakmanschap uit Limburg",
-    trustBody: "Persoonlijk advies aan huis, scherpe offerte en oplevering volgens afspraak.",
+    trustBody:
+      "Persoonlijk advies aan huis, scherpe offerte en oplevering volgens afspraak.",
   },
 ];
 
@@ -68,8 +71,11 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen w-full overflow-hidden bg-background">
-      {/* Slides */}
+    <section
+      id="home"
+      className="relative w-full overflow-hidden bg-background h-[92vh] min-h-[720px] max-h-[1000px]"
+    >
+      {/* Slides — fixed-size stage so every image renders at identical dimensions */}
       <div className="absolute inset-0">
         {SLIDES.map((slide, i) => {
           const isActive = i === active;
@@ -83,7 +89,7 @@ export function Hero() {
               <img
                 src={slide.image}
                 alt=""
-                className="h-full w-full object-cover will-change-transform"
+                className="h-full w-full object-cover object-center will-change-transform"
                 style={{
                   transform: isActive ? "scale(1.08)" : "scale(1.0)",
                   transition: "transform 8000ms cubic-bezier(0.22,1,0.36,1)",
@@ -96,24 +102,24 @@ export function Hero() {
             </div>
           );
         })}
-        {/* Cinematic gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background" />
-        <div className="absolute inset-0 gradient-radial-glow opacity-70" />
+        {/* Cinematic gradients — strong left vignette for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/55 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/85" />
+        <div className="absolute inset-0 gradient-radial-glow opacity-60" />
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-6 pb-28 pt-40 md:pb-36 md:pt-44">
-        <div key={active} className="max-w-3xl">
+      <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-32 pt-32 md:pb-40 md:pt-40">
+        <div key={active} className="max-w-2xl">
           <div
-            className="reveal-up mb-7 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[11px] uppercase tracking-[0.24em] text-primary"
+            className="reveal-up mb-7 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[11px] uppercase tracking-[0.28em] text-primary"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-glow" />
             {SLIDES[active].eyebrow}
           </div>
 
           <h1
-            className="font-display reveal-up text-[clamp(2.75rem,7.4vw,6.5rem)] font-medium leading-[1.0] tracking-[-0.02em] text-foreground"
+            className="font-display reveal-up text-[clamp(2.5rem,6.4vw,5.75rem)] font-medium leading-[1.02] tracking-[-0.02em] text-foreground"
             style={{ animationDelay: "120ms" }}
           >
             {SLIDES[active].titleLead}{" "}
@@ -122,25 +128,25 @@ export function Hero() {
           </h1>
 
           <p
-            className="reveal-up mt-8 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
+            className="reveal-up mt-7 max-w-lg text-[15px] leading-relaxed text-muted-foreground md:text-base"
             style={{ animationDelay: "260ms" }}
           >
             {SLIDES[active].description}
           </p>
 
           <div
-            className="reveal-up mt-10 flex flex-wrap items-center gap-4"
+            className="reveal-up mt-9 flex flex-wrap items-center gap-4"
             style={{ animationDelay: "400ms" }}
           >
             <a
               href="#producten"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
+              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
             >
               {SLIDES[active].primaryLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
-            <button className="group inline-flex items-center gap-3 rounded-full glass px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-white/10">
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-primary/20 ring-1 ring-primary/40 transition-transform group-hover:scale-110">
+            <button className="group inline-flex items-center gap-3 rounded-full px-2 py-2 text-[13px] font-medium uppercase tracking-[0.14em] text-foreground transition-all">
+              <span className="grid h-10 w-10 place-items-center rounded-full glass ring-1 ring-white/15 transition-transform group-hover:scale-110">
                 <Play className="h-3.5 w-3.5 fill-primary text-primary" />
               </span>
               Bekijk video
@@ -148,13 +154,13 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Trust card */}
+        {/* Trust card — mid-right, overlapping image area */}
         <div
           key={`trust-${active}`}
-          className="fade-in absolute right-6 top-40 hidden max-w-[280px] md:block"
+          className="fade-in pointer-events-none absolute right-6 bottom-44 hidden max-w-[300px] md:block"
           style={{ animationDelay: "600ms" }}
         >
-          <div className="glass-strong rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
+          <div className="glass-strong pointer-events-auto rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
                 <ShieldCheck className="h-5 w-5 text-primary" />
@@ -170,7 +176,7 @@ export function Hero() {
         </div>
 
         {/* Pagination + progress */}
-        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between md:left-6">
+        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {SLIDES.map((_, i) => {
               const isActive = i === active;
