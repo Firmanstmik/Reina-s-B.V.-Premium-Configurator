@@ -172,25 +172,24 @@
   .fade-in { animation: fadeIn 1.2s ease-out both; }
   .float-y { animation: floatY 7s ease-in-out infinite; }
 
-  /* Premium editorial hero image reveal —
-     soft horizontal mask-wipe + parallax scale + luminance bloom.
-     Inspired by Awwwards-tier European editorial sites (Studio Dumbar / Locomotive). */
-  .hero-img-enter {
-    animation: heroRevealIn 1800ms cubic-bezier(0.65, 0, 0.05, 1) both;
+  /* Architectural "frame opening" reveal — evokes window panels opening.
+     Two leaves slide outward from center, syncing with text rise. */
+  .hero-frame-enter {
+    animation: heroFrameIn 1600ms cubic-bezier(0.7, 0, 0.15, 1) both;
     will-change: clip-path, transform, filter;
   }
-  .hero-img-exit {
-    animation: heroRevealOut 1600ms cubic-bezier(0.65, 0, 0.05, 1) both;
+  .hero-frame-exit {
+    animation: heroFrameOut 1400ms cubic-bezier(0.7, 0, 0.15, 1) both;
     will-change: clip-path, transform, filter;
   }
   .ken-burns {
-    animation: kenBurns 16s ease-in-out infinite alternate;
+    animation: kenBurns 18s ease-in-out infinite alternate;
   }
 
-  /* Editorial text reveal — mask rise + blur lift + letter-spacing settle.
+  /* Text reveal — synced with frame: subtle mask rise + blur lift.
      Stagger via inline style: --delay. */
   .hero-text-in {
-    animation: heroTextIn 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: heroTextIn 1300ms cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--delay, 0ms);
     will-change: transform, opacity, filter;
   }
@@ -213,45 +212,46 @@
     50% { box-shadow: 0 0 0 14px oklch(0.78 0.13 215 / 0); }
   }
 
-  /* Incoming image: horizontal mask wipe from right + counter-scale + bloom. */
-  @keyframes heroRevealIn {
+  /* Incoming image: two leaves open from center (window-frame metaphor) +
+     parallax counter-scale + soft luminance bloom. */
+  @keyframes heroFrameIn {
     0% {
-      clip-path: inset(0 0 0 100%);
-      transform: scale(1.12);
-      filter: brightness(1.15) saturate(1.08) blur(8px);
+      clip-path: inset(0 50% 0 50%);
+      transform: scale(1.14);
+      filter: brightness(1.18) saturate(1.05) blur(10px);
     }
-    60% { filter: brightness(1.05) saturate(1.04) blur(2px); }
+    55% { filter: brightness(1.06) saturate(1.02) blur(2px); }
     100% {
-      clip-path: inset(0 0 0 0%);
+      clip-path: inset(0 0% 0 0%);
       transform: scale(1);
       filter: brightness(1) saturate(1) blur(0);
     }
   }
-  /* Outgoing image: parallax drift + soft fade — never harsh. */
-  @keyframes heroRevealOut {
+  /* Outgoing image: leaves close back to center — never harsh. */
+  @keyframes heroFrameOut {
     0% {
-      clip-path: inset(0 0 0 0);
+      clip-path: inset(0 0% 0 0%);
       transform: scale(1);
       filter: brightness(1) blur(0);
       opacity: 1;
     }
     100% {
-      clip-path: inset(0 100% 0 0);
-      transform: scale(1.06);
-      filter: brightness(0.92) blur(6px);
-      opacity: 0.9;
+      clip-path: inset(0 50% 0 50%);
+      transform: scale(1.05);
+      filter: brightness(0.94) blur(4px);
+      opacity: 0.85;
     }
   }
 
-  /* Editorial text reveal — rise + blur-to-focus + letter-spacing settle. */
+  /* Text reveal — rise + blur-to-focus + letter-spacing settle, paced to frame open. */
   @keyframes heroTextIn {
     0% {
       opacity: 0;
-      transform: translateY(28px);
-      filter: blur(10px);
+      transform: translateY(34px);
+      filter: blur(12px);
       letter-spacing: 0.02em;
     }
-    60% { opacity: 1; filter: blur(0.5px); }
+    55% { opacity: 1; filter: blur(0.5px); }
     100% {
       opacity: 1;
       transform: translateY(0);
@@ -261,8 +261,8 @@
   }
 
   @keyframes kenBurns {
-    0%   { transform: scale(1.06) translate3d(0,0,0); }
-    100% { transform: scale(1.14) translate3d(-1.2%, -0.8%, 0); }
+    0%   { transform: scale(1.04) translate3d(0,0,0); }
+    100% { transform: scale(1.12) translate3d(-1.2%, -0.8%, 0); }
   }
   @keyframes pullInLeft {
     0%   { opacity: 0; transform: translateX(-48px); filter: blur(8px); }
