@@ -70,7 +70,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-foreground/85">
             <li className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 text-primary" /> Markt 5, Echt, Limburg, Nederland</li>
             <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-primary" /> +31 6 12 34 56 78</li>
-            <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-primary" /> info@reinas-bv.nl</li>
+            <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-primary" /><span>info@reinas-bv.nl</span></li>
           </ul>
         </div>
       </div>

@@ -1,56 +1,142 @@
+import { useEffect, useState } from "react";
 import { ArrowRight, Play, ShieldCheck } from "lucide-react";
-import heroImg from "@/assets/hero-villa.jpg";
+import slide1 from "@/assets/hero-slide-1.jpg";
+import slide2 from "@/assets/hero-slide-2.jpg";
+import slide3 from "@/assets/hero-slide-3.jpg";
+
+type Slide = {
+  image: string;
+  eyebrow: string;
+  titleLead: string;
+  titleItalic: string;
+  titleTail: string;
+  description: string;
+  primaryLabel: string;
+  trustTitle: string;
+  trustBody: string;
+};
+
+const SLIDES: Slide[] = [
+  {
+    image: slide1,
+    eyebrow: "Particulier · Premium maatwerk",
+    titleLead: "Kozijnen die uw leefruimte",
+    titleItalic: "naar een hoger",
+    titleTail: "niveau tillen.",
+    description:
+      "Maatwerk kozijnen, deuren en schuifpuien — met vakmanschap en oog voor detail voor uw droomwoning of renovatieproject.",
+    primaryLabel: "Bekijk producten",
+    trustTitle: "Betrouwbaar & duurzaam",
+    trustBody: "Hoogwaardige materialen, vakkundige montage en betrouwbare service.",
+  },
+  {
+    image: slide2,
+    eyebrow: "Zakelijk · Architecturale oplossingen",
+    titleLead: "Premium gevels voor",
+    titleItalic: "het zakelijke",
+    titleTail: "vastgoed van morgen.",
+    description:
+      "Van kantoorgebouwen tot bedrijfspanden — wij realiseren glasgevels en kozijnsystemen op het hoogste architectonische niveau.",
+    primaryLabel: "Zakelijke projecten",
+    trustTitle: "Schaal & precisie",
+    trustBody: "Grootschalige projecten, opgeleverd met de zorg van maatwerk.",
+  },
+  {
+    image: slide3,
+    eyebrow: "Vakmanschap · Details die tellen",
+    titleLead: "Elk detail",
+    titleItalic: "met de hand",
+    titleTail: "geperfectioneerd.",
+    description:
+      "Luxe aluminium kozijnen, premium beslag en duurzame materialen — gekozen voor schoonheid, sterkte en een leven lang gebruik.",
+    primaryLabel: "Onze materialen",
+    trustTitle: "10+ jaar vakmanschap",
+    trustBody: "Een team dat kwaliteit, design en duurzaamheid in elk project verenigt.",
+  },
+];
+
+const INTERVAL = 6000;
 
 export function Hero() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setActive((i) => (i + 1) % SLIDES.length);
+    }, INTERVAL);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
-    <section id="home" className="relative min-h-screen w-full overflow-hidden">
-      {/* Background image */}
+    <section id="home" className="relative min-h-screen w-full overflow-hidden bg-background">
+      {/* Slides */}
       <div className="absolute inset-0">
-        <img
-          src={heroImg}
-          alt="Luxe moderne villa met maatwerk aluminium kozijnen"
-          className="h-full w-full object-cover"
-          width={1920}
-          height={1280}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/20 to-background" />
-        <div className="absolute inset-0 gradient-radial-glow" />
+        {SLIDES.map((slide, i) => {
+          const isActive = i === active;
+          return (
+            <div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{ opacity: isActive ? 1 : 0 }}
+              aria-hidden={!isActive}
+            >
+              <img
+                src={slide.image}
+                alt=""
+                className="h-full w-full object-cover will-change-transform"
+                style={{
+                  transform: isActive ? "scale(1.08)" : "scale(1.0)",
+                  transition: "transform 8000ms cubic-bezier(0.22,1,0.36,1)",
+                }}
+                width={1920}
+                height={1280}
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : undefined}
+              />
+            </div>
+          );
+        })}
+        {/* Cinematic gradients */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background" />
+        <div className="absolute inset-0 gradient-radial-glow opacity-70" />
       </div>
 
+      {/* Content */}
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-6 pb-28 pt-40 md:pb-36 md:pt-44">
-        <div className="max-w-3xl">
-          <div className="reveal-up mb-6 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[11px] uppercase tracking-[0.22em] text-primary">
+        <div key={active} className="max-w-3xl">
+          <div
+            className="reveal-up mb-7 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[11px] uppercase tracking-[0.24em] text-primary"
+          >
             <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-glow" />
-            Premium maatwerk kozijnen
+            {SLIDES[active].eyebrow}
           </div>
 
           <h1
-            className="font-display reveal-up text-[clamp(2.75rem,7vw,6rem)] font-medium leading-[1.02] tracking-tight text-foreground"
-            style={{ animationDelay: "100ms" }}
+            className="font-display reveal-up text-[clamp(2.75rem,7.4vw,6.5rem)] font-medium leading-[1.0] tracking-[-0.02em] text-foreground"
+            style={{ animationDelay: "120ms" }}
           >
-            Kozijnen die uw <br className="hidden sm:block" />
-            leefruimte naar een{" "}
-            <span className="font-serif-italic gradient-text">hoger niveau</span> tillen.
+            {SLIDES[active].titleLead}{" "}
+            <span className="font-serif-italic gradient-text">{SLIDES[active].titleItalic}</span>{" "}
+            {SLIDES[active].titleTail}
           </h1>
 
           <p
-            className="reveal-up mt-7 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
-            style={{ animationDelay: "220ms" }}
+            className="reveal-up mt-8 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
+            style={{ animationDelay: "260ms" }}
           >
-            Maatwerk kozijnen, deuren, schuifpuien en meer. Met vakmanschap, kwaliteit en oog
-            voor detail realiseren wij duurzame oplossingen voor particuliere en zakelijke
-            projecten in heel Limburg.
+            {SLIDES[active].description}
           </p>
 
           <div
             className="reveal-up mt-10 flex flex-wrap items-center gap-4"
-            style={{ animationDelay: "340ms" }}
+            style={{ animationDelay: "400ms" }}
           >
             <a
               href="#producten"
               className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
             >
-              Bekijk producten
+              {SLIDES[active].primaryLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <button className="group inline-flex items-center gap-3 rounded-full glass px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-white/10">
@@ -62,26 +148,57 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Trust badge floating card */}
-        <div className="fade-in absolute right-6 top-40 hidden max-w-[260px] md:block" style={{ animationDelay: "600ms" }}>
+        {/* Trust card */}
+        <div
+          key={`trust-${active}`}
+          className="fade-in absolute right-6 top-40 hidden max-w-[280px] md:block"
+          style={{ animationDelay: "600ms" }}
+        >
           <div className="glass-strong rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
             <div className="flex items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
                 <ShieldCheck className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold">Betrouwbaar & duurzaam</p>
+                <p className="text-sm font-semibold">{SLIDES[active].trustTitle}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Hoogwaardige materialen, vakkundige montage en betrouwbare service.
+                  {SLIDES[active].trustBody}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div className="fade-in absolute bottom-6 left-1/2 hidden -translate-x-1/2 md:block" style={{ animationDelay: "900ms" }}>
-          <div className="flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+        {/* Pagination + progress */}
+        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between md:left-6">
+          <div className="flex items-center gap-3">
+            {SLIDES.map((_, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Ga naar slide ${i + 1}`}
+                  className="group relative h-[2px] w-12 overflow-hidden rounded-full bg-white/15 transition-all md:w-16"
+                >
+                  <span
+                    className="absolute inset-y-0 left-0 bg-primary"
+                    style={{
+                      width: isActive ? "100%" : "0%",
+                      transition: isActive ? `width ${INTERVAL}ms linear` : "width 400ms ease",
+                    }}
+                  />
+                </button>
+              );
+            })}
+            <span className="ml-3 font-display text-xs tabular-nums text-muted-foreground">
+              {String(active + 1).padStart(2, "0")}
+              <span className="mx-1.5 opacity-50">/</span>
+              {String(SLIDES.length).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="hidden flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground md:flex">
             <span>Scroll</span>
             <span className="h-10 w-px bg-gradient-to-b from-muted-foreground/60 to-transparent" />
           </div>
