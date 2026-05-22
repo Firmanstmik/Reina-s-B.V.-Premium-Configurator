@@ -44,7 +44,7 @@ export function WhyUs() {
 
           <a
             href="#contact"
-            className="border-warm group mt-12 inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors hover:border-transparent hover:bg-foreground hover:text-background"
+            className="border-warm group mt-12 inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold transition-colors hover:border-transparent hover:bg-foreground hover:text-background"
             style={{ color: "var(--light-fg)" }}
           >
             Meer over ons

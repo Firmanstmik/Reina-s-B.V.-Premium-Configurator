@@ -17,7 +17,7 @@ export function Footer() {
           </div>
           <a
             href="mailto:info@reinas-bv.nl"
-            className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
+            className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
           >
             Neem contact op
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
