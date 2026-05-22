@@ -66,7 +66,7 @@ const INTERVAL = 6000;
 export function Hero() {
   const [active, setActive] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
-  const [segment, setSegment] = useSegment();
+  const [segment] = useSegment();
 
   useEffect(() => {
     const id = window.setInterval(() => {
