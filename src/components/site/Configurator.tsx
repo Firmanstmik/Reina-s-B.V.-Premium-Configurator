@@ -62,225 +62,141 @@ const GLASS = [
 const STEPS = ["Type", "Stijl", "Kleur", "Glas", "Details", "Samenvatting"] as const;
 
 /* ------------------------------------------------------------------ */
-/*  Live SVG window preview                                            */
+/*  Photorealistic layered preview (Aluminium / Hout / Kunststof)       */
 /* ------------------------------------------------------------------ */
 
-function WindowPreview({
-  cols, rows, color, sheen, material, glass, styleId,
+const MATERIAL_RENDERS: Record<Material, string> = {
+  Aluminium: aluImg,
+  Kunststof: kunstImg,
+  Hout: houtImg,
+};
+
+function RealisticPreview({
+  material, color, glass, parallax,
 }: {
-  cols: number; rows: number;
-  color: string; sheen: string;
   material: Material;
+  color: { hex: string; sheen: string; name: string };
   glass: typeof GLASS[number];
-  styleId: StyleName;
+  parallax: { x: number; y: number };
 }) {
-  // Frame thickness varies by style + material
-  const baseFrame =
-    styleId === "Industrieel" ? 28 :
-    styleId === "Klassiek"   ? 22 : 14;
-  const frame = baseFrame + (material === "Hout" ? 6 : material === "Kunststof" ? 3 : 0);
-  const mullion = Math.max(7, frame * 0.6);
-
-  const W = 800, H = 520;
-  const innerX = frame, innerY = frame;
-  const innerW = W - frame * 2, innerH = H - frame * 2;
-  const cellW = (innerW - mullion * (cols - 1)) / cols;
-  const cellH = (innerH - mullion * (rows - 1)) / rows;
-
-  // Material-driven optics
-  const sheenStrength =
-    material === "Aluminium" ? 0.95 : material === "Kunststof" ? 0.45 : 0.22;
-  const roughness =
-    material === "Hout" ? 0.75 : material === "Kunststof" ? 0.35 : 0.18;
-  const isWood = material === "Hout";
-  const isAlu  = material === "Aluminium";
-
-  // Unique gradient IDs per render to avoid SVG cache collisions across re-renders
-  const uid = `${material}-${color.replace("#", "")}-${glass.id}`;
+  // Per-material tonal calibration so color tint feels physically plausible.
+  const tintOpacity =
+    material === "Aluminium" ? 0.62 :
+    material === "Kunststof" ? 0.55 : 0.42;
+  const frameSaturate =
+    material === "Aluminium" ? 1.05 :
+    material === "Kunststof" ? 1.0  : 0.92;
+  const frameBrightness =
+    material === "Aluminium" ? 0.95 :
+    material === "Kunststof" ? 1.02 : 0.98;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="absolute inset-0 h-full w-full"
+    <div
+      className="relative h-full w-full"
       style={{
-        transition: "filter 900ms ease",
-        filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.55)) drop-shadow(0 10px 20px rgba(0,0,0,0.35))",
+        transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0)`,
+        transition: "transform 600ms cubic-bezier(0.22,1,0.36,1)",
+        filter:
+          "drop-shadow(0 50px 60px rgba(0,0,0,0.55)) drop-shadow(0 18px 28px rgba(0,0,0,0.35))",
       }}
     >
-      <defs>
-        {/* Frame — top-light gradient with sheen highlight */}
-        <linearGradient id={`frame-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor={sheen} stopOpacity={0.55 + sheenStrength * 0.35} />
-          <stop offset="22%"  stopColor={color} />
-          <stop offset="78%"  stopColor={color} />
-          <stop offset="100%" stopColor="#000000" stopOpacity={0.55} />
-        </linearGradient>
-        {/* Subtle brushed-metal vertical streaks (aluminium only) */}
-        <linearGradient id={`brush-${uid}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor="#ffffff" stopOpacity={isAlu ? 0.05 : 0} />
-          <stop offset="20%"  stopColor="#ffffff" stopOpacity={0} />
-          <stop offset="50%"  stopColor="#ffffff" stopOpacity={isAlu ? 0.07 : 0} />
-          <stop offset="80%"  stopColor="#ffffff" stopOpacity={0} />
-          <stop offset="100%" stopColor="#000000" stopOpacity={isAlu ? 0.18 : 0.08} />
-        </linearGradient>
-        {/* Wood grain */}
-        <linearGradient id={`wood-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#000" stopOpacity={isWood ? 0.18 : 0} />
-          <stop offset="50%"  stopColor="#fff" stopOpacity={isWood ? 0.04 : 0} />
-          <stop offset="100%" stopColor="#000" stopOpacity={isWood ? 0.22 : 0} />
-        </linearGradient>
+      {/* Crossfaded photorealistic material layers — identical composition */}
+      {(Object.keys(MATERIAL_RENDERS) as Material[]).map((m) => {
+        const active = m === material;
+        return (
+          <img
+            key={m}
+            src={MATERIAL_RENDERS[m]}
+            alt={`${m} kozijn render`}
+            loading="lazy"
+            width={1280}
+            height={896}
+            draggable={false}
+            className="absolute inset-0 h-full w-full select-none object-contain"
+            style={{
+              opacity: active ? 1 : 0,
+              transform: active ? "scale(1)" : "scale(1.015)",
+              transition:
+                "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1400ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
+              filter: active
+                ? `saturate(${frameSaturate}) brightness(${frameBrightness}) contrast(1.04)`
+                : undefined,
+              willChange: "opacity, transform",
+            }}
+          />
+        );
+      })}
 
-        {/* Glass — sky reflection + room shadow */}
-        <linearGradient id={`glass-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#cfe6f2" stopOpacity={0.35 * glass.reflect} />
-          <stop offset="35%"  stopColor={glass.tint} stopOpacity={glass.opacity} />
-          <stop offset="70%"  stopColor={glass.tint} stopOpacity={glass.opacity * 0.85} />
-          <stop offset="100%" stopColor="#0a1018" stopOpacity={0.45} />
-        </linearGradient>
-        {/* Diagonal environment reflection (sky / clouds streak) */}
-        <linearGradient id={`env-${uid}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"  stopColor="#ffffff" stopOpacity={0.0} />
-          <stop offset="35%" stopColor="#ffffff" stopOpacity={0.16 * glass.reflect} />
-          <stop offset="55%" stopColor="#ffffff" stopOpacity={0.35 * glass.reflect} />
-          <stop offset="70%" stopColor="#ffffff" stopOpacity={0.10 * glass.reflect} />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
-        </linearGradient>
-        {/* Bottom inner shadow (depth into the room) */}
-        <linearGradient id={`depth-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#000" stopOpacity={0} />
-          <stop offset="100%" stopColor="#000" stopOpacity={0.35} />
-        </linearGradient>
-
-        {/* Handle gradient */}
-        <linearGradient id={`handle-${uid}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor={sheen} stopOpacity={1} />
-          <stop offset="50%"  stopColor={color} />
-          <stop offset="100%" stopColor="#000" stopOpacity={0.5} />
-        </linearGradient>
-
-        {/* Soft bevel filter */}
-        <filter id={`bevel-${uid}`} x="-5%" y="-5%" width="110%" height="110%">
-          <feGaussianBlur stdDeviation="0.6" />
-        </filter>
-      </defs>
-
-      {/* ===== Outer frame body ===== */}
-      <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={color} />
-      <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#frame-${uid})`} />
-      {/* Material texture overlay */}
-      {isAlu && (
-        <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#brush-${uid})`} opacity={0.9} />
-      )}
-      {isWood && (
-        <>
-          <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#wood-${uid})`} />
-          {/* faint wood grain lines */}
-          {Array.from({ length: 14 }).map((_, i) => (
-            <line
-              key={i}
-              x1={0} y1={(i + 1) * (H / 15)}
-              x2={W} y2={(i + 1) * (H / 15) + (i % 2 ? 1.5 : -1.2)}
-              stroke="#000" strokeOpacity={0.07} strokeWidth={0.6}
-            />
-          ))}
-        </>
-      )}
-      {/* Top highlight rim */}
-      <rect x="0" y="0" width={W} height={2.5} fill="#ffffff" opacity={0.18 + sheenStrength * 0.25} />
-      {/* Bottom shadow rim */}
-      <rect x="0" y={H - 3} width={W} height={3} fill="#000" opacity={0.45} />
-      {/* Left/right edge shading */}
-      <rect x="0" y="0" width={3} height={H} fill="#fff" opacity={0.06 + sheenStrength * 0.06} />
-      <rect x={W - 3} y="0" width={3} height={H} fill="#000" opacity={0.35} />
-
-      {/* Inner opening shadow (gives the frame thickness) */}
-      <rect
-        x={innerX - 2} y={innerY - 2}
-        width={innerW + 4} height={innerH + 4}
-        fill="none" stroke="#000" strokeOpacity={0.55} strokeWidth="3"
-        rx="2"
+      {/* Color tint — multiplies frame to selected color, glass stays believable */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: color.hex,
+          opacity: tintOpacity,
+          mixBlendMode: "multiply",
+          maskImage: `url(${MATERIAL_RENDERS[material]})`,
+          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
+          maskSize: "100% 100%",
+          WebkitMaskSize: "100% 100%",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          transition: "background 900ms ease, opacity 900ms ease",
+        }}
       />
 
-      {/* ===== Glass cells ===== */}
-      {Array.from({ length: rows }).map((_, r) =>
-        Array.from({ length: cols }).map((__, c) => {
-          const x = innerX + c * (cellW + mullion);
-          const y = innerY + r * (cellH + mullion);
-          return (
-            <g key={`${r}-${c}`} style={{ transition: "opacity 700ms ease" }}>
-              {/* Glass base */}
-              <rect x={x} y={y} width={cellW} height={cellH} fill={`url(#glass-${uid})`} />
-              {/* Environment reflection streak */}
-              <rect x={x} y={y} width={cellW} height={cellH} fill={`url(#env-${uid})`} />
-              {/* Depth shadow toward bottom */}
-              <rect x={x} y={y + cellH * 0.55} width={cellW} height={cellH * 0.45} fill={`url(#depth-${uid})`} />
-              {/* Window cross reflection — silhouette */}
-              <polygon
-                points={`${x},${y + cellH * 0.18} ${x + cellW * 0.42},${y} ${x + cellW * 0.62},${y} ${x},${y + cellH * 0.52}`}
-                fill="#ffffff"
-                opacity={0.05 + glass.reflect * 0.10}
-              />
-              {/* Inner bevel — dark + light edge for depth */}
-              <rect
-                x={x + 0.5} y={y + 0.5}
-                width={cellW - 1} height={cellH - 1}
-                fill="none" stroke="#000" strokeOpacity={0.55} strokeWidth="1.2"
-              />
-              <rect
-                x={x + 1.5} y={y + 1.5}
-                width={cellW - 3} height={cellH - 3}
-                fill="none" stroke="#ffffff" strokeOpacity={0.07} strokeWidth="0.8"
-              />
-              {/* Spacer bar (warm-edge) — premium IGU look */}
-              <rect
-                x={x + 3} y={y + 3}
-                width={cellW - 6} height={cellH - 6}
-                fill="none" stroke="#1a2026" strokeOpacity={0.5} strokeWidth="1"
-              />
-            </g>
-          );
-        })
-      )}
+      {/* Specular sheen highlight — picks selected color's sheen */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `linear-gradient(160deg, ${color.sheen}cc 0%, transparent 40%)`,
+          opacity: material === "Aluminium" ? 0.18 : material === "Kunststof" ? 0.1 : 0.05,
+          mixBlendMode: "screen",
+          maskImage: `url(${MATERIAL_RENDERS[material]})`,
+          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
+          maskSize: "100% 100%",
+          WebkitMaskSize: "100% 100%",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          transition: "opacity 900ms ease, background 900ms ease",
+        }}
+      />
 
-      {/* Mullion highlights (vertical) */}
-      {Array.from({ length: cols - 1 }).map((_, i) => {
-        const x = innerX + (i + 1) * cellW + i * mullion;
-        return (
-          <g key={`mv-${i}`}>
-            <rect x={x} y={innerY} width={mullion} height={innerH} fill={color} />
-            <rect x={x} y={innerY} width={mullion} height={innerH} fill={`url(#frame-${uid})`} opacity={0.85} />
-            <rect x={x} y={innerY} width={1} height={innerH} fill="#fff" opacity={0.18 + sheenStrength * 0.2} />
-            <rect x={x + mullion - 1} y={innerY} width={1} height={innerH} fill="#000" opacity={0.4} />
-          </g>
-        );
-      })}
-      {/* Mullion highlights (horizontal) */}
-      {Array.from({ length: rows - 1 }).map((_, i) => {
-        const y = innerY + (i + 1) * cellH + i * mullion;
-        return (
-          <g key={`mh-${i}`}>
-            <rect x={innerX} y={y} width={innerW} height={mullion} fill={color} />
-            <rect x={innerX} y={y} width={innerW} height={mullion} fill={`url(#frame-${uid})`} opacity={0.85} />
-            <rect x={innerX} y={y} width={innerW} height={1} fill="#fff" opacity={0.2 + sheenStrength * 0.2} />
-            <rect x={innerX} y={y + mullion - 1} width={innerW} height={1} fill="#000" opacity={0.4} />
-          </g>
-        );
-      })}
+      {/* Glass tint overlay — sits over central glass region */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-[8%_9%_10%_9%] rounded-[2px]"
+        style={{
+          background: glass.tint,
+          opacity: glass.opacity * 0.75,
+          mixBlendMode: "multiply",
+          transition: "opacity 900ms ease, background 900ms ease",
+        }}
+      />
 
-      {/* Premium handle */}
-      <g filter={`url(#bevel-${uid})`}>
-        <rect
-          x={innerX + cellW - 30} y={innerY + cellH / 2 - 26}
-          width="9" height="52" rx="4"
-          fill={`url(#handle-${uid})`}
-        />
-        <rect
-          x={innerX + cellW - 29} y={innerY + cellH / 2 - 25}
-          width="2" height="50" rx="1"
-          fill="#fff" opacity={0.35 + sheenStrength * 0.25}
-        />
-      </g>
-    </svg>
+      {/* Cinematic diagonal environment reflection across glass */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-[8%_9%_10%_9%] overflow-hidden"
+        style={{
+          background: `linear-gradient(115deg, transparent 28%, rgba(255,255,255,${0.22 * glass.reflect}) 48%, rgba(255,255,255,${0.06 * glass.reflect}) 60%, transparent 72%)`,
+          mixBlendMode: "screen",
+          transition: "background 900ms ease",
+        }}
+      />
+
+      {/* HDR-style top edge bloom */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/4"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.10), transparent)",
+          mixBlendMode: "screen",
+        }}
+      />
+    </div>
   );
 }
 
