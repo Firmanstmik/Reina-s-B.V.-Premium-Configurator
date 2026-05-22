@@ -581,6 +581,23 @@ export function Configurator() {
                       </li>
                     ))}
                   </ul>
+
+                  {/* Premium price card */}
+                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-5">
+                    <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/25 blur-3xl" />
+                    <div className="relative flex items-end justify-between">
+                      <div>
+                        <p className="text-[10.5px] uppercase tracking-[0.22em] text-primary">Indicatieve richtprijs</p>
+                        <p className="font-display mt-1.5 text-3xl font-medium tracking-tight">
+                          € {price.toLocaleString("nl-NL")}
+                        </p>
+                        <p className="mt-1 text-[11px] text-muted-foreground">Excl. BTW, incl. montage in Limburg</p>
+                      </div>
+                      <span className="rounded-full bg-primary/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary ring-1 ring-primary/40">
+                        Vrijblijvend
+                      </span>
+                    </div>
+                  </div>
                 </ControlGroup>
               )}
             </div>
