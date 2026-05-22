@@ -11,10 +11,10 @@ import {
   PanelTop,
   Maximize2,
 } from "lucide-react";
-import sceneImg from "@/assets/cfg-scene.jpg";
-import aluImg from "@/assets/cfg-aluminium.png";
-import houtImg from "@/assets/cfg-hout.png";
-import kunstImg from "@/assets/cfg-kunststof.png";
+import sceneSchuifpui from "@/assets/cfg-type-schuifpui.jpg";
+import sceneKozijn from "@/assets/cfg-type-kozijn.jpg";
+import sceneVoordeur from "@/assets/cfg-type-voordeur.jpg";
+import scenePanorama from "@/assets/cfg-type-panorama.jpg";
 
 /* ------------------------------------------------------------------ */
 /*  Config domain                                                      */
@@ -62,143 +62,15 @@ const GLASS = [
 const STEPS = ["Type", "Stijl", "Kleur", "Glas", "Details", "Samenvatting"] as const;
 
 /* ------------------------------------------------------------------ */
-/*  Photorealistic layered preview (Aluminium / Hout / Kunststof)       */
+/*  Photorealistic per-type scenes                                     */
 /* ------------------------------------------------------------------ */
 
-const MATERIAL_RENDERS: Record<Material, string> = {
-  Aluminium: aluImg,
-  Kunststof: kunstImg,
-  Hout: houtImg,
+const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
+  schuifpui: sceneSchuifpui,
+  kozijn: sceneKozijn,
+  voordeur: sceneVoordeur,
+  panorama: scenePanorama,
 };
-
-function RealisticPreview({
-  material, color, glass, parallax,
-}: {
-  material: Material;
-  color: { hex: string; sheen: string; name: string };
-  glass: typeof GLASS[number];
-  parallax: { x: number; y: number };
-}) {
-  // Per-material tonal calibration so color tint feels physically plausible.
-  const tintOpacity =
-    material === "Aluminium" ? 0.62 :
-    material === "Kunststof" ? 0.55 : 0.42;
-  const frameSaturate =
-    material === "Aluminium" ? 1.05 :
-    material === "Kunststof" ? 1.0  : 0.92;
-  const frameBrightness =
-    material === "Aluminium" ? 0.95 :
-    material === "Kunststof" ? 1.02 : 0.98;
-
-  return (
-    <div
-      className="relative h-full w-full"
-      style={{
-        transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0)`,
-        transition: "transform 600ms cubic-bezier(0.22,1,0.36,1)",
-        filter:
-          "drop-shadow(0 50px 60px rgba(0,0,0,0.55)) drop-shadow(0 18px 28px rgba(0,0,0,0.35))",
-      }}
-    >
-      {/* Crossfaded photorealistic material layers — identical composition */}
-      {(Object.keys(MATERIAL_RENDERS) as Material[]).map((m) => {
-        const active = m === material;
-        return (
-          <img
-            key={m}
-            src={MATERIAL_RENDERS[m]}
-            alt={`${m} kozijn render`}
-            loading="lazy"
-            width={1280}
-            height={896}
-            draggable={false}
-            className="absolute inset-0 h-full w-full select-none object-contain"
-            style={{
-              opacity: active ? 1 : 0,
-              transform: active ? "scale(1)" : "scale(1.015)",
-              transition:
-                "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1400ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
-              filter: active
-                ? `saturate(${frameSaturate}) brightness(${frameBrightness}) contrast(1.04)`
-                : undefined,
-              willChange: "opacity, transform",
-            }}
-          />
-        );
-      })}
-
-      {/* Color tint — multiplies frame to selected color, glass stays believable */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: color.hex,
-          opacity: tintOpacity,
-          mixBlendMode: "multiply",
-          maskImage: `url(${MATERIAL_RENDERS[material]})`,
-          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          transition: "background 900ms ease, opacity 900ms ease",
-        }}
-      />
-
-      {/* Specular sheen highlight — picks selected color's sheen */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `linear-gradient(160deg, ${color.sheen}cc 0%, transparent 40%)`,
-          opacity: material === "Aluminium" ? 0.18 : material === "Kunststof" ? 0.1 : 0.05,
-          mixBlendMode: "screen",
-          maskImage: `url(${MATERIAL_RENDERS[material]})`,
-          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          transition: "opacity 900ms ease, background 900ms ease",
-        }}
-      />
-
-      {/* Glass tint overlay — sits over central glass region */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[8%_9%_10%_9%] rounded-[2px]"
-        style={{
-          background: glass.tint,
-          opacity: glass.opacity * 0.75,
-          mixBlendMode: "multiply",
-          transition: "opacity 900ms ease, background 900ms ease",
-        }}
-      />
-
-      {/* Cinematic diagonal environment reflection across glass */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[8%_9%_10%_9%] overflow-hidden"
-        style={{
-          background: `linear-gradient(115deg, transparent 28%, rgba(255,255,255,${0.22 * glass.reflect}) 48%, rgba(255,255,255,${0.06 * glass.reflect}) 60%, transparent 72%)`,
-          mixBlendMode: "screen",
-          transition: "background 900ms ease",
-        }}
-      />
-
-      {/* HDR-style top edge bloom */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-1/4"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.10), transparent)",
-          mixBlendMode: "screen",
-        }}
-      />
-    </div>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
