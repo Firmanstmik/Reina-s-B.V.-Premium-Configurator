@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowLeft,
@@ -11,7 +11,10 @@ import {
   PanelTop,
   Maximize2,
 } from "lucide-react";
-import previewImg from "@/assets/configurator-preview.jpg";
+import sceneImg from "@/assets/cfg-scene.jpg";
+import aluImg from "@/assets/cfg-aluminium.png";
+import houtImg from "@/assets/cfg-hout.png";
+import kunstImg from "@/assets/cfg-kunststof.png";
 
 /* ------------------------------------------------------------------ */
 /*  Config domain                                                      */
