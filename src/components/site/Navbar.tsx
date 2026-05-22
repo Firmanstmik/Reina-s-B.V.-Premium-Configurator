@@ -147,10 +147,10 @@ export function Navbar() {
           </a>
           <div className="mt-4 flex flex-col gap-2 text-[13px] text-muted-foreground">
             <a href="mailto:info@reinas-bv.nl" className="inline-flex items-center gap-2 hover:text-foreground">
-              <Mail className="h-3.5 w-3.5 text-primary" /> info@reinas-bv.nl
+              <Mail className="h-3.5 w-3.5 text-primary" /><span>info@reinas-bv.nl</span>
             </a>
             <a href="tel:+31000000000" className="inline-flex items-center gap-2 hover:text-foreground">
-              <Phone className="h-3.5 w-3.5 text-primary" /> +31 (0) 00 000 0000
+              <Phone className="h-3.5 w-3.5 text-primary" /><span>+31 (0) 00 000 0000</span>
             </a>
           </div>
         </div>
