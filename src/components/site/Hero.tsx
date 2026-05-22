@@ -134,7 +134,8 @@ export function Hero() {
         <div className="max-w-2xl">
           <div
             key={`eyebrow-${active}`}
-            className="fade-in mb-7 inline-flex items-center gap-2 rounded-lg glass px-4 py-1.5 text-[11px] uppercase tracking-[0.28em] text-primary"
+            className="hero-text-in mb-7 inline-flex items-center gap-2 rounded-lg glass px-4 py-1.5 text-[11px] uppercase tracking-[0.28em] text-primary"
+            style={{ ["--delay" as string]: "0ms" }}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-glow" />
             {SLIDES[active].eyebrow}
@@ -142,8 +143,8 @@ export function Hero() {
 
           <h1
             key={`title-${active}`}
-            className="font-display fade-in text-[clamp(2.5rem,6.4vw,5.75rem)] font-medium leading-[1.02] tracking-[-0.02em] text-foreground"
-            style={{ animationDuration: "600ms" }}
+            className="hero-text-in font-display text-[clamp(2.5rem,6.4vw,5.75rem)] font-medium leading-[1.02] tracking-[-0.02em] text-foreground"
+            style={{ ["--delay" as string]: "140ms" }}
           >
             {SLIDES[active].titleLead}{" "}
             <span className="font-serif-italic gradient-text">{SLIDES[active].titleItalic}</span>{" "}
@@ -152,8 +153,8 @@ export function Hero() {
 
           <p
             key={`desc-${active}`}
-            className="fade-in mt-7 max-w-lg text-[15px] leading-relaxed text-muted-foreground md:text-base"
-            style={{ animationDuration: "700ms" }}
+            className="hero-text-in mt-7 max-w-lg text-[15px] leading-relaxed text-muted-foreground md:text-base"
+            style={{ ["--delay" as string]: "320ms" }}
           >
             {SLIDES[active].description}
           </p>
@@ -162,8 +163,8 @@ export function Hero() {
             <a
               key={`cta-${active}`}
               href="#producten"
-              className="group fade-in inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)]"
-              style={{ animationDuration: "700ms" }}
+              className="group hero-text-in inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)]"
+              style={{ ["--delay" as string]: "480ms" }}
             >
               {SLIDES[active].primaryLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -176,6 +177,7 @@ export function Hero() {
             </button>
           </div>
         </div>
+
 
 
         {/* Trust card */}
