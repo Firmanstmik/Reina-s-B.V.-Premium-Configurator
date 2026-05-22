@@ -202,7 +202,7 @@ export function Hero() {
             return (
               <button
                 key={i}
-                onClick={() => setActive(i)}
+                onClick={() => go(i)}
                 aria-label={`Ga naar slide ${i + 1}`}
                 className="group relative h-[2px] w-12 overflow-hidden rounded-full bg-white/15 transition-all md:w-16"
               >
