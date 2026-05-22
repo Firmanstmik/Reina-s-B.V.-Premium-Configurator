@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowLeft,
@@ -230,9 +230,6 @@ export function Configurator() {
   const color   = COLORS[colorIx];
   const mat     = MATERIALS[matIx];
   const glass   = GLASS[glassIx];
-
-  // Profile alters row density (adds horizontal bars)
-  const effectiveRows = useMemo(() => Math.max(type.rows, profile + 1), [type.rows, profile]);
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
