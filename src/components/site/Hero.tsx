@@ -183,8 +183,9 @@ export function Hero() {
         {/* Trust card */}
         <div
           key={`trust-${active}`}
-          className="fade-in pointer-events-none absolute right-6 bottom-[260px] hidden max-w-[300px] md:block"
-          style={{ animationDelay: "600ms" }}
+          className="hero-text-in pointer-events-none absolute right-6 bottom-[260px] hidden max-w-[300px] md:block"
+          style={{ ["--delay" as string]: "640ms" }}
+
         >
           <div className="glass-strong pointer-events-auto rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
             <div className="flex items-start gap-3">
