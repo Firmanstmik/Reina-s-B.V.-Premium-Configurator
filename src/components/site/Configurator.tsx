@@ -213,6 +213,19 @@ export function Configurator() {
   const [glassIx, setGlassIx] = useState(0);
   const [profile, setProfile] = useState(0); // 0..3 — adds row density
 
+  // Cinematic parallax — tracks pointer over the preview stage
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const onStageMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = stageRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height - 0.5;
+    setParallax({ x: nx * -18, y: ny * -10 });
+  };
+  const onStageLeave = () => setParallax({ x: 0, y: 0 });
+
   const type    = TYPES.find((t) => t.id === typeId)!;
   const color   = COLORS[colorIx];
   const mat     = MATERIALS[matIx];
@@ -561,14 +574,26 @@ export function Configurator() {
                 background: `radial-gradient(60% 60% at 30% 30%, ${color.hex}55, transparent 70%), radial-gradient(50% 50% at 80% 70%, oklch(0.78 0.13 215 / 0.35), transparent 70%)`,
               }}
             />
-            <div className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10">
+            <div
+              ref={stageRef}
+              onMouseMove={onStageMove}
+              onMouseLeave={onStageLeave}
+              className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10"
+            >
               {/* Background scene */}
               <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
                 <img
-                  src={previewImg}
+                  src={sceneImg}
                   alt="Architectural scene"
-                  className="absolute inset-0 h-full w-full scale-[1.08] object-cover ken-burns"
-                  style={{ filter: "blur(2px) saturate(1.05) brightness(0.85)" }}
+                  loading="lazy"
+                  width={1600}
+                  height={1024}
+                  className="absolute inset-0 h-full w-full scale-[1.12] object-cover ken-burns"
+                  style={{
+                    filter: "blur(3px) saturate(1.08) brightness(0.78)",
+                    transform: `translate3d(${parallax.x * 0.35}px, ${parallax.y * 0.35}px, 0) scale(1.12)`,
+                    transition: "transform 700ms cubic-bezier(0.22,1,0.36,1)",
+                  }}
                 />
                 {/* Cinematic vignette + depth */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,transparent_0%,oklch(0.08_0.012_240/0.7)_80%)]" />
@@ -585,24 +610,19 @@ export function Configurator() {
                 <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
 
                 {/* The configurable window — floats subtly */}
-                <div
-                  className="absolute inset-x-[7%] top-[9%] bottom-[17%] float-y"
-                >
+                <div className="absolute inset-x-[7%] top-[8%] bottom-[16%] float-y">
                   {/* Ground reflection of the window */}
                   <div
                     aria-hidden
-                    className="absolute -bottom-6 left-[8%] right-[8%] h-6 rounded-[50%] blur-xl transition-all duration-700"
-                    style={{ background: `${color.hex}99` }}
+                    className="absolute -bottom-8 left-[6%] right-[6%] h-10 rounded-[50%] blur-2xl transition-all duration-700"
+                    style={{ background: `${color.hex}aa`, opacity: 0.7 }}
                   />
-                  <div key={`${typeId}-${styleId}-${matIx}-${colorIx}-${glassIx}-${profile}`} className="absolute inset-0 fade-in">
-                    <WindowPreview
-                      cols={type.cols}
-                      rows={effectiveRows}
-                      color={color.hex}
-                      sheen={color.sheen}
+                  <div className="absolute inset-0">
+                    <RealisticPreview
                       material={mat.id}
+                      color={color}
                       glass={glass}
-                      styleId={styleId}
+                      parallax={parallax}
                     />
                   </div>
                 </div>
