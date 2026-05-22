@@ -194,11 +194,11 @@ export function SegmentBar({
       <button
         type="button"
         onClick={() => select("zakelijk")}
-        className="group flex items-center justify-end gap-4 text-right"
+        className="group flex items-center justify-end gap-2.5 text-right sm:gap-4"
       >
         <span className="flex flex-col leading-tight">
           <span
-            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors duration-500 ${
+            className={`text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500 sm:text-[12px] sm:tracking-[0.22em] ${
               active === "zakelijk" ? "text-primary" : "text-foreground/85"
             }`}
           >
@@ -209,15 +209,16 @@ export function SegmentBar({
           </span>
         </span>
         <span
-          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 ${
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 sm:h-12 sm:w-12 ${
             active === "zakelijk"
               ? "bg-primary/15 ring-primary/40 text-primary"
               : "bg-white/5 ring-white/10 text-foreground/70"
           }`}
         >
-          <Building2 className="h-5 w-5" />
+          <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
         </span>
       </button>
+
     </div>
   );
 }
