@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, Building2, Home } from "lucide-react";
+import { ArrowRight, Building2, Home } from "lucide-react";
 import particulierImg from "@/assets/particulier.jpg";
 import zakelijkImg from "@/assets/zakelijk.jpg";
+import { useSegment, type Segment } from "@/hooks/useSegment";
 
 const data = {
   particulier: {
@@ -18,20 +18,31 @@ const data = {
     body: "Van kantoorgebouwen tot bedrijfspanden en projectontwikkeling — wij leveren architecturale gevelsystemen op grote schaal, met strakke planning en betrouwbare oplevering.",
     cta: "Bespreek uw project",
     img: zakelijkImg,
-    points: ["Project­management", "Schaalbare productie", "B2B partnerships"],
+    points: ["Projectmanagement", "Schaalbare productie", "B2B partnerships"],
   },
 };
 
 export function SegmentSwitch() {
-  const [active, setActive] = useState<"particulier" | "zakelijk">("particulier");
+  const [active] = useSegment();
   const d = data[active];
+  const isZakelijk = active === "zakelijk";
+
+  // Text slides in from the side OPPOSITE to where it now lives;
+  // image slides in from the side OPPOSITE to where it now lives — "saling tarik".
+  const textAnim = isZakelijk ? "slide-pull-right" : "slide-pull-left";
+  const imgAnim = isZakelijk ? "slide-pull-left" : "slide-pull-right";
 
   return (
     <section className="relative px-4 md:px-6">
       <div className="mx-auto max-w-7xl">
-        {/* Content panel */}
         <div className="glass-strong mt-16 grid overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] lg:grid-cols-2">
-          <div key={active} className="reveal-up flex flex-col justify-between gap-8 p-8 md:p-12">
+          {/* Text panel */}
+          <div
+            key={`txt-${active}`}
+            className={`${textAnim} flex flex-col justify-between gap-8 p-8 md:p-12 ${
+              isZakelijk ? "lg:order-2" : "lg:order-1"
+            }`}
+          >
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-primary">{d.eyebrow}</p>
               <h3 className="font-display mt-4 text-3xl font-medium leading-[1.1] tracking-tight md:text-4xl">
@@ -56,9 +67,21 @@ export function SegmentSwitch() {
             </a>
           </div>
 
-          <div key={active + "img"} className="fade-in relative min-h-[280px] overflow-hidden lg:min-h-[420px]">
+          {/* Image panel */}
+          <div
+            key={`img-${active}`}
+            className={`${imgAnim} relative min-h-[280px] overflow-hidden lg:min-h-[420px] ${
+              isZakelijk ? "lg:order-1" : "lg:order-2"
+            }`}
+          >
             <img src={d.img} alt={d.title} className="h-full w-full object-cover" loading="lazy" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-transparent" />
+            <div
+              className={`absolute inset-0 ${
+                isZakelijk
+                  ? "bg-gradient-to-l from-background/40 via-transparent to-transparent"
+                  : "bg-gradient-to-r from-background/40 via-transparent to-transparent"
+              }`}
+            />
           </div>
         </div>
       </div>
@@ -66,26 +89,30 @@ export function SegmentSwitch() {
   );
 }
 
-/* Particulier / Zakelijk split bar used INSIDE Hero (bottom band) */
+/* Particulier / Zakelijk split bar — center toggle uses a TWO-COLOR split circle */
 export function SegmentBar({
-  active,
-  onChange,
+  active: _active,
+  onChange: _onChange,
 }: {
-  active: "particulier" | "zakelijk";
-  onChange: (v: "particulier" | "zakelijk") => void;
+  active?: Segment;
+  onChange?: (v: Segment) => void;
 }) {
-  const toggle = () =>
-    onChange(active === "particulier" ? "zakelijk" : "particulier");
+  const [active, setSeg] = useSegment();
+  const select = (v: Segment) => {
+    setSeg(v);
+    _onChange?.(v);
+  };
+
   return (
     <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-2xl px-6 py-5 shadow-[var(--shadow-elevated)] md:px-8 md:py-6">
       {/* Particulier */}
       <button
         type="button"
-        onClick={() => onChange("particulier")}
+        onClick={() => select("particulier")}
         className="group flex items-center gap-4 text-left"
       >
         <span
-          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all ${
+          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 ${
             active === "particulier"
               ? "bg-primary/15 ring-primary/40 text-primary"
               : "bg-white/5 ring-white/10 text-foreground/70"
@@ -95,7 +122,7 @@ export function SegmentBar({
         </span>
         <span className="flex flex-col leading-tight">
           <span
-            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors ${
+            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors duration-500 ${
               active === "particulier" ? "text-primary" : "text-foreground/85"
             }`}
           >
@@ -107,32 +134,70 @@ export function SegmentBar({
         </span>
       </button>
 
-      {/* Center arrow control */}
-      <div className="relative flex items-center justify-center">
-        <span className="absolute h-16 w-16 rounded-full border border-primary/40" />
-        <span className="absolute h-16 w-16 rounded-full bg-primary/10 blur-md" />
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label="Wissel segment"
-          className="relative z-10 grid h-14 w-14 place-items-center gap-1 rounded-full bg-background/80 ring-1 ring-primary/30 backdrop-blur transition-all hover:ring-primary"
-        >
-          <span className="flex items-center gap-1.5">
-            <ArrowLeft className="h-3.5 w-3.5 text-foreground/80" />
-            <ArrowRight className="h-3.5 w-3.5 text-foreground/80" />
-          </span>
-        </button>
+      {/* Center split-color toggle */}
+      <div className="relative flex h-16 w-16 items-center justify-center">
+        <span
+          className={`absolute inset-0 rounded-full border transition-colors duration-500 ${
+            active === "particulier" ? "border-primary/50" : "border-foreground/30"
+          }`}
+        />
+        <span
+          className={`absolute inset-0 rounded-full blur-md transition-all duration-500 ${
+            active === "particulier" ? "bg-primary/15" : "bg-foreground/10"
+          }`}
+        />
+        {/* Two halves */}
+        <div className="relative z-10 grid h-14 w-14 grid-cols-2 overflow-hidden rounded-full bg-background/85 ring-1 ring-white/10 backdrop-blur">
+          <button
+            type="button"
+            aria-label="Particulier"
+            onClick={() => select("particulier")}
+            className={`relative flex items-center justify-end pr-1.5 transition-all duration-500 ${
+              active === "particulier"
+                ? "bg-gradient-to-r from-primary/40 to-primary/15"
+                : "bg-transparent hover:bg-primary/10"
+            }`}
+          >
+            <span
+              className={`text-[10px] transition-transform duration-500 ${
+                active === "particulier" ? "scale-110 text-primary" : "text-foreground/60"
+              }`}
+            >
+              ◀
+            </span>
+          </button>
+          <button
+            type="button"
+            aria-label="Zakelijk"
+            onClick={() => select("zakelijk")}
+            className={`relative flex items-center justify-start pl-1.5 transition-all duration-500 ${
+              active === "zakelijk"
+                ? "bg-gradient-to-l from-foreground/30 to-foreground/10"
+                : "bg-transparent hover:bg-foreground/10"
+            }`}
+          >
+            <span
+              className={`text-[10px] transition-transform duration-500 ${
+                active === "zakelijk" ? "scale-110 text-foreground" : "text-foreground/60"
+              }`}
+            >
+              ▶
+            </span>
+          </button>
+          {/* Divider */}
+          <span className="pointer-events-none absolute left-1/2 top-1.5 bottom-1.5 -translate-x-1/2 w-px bg-white/15" />
+        </div>
       </div>
 
       {/* Zakelijk */}
       <button
         type="button"
-        onClick={() => onChange("zakelijk")}
+        onClick={() => select("zakelijk")}
         className="group flex items-center justify-end gap-4 text-right"
       >
         <span className="flex flex-col leading-tight">
           <span
-            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors ${
+            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors duration-500 ${
               active === "zakelijk" ? "text-primary" : "text-foreground/85"
             }`}
           >
@@ -143,7 +208,7 @@ export function SegmentBar({
           </span>
         </span>
         <span
-          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all ${
+          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 ${
             active === "zakelijk"
               ? "bg-primary/15 ring-primary/40 text-primary"
               : "bg-white/5 ring-white/10 text-foreground/70"
