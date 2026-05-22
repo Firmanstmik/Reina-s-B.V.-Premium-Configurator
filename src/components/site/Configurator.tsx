@@ -634,22 +634,47 @@ export function Configurator() {
 
           {/* ---------- Live preview ---------- */}
           <div className="relative">
-            <div className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)]">
+            {/* Outer ambient halo — reacts to selected color */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-70 blur-3xl transition-all duration-1000"
+              style={{
+                background: `radial-gradient(60% 60% at 30% 30%, ${color.hex}55, transparent 70%), radial-gradient(50% 50% at 80% 70%, oklch(0.78 0.13 215 / 0.35), transparent 70%)`,
+              }}
+            />
+            <div className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10">
               {/* Background scene */}
               <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
                 <img
                   src={previewImg}
                   alt="Architectural scene"
-                  className="absolute inset-0 h-full w-full scale-[1.06] object-cover ken-burns"
+                  className="absolute inset-0 h-full w-full scale-[1.08] object-cover ken-burns"
+                  style={{ filter: "blur(2px) saturate(1.05) brightness(0.85)" }}
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,transparent_0%,oklch(0.10_0.012_240/0.55)_75%)]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent" />
+                {/* Cinematic vignette + depth */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,transparent_0%,oklch(0.08_0.012_240/0.7)_80%)]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                {/* Color-reactive ambient floor light */}
+                <div
+                  className="absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
+                  style={{
+                    background: `radial-gradient(80% 60% at 50% 100%, ${color.hex}30, transparent 70%)`,
+                    mixBlendMode: "screen",
+                  }}
+                />
+                {/* Subtle cyan top accent light */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
 
                 {/* The configurable window — floats subtly */}
                 <div
-                  className="absolute inset-x-[8%] top-[10%] bottom-[18%] float-y"
-                  style={{ filter: "drop-shadow(0 30px 40px rgba(0,0,0,.55))" }}
+                  className="absolute inset-x-[7%] top-[9%] bottom-[17%] float-y"
                 >
+                  {/* Ground reflection of the window */}
+                  <div
+                    aria-hidden
+                    className="absolute -bottom-6 left-[8%] right-[8%] h-6 rounded-[50%] blur-xl transition-all duration-700"
+                    style={{ background: `${color.hex}99` }}
+                  />
                   <div key={`${typeId}-${styleId}-${matIx}-${colorIx}-${glassIx}-${profile}`} className="absolute inset-0 fade-in">
                     <WindowPreview
                       cols={type.cols}
@@ -670,6 +695,12 @@ export function Configurator() {
                   <Chip label={styleId} />
                 </div>
 
+                {/* Material/Glass HUD — right side */}
+                <div className="absolute right-5 top-5 flex flex-col items-end gap-2">
+                  <Chip label={mat.id} />
+                  <Chip label={glass.name} />
+                </div>
+
                 {/* Summary card */}
                 <div
                   className="absolute inset-x-5 bottom-5 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 backdrop-blur-2xl"
@@ -677,11 +708,16 @@ export function Configurator() {
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className="h-9 w-9 rounded-lg ring-1 ring-white/20 transition-all duration-500"
-                      style={{ background: `linear-gradient(135deg, ${color.sheen}, ${color.hex})` }}
+                      className="h-10 w-10 rounded-lg ring-1 ring-white/20 transition-all duration-700"
+                      style={{
+                        background: `linear-gradient(135deg, ${color.sheen} 0%, ${color.hex} 55%, #000 130%)`,
+                        boxShadow: `inset 0 1px 0 ${color.sheen}88, 0 6px 18px -6px ${color.hex}aa`,
+                      }}
                     />
                     <div className="min-w-0">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Uw samenstelling</p>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                        Uw samenstelling · <span className="text-primary">€ {price.toLocaleString("nl-NL")}</span>
+                      </p>
                       <p className="mt-0.5 truncate text-[12.5px] font-medium">
                         {type.name} · {mat.id} · {color.name} · {glass.name}
                       </p>
