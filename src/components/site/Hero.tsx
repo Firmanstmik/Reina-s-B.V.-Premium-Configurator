@@ -27,7 +27,7 @@ const SLIDES: Slide[] = [
     titleItalic: "hoger niveau",
     titleTail: "tillen.",
     description:
-      "Maatwerk kozijnen, deuren, schuifpuien en meer. Met vakmanschap, kwaliteit en oog voor detail realiseren wij duurzame oplossingen voor particuliere en zakelijke projecten.",
+      "Maatwerk kozijnen, deuren en schuifpuien. Met vakmanschap, kwaliteit en oog voor detail realiseren wij duurzame oplossingen voor particuliere en zakelijke projecten.",
     primaryLabel: "Bekijk producten",
     trustTitle: "Betrouwbaar & duurzaam",
     trustBody:
@@ -40,11 +40,11 @@ const SLIDES: Slide[] = [
     titleItalic: "uw merk",
     titleTail: "een gezicht geeft.",
     description:
-      "Van kantoor en bedrijfspand tot grootschalige projectbouw — wij realiseren glasgevels en aluminium puien die voldoen aan de hoogste eisen op gebied van design, isolatie en duurzaamheid.",
+      "Van kantoor en bedrijfspand tot grootschalige projectbouw. Wij realiseren glasgevels en aluminium puien die voldoen aan de hoogste eisen op gebied van design, isolatie en duurzaamheid.",
     primaryLabel: "Bekijk zakelijke projecten",
     trustTitle: "Partner in projectbouw",
     trustBody:
-      "Heldere planning, eigen montageteams en complete ontzorging — van tekening tot oplevering.",
+      "Heldere planning, eigen montageteams en complete ontzorging, van tekening tot oplevering.",
   },
   {
     image: slide3,
@@ -53,7 +53,7 @@ const SLIDES: Slide[] = [
     titleItalic: "uw complete",
     titleTail: "gevel & buitenruimte.",
     description:
-      "Kozijnen, rolluiken, horren, screens en poorten — hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail. Persoonlijk geleverd, vakkundig geplaatst.",
+      "Kozijnen, rolluiken, horren, screens en poorten. Hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail. Persoonlijk geleverd, vakkundig geplaatst.",
     primaryLabel: "Vraag direct uw offerte aan",
     trustTitle: "Vakmanschap uit Limburg",
     trustBody:
