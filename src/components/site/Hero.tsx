@@ -65,14 +65,24 @@ const INTERVAL = 6000;
 
 export function Hero() {
   const [active, setActive] = useState(0);
-  const [segment, setSegment] = useState<"particulier" | "zakelijk">("particulier");
+  const [prev, setPrev] = useState<number | null>(null);
+  const [segment, setSegment] = useSegment();
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setActive((i) => (i + 1) % SLIDES.length);
+      setActive((i) => {
+        setPrev(i);
+        return (i + 1) % SLIDES.length;
+      });
     }, INTERVAL);
     return () => window.clearInterval(id);
   }, []);
+
+  const go = (i: number) => {
+    if (i === active) return;
+    setPrev(active);
+    setActive(i);
+  };
 
   return (
     <section
@@ -80,37 +90,42 @@ export function Hero() {
       className="relative w-full overflow-hidden bg-background"
       style={{ minHeight: "100vh" }}
     >
-      {/* Slides */}
+      {/* Slides — fixed frame, identical sizing; clip-path curtain reveal */}
       <div className="absolute inset-0">
         {SLIDES.map((slide, i) => {
           const isActive = i === active;
+          const isPrev = i === prev;
           return (
             <div
               key={i}
-              className="absolute inset-0 transition-opacity duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-              style={{ opacity: isActive ? 1 : 0 }}
+              className="absolute inset-0 overflow-hidden"
+              style={{
+                zIndex: isActive ? 2 : isPrev ? 1 : 0,
+                opacity: isActive || isPrev ? 1 : 0,
+              }}
               aria-hidden={!isActive}
             >
-              <img
-                src={slide.image}
-                alt=""
-                className="h-full w-full object-cover object-center will-change-transform"
-                style={{
-                  transform: isActive ? "scale(1.08)" : "scale(1.0)",
-                  transition: "transform 8000ms cubic-bezier(0.22,1,0.36,1)",
-                }}
-                width={1920}
-                height={1280}
-                loading={i === 0 ? "eager" : "lazy"}
-                fetchPriority={i === 0 ? "high" : undefined}
-              />
+              <div
+                key={`${i}-${active}`}
+                className={`absolute inset-0 ${isActive ? "hero-img-enter" : isPrev ? "hero-img-exit" : ""}`}
+              >
+                <img
+                  src={slide.image}
+                  alt=""
+                  className="h-full w-full object-cover object-center ken-burns will-change-transform"
+                  width={1920}
+                  height={1280}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : undefined}
+                />
+              </div>
             </div>
           );
         })}
         {/* Cinematic gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/92 via-background/55 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/90" />
-        <div className="absolute inset-0 gradient-radial-glow opacity-60" />
+        <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-r from-background/92 via-background/55 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-b from-background/30 via-transparent to-background/90" />
+        <div className="pointer-events-none absolute inset-0 z-[3] gradient-radial-glow opacity-60" />
       </div>
 
       {/* Content */}
