@@ -73,10 +73,10 @@ function WindowPreview({
 }) {
   // Frame thickness varies by style + material
   const baseFrame =
-    styleId === "Industrieel" ? 26 :
+    styleId === "Industrieel" ? 28 :
     styleId === "Klassiek"   ? 22 : 14;
-  const frame = baseFrame + (material === "Hout" ? 4 : material === "Kunststof" ? 2 : 0);
-  const mullion = Math.max(6, frame * 0.55);
+  const frame = baseFrame + (material === "Hout" ? 6 : material === "Kunststof" ? 3 : 0);
+  const mullion = Math.max(7, frame * 0.6);
 
   const W = 800, H = 520;
   const innerX = frame, innerY = frame;
@@ -84,83 +84,199 @@ function WindowPreview({
   const cellW = (innerW - mullion * (cols - 1)) / cols;
   const cellH = (innerH - mullion * (rows - 1)) / rows;
 
-  const materialSheen =
-    material === "Aluminium" ? 0.85 : material === "Kunststof" ? 0.40 : 0.22;
+  // Material-driven optics
+  const sheenStrength =
+    material === "Aluminium" ? 0.95 : material === "Kunststof" ? 0.45 : 0.22;
+  const roughness =
+    material === "Hout" ? 0.75 : material === "Kunststof" ? 0.35 : 0.18;
+  const isWood = material === "Hout";
+  const isAlu  = material === "Aluminium";
+
+  // Unique gradient IDs per render to avoid SVG cache collisions across re-renders
+  const uid = `${material}-${color.replace("#", "")}-${glass.id}`;
 
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="absolute inset-0 h-full w-full drop-shadow-[0_30px_40px_rgba(0,0,0,0.45)]"
-      style={{ transition: "filter 700ms ease" }}
+      className="absolute inset-0 h-full w-full"
+      style={{
+        transition: "filter 900ms ease",
+        filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.55)) drop-shadow(0 10px 20px rgba(0,0,0,0.35))",
+      }}
     >
       <defs>
-        <linearGradient id="frameGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"  stopColor={sheen} stopOpacity={materialSheen} />
-          <stop offset="45%" stopColor={color} />
-          <stop offset="100%" stopColor={color} stopOpacity={0.92} />
+        {/* Frame — top-light gradient with sheen highlight */}
+        <linearGradient id={`frame-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor={sheen} stopOpacity={0.55 + sheenStrength * 0.35} />
+          <stop offset="22%"  stopColor={color} />
+          <stop offset="78%"  stopColor={color} />
+          <stop offset="100%" stopColor="#000000" stopOpacity={0.55} />
         </linearGradient>
-        <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#ffffff" stopOpacity={glass.reflect * 0.7} />
-          <stop offset="40%"  stopColor={glass.tint} stopOpacity={glass.opacity} />
-          <stop offset="100%" stopColor="#000000" stopOpacity={0.18} />
+        {/* Subtle brushed-metal vertical streaks (aluminium only) */}
+        <linearGradient id={`brush-${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor="#ffffff" stopOpacity={isAlu ? 0.05 : 0} />
+          <stop offset="20%"  stopColor="#ffffff" stopOpacity={0} />
+          <stop offset="50%"  stopColor="#ffffff" stopOpacity={isAlu ? 0.07 : 0} />
+          <stop offset="80%"  stopColor="#ffffff" stopOpacity={0} />
+          <stop offset="100%" stopColor="#000000" stopOpacity={isAlu ? 0.18 : 0.08} />
         </linearGradient>
-        <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"  stopColor="#ffffff" stopOpacity={0.35 * glass.reflect} />
-          <stop offset="55%" stopColor="#ffffff" stopOpacity={0} />
+        {/* Wood grain */}
+        <linearGradient id={`wood-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#000" stopOpacity={isWood ? 0.18 : 0} />
+          <stop offset="50%"  stopColor="#fff" stopOpacity={isWood ? 0.04 : 0} />
+          <stop offset="100%" stopColor="#000" stopOpacity={isWood ? 0.22 : 0} />
         </linearGradient>
-        <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feGaussianBlur stdDeviation="3" />
+
+        {/* Glass — sky reflection + room shadow */}
+        <linearGradient id={`glass-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#cfe6f2" stopOpacity={0.35 * glass.reflect} />
+          <stop offset="35%"  stopColor={glass.tint} stopOpacity={glass.opacity} />
+          <stop offset="70%"  stopColor={glass.tint} stopOpacity={glass.opacity * 0.85} />
+          <stop offset="100%" stopColor="#0a1018" stopOpacity={0.45} />
+        </linearGradient>
+        {/* Diagonal environment reflection (sky / clouds streak) */}
+        <linearGradient id={`env-${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"  stopColor="#ffffff" stopOpacity={0.0} />
+          <stop offset="35%" stopColor="#ffffff" stopOpacity={0.16 * glass.reflect} />
+          <stop offset="55%" stopColor="#ffffff" stopOpacity={0.35 * glass.reflect} />
+          <stop offset="70%" stopColor="#ffffff" stopOpacity={0.10 * glass.reflect} />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
+        </linearGradient>
+        {/* Bottom inner shadow (depth into the room) */}
+        <linearGradient id={`depth-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#000" stopOpacity={0} />
+          <stop offset="100%" stopColor="#000" stopOpacity={0.35} />
+        </linearGradient>
+
+        {/* Handle gradient */}
+        <linearGradient id={`handle-${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor={sheen} stopOpacity={1} />
+          <stop offset="50%"  stopColor={color} />
+          <stop offset="100%" stopColor="#000" stopOpacity={0.5} />
+        </linearGradient>
+
+        {/* Soft bevel filter */}
+        <filter id={`bevel-${uid}`} x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation="0.6" />
         </filter>
       </defs>
 
-      {/* Outer frame */}
+      {/* ===== Outer frame body ===== */}
+      <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={color} />
+      <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#frame-${uid})`} />
+      {/* Material texture overlay */}
+      {isAlu && (
+        <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#brush-${uid})`} opacity={0.9} />
+      )}
+      {isWood && (
+        <>
+          <rect x="0" y="0" width={W} height={H} rx="8" ry="8" fill={`url(#wood-${uid})`} />
+          {/* faint wood grain lines */}
+          {Array.from({ length: 14 }).map((_, i) => (
+            <line
+              key={i}
+              x1={0} y1={(i + 1) * (H / 15)}
+              x2={W} y2={(i + 1) * (H / 15) + (i % 2 ? 1.5 : -1.2)}
+              stroke="#000" strokeOpacity={0.07} strokeWidth={0.6}
+            />
+          ))}
+        </>
+      )}
+      {/* Top highlight rim */}
+      <rect x="0" y="0" width={W} height={2.5} fill="#ffffff" opacity={0.18 + sheenStrength * 0.25} />
+      {/* Bottom shadow rim */}
+      <rect x="0" y={H - 3} width={W} height={3} fill="#000" opacity={0.45} />
+      {/* Left/right edge shading */}
+      <rect x="0" y="0" width={3} height={H} fill="#fff" opacity={0.06 + sheenStrength * 0.06} />
+      <rect x={W - 3} y="0" width={3} height={H} fill="#000" opacity={0.35} />
+
+      {/* Inner opening shadow (gives the frame thickness) */}
       <rect
-        x="0" y="0" width={W} height={H}
-        rx="6" ry="6"
-        fill="url(#frameGrad)"
-        style={{ transition: "fill 700ms ease" }}
+        x={innerX - 2} y={innerY - 2}
+        width={innerW + 4} height={innerH + 4}
+        fill="none" stroke="#000" strokeOpacity={0.55} strokeWidth="3"
+        rx="2"
       />
 
-      {/* Inner cells with glass + mullions */}
+      {/* ===== Glass cells ===== */}
       {Array.from({ length: rows }).map((_, r) =>
         Array.from({ length: cols }).map((__, c) => {
           const x = innerX + c * (cellW + mullion);
           const y = innerY + r * (cellH + mullion);
           return (
-            <g key={`${r}-${c}`}>
-              {/* Glass pane */}
-              <rect
-                x={x} y={y} width={cellW} height={cellH}
-                fill="url(#glassGrad)"
-                style={{ transition: "opacity 700ms ease" }}
-              />
-              {/* Reflection sheen */}
-              <rect
-                x={x} y={y} width={cellW} height={cellH * 0.55}
-                fill="url(#glassShine)"
-              />
-              {/* Soft diagonal highlight */}
+            <g key={`${r}-${c}`} style={{ transition: "opacity 700ms ease" }}>
+              {/* Glass base */}
+              <rect x={x} y={y} width={cellW} height={cellH} fill={`url(#glass-${uid})`} />
+              {/* Environment reflection streak */}
+              <rect x={x} y={y} width={cellW} height={cellH} fill={`url(#env-${uid})`} />
+              {/* Depth shadow toward bottom */}
+              <rect x={x} y={y + cellH * 0.55} width={cellW} height={cellH * 0.45} fill={`url(#depth-${uid})`} />
+              {/* Window cross reflection — silhouette */}
               <polygon
-                points={`${x},${y + cellH * 0.15} ${x + cellW * 0.35},${y} ${x + cellW * 0.55},${y} ${x},${y + cellH * 0.45}`}
+                points={`${x},${y + cellH * 0.18} ${x + cellW * 0.42},${y} ${x + cellW * 0.62},${y} ${x},${y + cellH * 0.52}`}
                 fill="#ffffff"
-                opacity={0.06 + glass.reflect * 0.08}
+                opacity={0.05 + glass.reflect * 0.10}
               />
-              {/* Inner bevel */}
+              {/* Inner bevel — dark + light edge for depth */}
               <rect
-                x={x + 1} y={y + 1} width={cellW - 2} height={cellH - 2}
-                fill="none" stroke="#000" strokeOpacity={0.18} strokeWidth="1.5"
+                x={x + 0.5} y={y + 0.5}
+                width={cellW - 1} height={cellH - 1}
+                fill="none" stroke="#000" strokeOpacity={0.55} strokeWidth="1.2"
+              />
+              <rect
+                x={x + 1.5} y={y + 1.5}
+                width={cellW - 3} height={cellH - 3}
+                fill="none" stroke="#ffffff" strokeOpacity={0.07} strokeWidth="0.8"
+              />
+              {/* Spacer bar (warm-edge) — premium IGU look */}
+              <rect
+                x={x + 3} y={y + 3}
+                width={cellW - 6} height={cellH - 6}
+                fill="none" stroke="#1a2026" strokeOpacity={0.5} strokeWidth="1"
               />
             </g>
           );
         })
       )}
 
-      {/* Handle on first cell for door/sliding feel */}
-      <rect
-        x={innerX + cellW - 26} y={innerY + cellH / 2 - 18}
-        width="7" height="36" rx="3"
-        fill={sheen} opacity={0.85}
-      />
+      {/* Mullion highlights (vertical) */}
+      {Array.from({ length: cols - 1 }).map((_, i) => {
+        const x = innerX + (i + 1) * cellW + i * mullion;
+        return (
+          <g key={`mv-${i}`}>
+            <rect x={x} y={innerY} width={mullion} height={innerH} fill={color} />
+            <rect x={x} y={innerY} width={mullion} height={innerH} fill={`url(#frame-${uid})`} opacity={0.85} />
+            <rect x={x} y={innerY} width={1} height={innerH} fill="#fff" opacity={0.18 + sheenStrength * 0.2} />
+            <rect x={x + mullion - 1} y={innerY} width={1} height={innerH} fill="#000" opacity={0.4} />
+          </g>
+        );
+      })}
+      {/* Mullion highlights (horizontal) */}
+      {Array.from({ length: rows - 1 }).map((_, i) => {
+        const y = innerY + (i + 1) * cellH + i * mullion;
+        return (
+          <g key={`mh-${i}`}>
+            <rect x={innerX} y={y} width={innerW} height={mullion} fill={color} />
+            <rect x={innerX} y={y} width={innerW} height={mullion} fill={`url(#frame-${uid})`} opacity={0.85} />
+            <rect x={innerX} y={y} width={innerW} height={1} fill="#fff" opacity={0.2 + sheenStrength * 0.2} />
+            <rect x={innerX} y={y + mullion - 1} width={innerW} height={1} fill="#000" opacity={0.4} />
+          </g>
+        );
+      })}
+
+      {/* Premium handle */}
+      <g filter={`url(#bevel-${uid})`}>
+        <rect
+          x={innerX + cellW - 30} y={innerY + cellH / 2 - 26}
+          width="9" height="52" rx="4"
+          fill={`url(#handle-${uid})`}
+        />
+        <rect
+          x={innerX + cellW - 29} y={innerY + cellH / 2 - 25}
+          width="2" height="50" rx="1"
+          fill="#fff" opacity={0.35 + sheenStrength * 0.25}
+        />
+      </g>
     </svg>
   );
 }
@@ -185,6 +301,21 @@ export function Configurator() {
 
   // Profile alters row density (adds horizontal bars)
   const effectiveRows = useMemo(() => Math.max(type.rows, profile + 1), [type.rows, profile]);
+
+  // Indicative price estimate (richt-prijs)
+  const price = useMemo(() => {
+    const base =
+      typeId === "panorama" ? 4800 :
+      typeId === "schuifpui" ? 3600 :
+      typeId === "voordeur"  ? 2400 : 1450;
+    const matMul = mat.id === "Aluminium" ? 1.25 : mat.id === "Hout" ? 1.35 : 1;
+    const glassAdd =
+      glass.id === "triple" ? 420 :
+      glass.id === "panoramic" ? 580 :
+      glass.id === "privacy" || glass.id === "tinted" ? 260 : 0;
+    const styleAdd = styleId === "Industrieel" ? 320 : styleId === "Klassiek" ? 180 : 0;
+    return Math.round((base * matMul + glassAdd + styleAdd) / 10) * 10;
+  }, [typeId, mat.id, glass.id, styleId]);
 
   const goNext = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const goPrev = () => setStep((s) => Math.max(0, s - 1));
@@ -450,6 +581,23 @@ export function Configurator() {
                       </li>
                     ))}
                   </ul>
+
+                  {/* Premium price card */}
+                  <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-5">
+                    <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/25 blur-3xl" />
+                    <div className="relative flex items-end justify-between">
+                      <div>
+                        <p className="text-[10.5px] uppercase tracking-[0.22em] text-primary">Indicatieve richtprijs</p>
+                        <p className="font-display mt-1.5 text-3xl font-medium tracking-tight">
+                          € {price.toLocaleString("nl-NL")}
+                        </p>
+                        <p className="mt-1 text-[11px] text-muted-foreground">Excl. BTW, incl. montage in Limburg</p>
+                      </div>
+                      <span className="rounded-full bg-primary/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary ring-1 ring-primary/40">
+                        Vrijblijvend
+                      </span>
+                    </div>
+                  </div>
                 </ControlGroup>
               )}
             </div>
@@ -486,22 +634,47 @@ export function Configurator() {
 
           {/* ---------- Live preview ---------- */}
           <div className="relative">
-            <div className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)]">
+            {/* Outer ambient halo — reacts to selected color */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-70 blur-3xl transition-all duration-1000"
+              style={{
+                background: `radial-gradient(60% 60% at 30% 30%, ${color.hex}55, transparent 70%), radial-gradient(50% 50% at 80% 70%, oklch(0.78 0.13 215 / 0.35), transparent 70%)`,
+              }}
+            />
+            <div className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10">
               {/* Background scene */}
               <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
                 <img
                   src={previewImg}
                   alt="Architectural scene"
-                  className="absolute inset-0 h-full w-full scale-[1.06] object-cover ken-burns"
+                  className="absolute inset-0 h-full w-full scale-[1.08] object-cover ken-burns"
+                  style={{ filter: "blur(2px) saturate(1.05) brightness(0.85)" }}
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,transparent_0%,oklch(0.10_0.012_240/0.55)_75%)]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent" />
+                {/* Cinematic vignette + depth */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,transparent_0%,oklch(0.08_0.012_240/0.7)_80%)]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                {/* Color-reactive ambient floor light */}
+                <div
+                  className="absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
+                  style={{
+                    background: `radial-gradient(80% 60% at 50% 100%, ${color.hex}30, transparent 70%)`,
+                    mixBlendMode: "screen",
+                  }}
+                />
+                {/* Subtle cyan top accent light */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
 
                 {/* The configurable window — floats subtly */}
                 <div
-                  className="absolute inset-x-[8%] top-[10%] bottom-[18%] float-y"
-                  style={{ filter: "drop-shadow(0 30px 40px rgba(0,0,0,.55))" }}
+                  className="absolute inset-x-[7%] top-[9%] bottom-[17%] float-y"
                 >
+                  {/* Ground reflection of the window */}
+                  <div
+                    aria-hidden
+                    className="absolute -bottom-6 left-[8%] right-[8%] h-6 rounded-[50%] blur-xl transition-all duration-700"
+                    style={{ background: `${color.hex}99` }}
+                  />
                   <div key={`${typeId}-${styleId}-${matIx}-${colorIx}-${glassIx}-${profile}`} className="absolute inset-0 fade-in">
                     <WindowPreview
                       cols={type.cols}
@@ -522,6 +695,12 @@ export function Configurator() {
                   <Chip label={styleId} />
                 </div>
 
+                {/* Material/Glass HUD — right side */}
+                <div className="absolute right-5 top-5 flex flex-col items-end gap-2">
+                  <Chip label={mat.id} />
+                  <Chip label={glass.name} />
+                </div>
+
                 {/* Summary card */}
                 <div
                   className="absolute inset-x-5 bottom-5 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 backdrop-blur-2xl"
@@ -529,11 +708,16 @@ export function Configurator() {
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className="h-9 w-9 rounded-lg ring-1 ring-white/20 transition-all duration-500"
-                      style={{ background: `linear-gradient(135deg, ${color.sheen}, ${color.hex})` }}
+                      className="h-10 w-10 rounded-lg ring-1 ring-white/20 transition-all duration-700"
+                      style={{
+                        background: `linear-gradient(135deg, ${color.sheen} 0%, ${color.hex} 55%, #000 130%)`,
+                        boxShadow: `inset 0 1px 0 ${color.sheen}88, 0 6px 18px -6px ${color.hex}aa`,
+                      }}
                     />
                     <div className="min-w-0">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Uw samenstelling</p>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                        Uw samenstelling · <span className="text-primary">€ {price.toLocaleString("nl-NL")}</span>
+                      </p>
                       <p className="mt-0.5 truncate text-[12.5px] font-medium">
                         {type.name} · {mat.id} · {color.name} · {glass.name}
                       </p>
