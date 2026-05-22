@@ -302,6 +302,21 @@ export function Configurator() {
   // Profile alters row density (adds horizontal bars)
   const effectiveRows = useMemo(() => Math.max(type.rows, profile + 1), [type.rows, profile]);
 
+  // Indicative price estimate (richt-prijs)
+  const price = useMemo(() => {
+    const base =
+      typeId === "panorama" ? 4800 :
+      typeId === "schuifpui" ? 3600 :
+      typeId === "voordeur"  ? 2400 : 1450;
+    const matMul = mat.id === "Aluminium" ? 1.25 : mat.id === "Hout" ? 1.35 : 1;
+    const glassAdd =
+      glass.id === "triple" ? 420 :
+      glass.id === "panoramic" ? 580 :
+      glass.id === "privacy" || glass.id === "tinted" ? 260 : 0;
+    const styleAdd = styleId === "Industrieel" ? 320 : styleId === "Klassiek" ? 180 : 0;
+    return Math.round((base * matMul + glassAdd + styleAdd) / 10) * 10;
+  }, [typeId, mat.id, glass.id, styleId]);
+
   const goNext = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const goPrev = () => setStep((s) => Math.max(0, s - 1));
 
