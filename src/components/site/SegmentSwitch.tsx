@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Home } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Home } from "lucide-react";
 import particulierImg from "@/assets/particulier.jpg";
 import zakelijkImg from "@/assets/zakelijk.jpg";
 import { useSegment, type Segment } from "@/hooks/useSegment";
@@ -134,60 +134,60 @@ export function SegmentBar({
         </span>
       </button>
 
-      {/* Center split-color toggle */}
-      <div className="relative flex h-16 w-16 items-center justify-center">
+      {/* Center toggle — original circle look, with split 2-color background */}
+      <div className="relative flex items-center justify-center">
         <span
-          className={`absolute inset-0 rounded-full border transition-colors duration-500 ${
+          className={`absolute h-16 w-16 rounded-full border transition-colors duration-500 ${
             active === "particulier" ? "border-primary/50" : "border-foreground/30"
           }`}
         />
         <span
-          className={`absolute inset-0 rounded-full blur-md transition-all duration-500 ${
+          className={`absolute h-16 w-16 rounded-full blur-md transition-colors duration-500 ${
             active === "particulier" ? "bg-primary/15" : "bg-foreground/10"
           }`}
         />
-        {/* Two halves */}
-        <div className="relative z-10 grid h-14 w-14 grid-cols-2 overflow-hidden rounded-full bg-background/85 ring-1 ring-white/10 backdrop-blur">
-          <button
-            type="button"
-            aria-label="Particulier"
-            onClick={() => select("particulier")}
-            className={`relative flex items-center justify-end pr-1.5 transition-all duration-500 ${
-              active === "particulier"
-                ? "bg-gradient-to-r from-primary/40 to-primary/15"
-                : "bg-transparent hover:bg-primary/10"
-            }`}
-          >
-            <span
-              className={`text-[10px] transition-transform duration-500 ${
-                active === "particulier" ? "scale-110 text-primary" : "text-foreground/60"
+        <div className="relative z-10 h-14 w-14 overflow-hidden rounded-full ring-1 ring-white/15 backdrop-blur">
+          {/* Split background halves */}
+          <div className="absolute inset-0 grid grid-cols-2">
+            <button
+              type="button"
+              aria-label="Particulier"
+              onClick={() => select("particulier")}
+              className={`transition-colors duration-500 ${
+                active === "particulier"
+                  ? "bg-primary/35"
+                  : "bg-background/70 hover:bg-primary/15"
               }`}
-            >
-              ◀
-            </span>
-          </button>
-          <button
-            type="button"
-            aria-label="Zakelijk"
-            onClick={() => select("zakelijk")}
-            className={`relative flex items-center justify-start pl-1.5 transition-all duration-500 ${
-              active === "zakelijk"
-                ? "bg-gradient-to-l from-foreground/30 to-foreground/10"
-                : "bg-transparent hover:bg-foreground/10"
-            }`}
-          >
-            <span
-              className={`text-[10px] transition-transform duration-500 ${
-                active === "zakelijk" ? "scale-110 text-foreground" : "text-foreground/60"
+            />
+            <button
+              type="button"
+              aria-label="Zakelijk"
+              onClick={() => select("zakelijk")}
+              className={`transition-colors duration-500 ${
+                active === "zakelijk"
+                  ? "bg-foreground/25"
+                  : "bg-background/70 hover:bg-foreground/15"
               }`}
-            >
-              ▶
-            </span>
-          </button>
-          {/* Divider */}
-          <span className="pointer-events-none absolute left-1/2 top-1.5 bottom-1.5 -translate-x-1/2 w-px bg-white/15" />
+            />
+          </div>
+          {/* Arrows on top — visual only, click passes through to halves */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-1.5">
+            <ArrowLeft
+              className={`h-3.5 w-3.5 transition-colors duration-500 ${
+                active === "particulier" ? "text-primary" : "text-foreground/70"
+              }`}
+            />
+            <ArrowRight
+              className={`h-3.5 w-3.5 transition-colors duration-500 ${
+                active === "zakelijk" ? "text-foreground" : "text-foreground/70"
+              }`}
+            />
+          </div>
+          {/* Center divider */}
+          <span className="pointer-events-none absolute left-1/2 top-1.5 bottom-1.5 -translate-x-1/2 w-px bg-white/20" />
         </div>
       </div>
+
 
       {/* Zakelijk */}
       <button
