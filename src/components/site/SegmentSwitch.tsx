@@ -104,25 +104,25 @@ export function SegmentBar({
   };
 
   return (
-    <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-2xl px-6 py-5 shadow-[var(--shadow-elevated)] md:px-8 md:py-6">
+    <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-2xl px-3 py-3 shadow-[var(--shadow-elevated)] sm:gap-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
       {/* Particulier */}
       <button
         type="button"
         onClick={() => select("particulier")}
-        className="group flex items-center gap-4 text-left"
+        className="group flex items-center gap-2.5 text-left sm:gap-4"
       >
         <span
-          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 ${
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ring-1 transition-all duration-500 sm:h-12 sm:w-12 ${
             active === "particulier"
               ? "bg-primary/15 ring-primary/40 text-primary"
               : "bg-white/5 ring-white/10 text-foreground/70"
           }`}
         >
-          <Home className="h-5 w-5" />
+          <Home className="h-4 w-4 sm:h-5 sm:w-5" />
         </span>
         <span className="flex flex-col leading-tight">
           <span
-            className={`text-[12px] font-semibold uppercase tracking-[0.22em] transition-colors duration-500 ${
+            className={`text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-500 sm:text-[12px] sm:tracking-[0.22em] ${
               active === "particulier" ? "text-primary" : "text-foreground/85"
             }`}
           >
@@ -133,6 +133,7 @@ export function SegmentBar({
           </span>
         </span>
       </button>
+
 
       {/* Center toggle — original circle look, with split 2-color background */}
       <div className="relative flex items-center justify-center">
