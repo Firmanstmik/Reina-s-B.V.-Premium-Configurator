@@ -129,7 +129,8 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-[140px] pb-[220px] md:pt-[160px]">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-[140px] pb-[220px] md:pt-[160px]">
+
         <div className="max-w-2xl">
           <div
             key={`eyebrow-${active}`}
