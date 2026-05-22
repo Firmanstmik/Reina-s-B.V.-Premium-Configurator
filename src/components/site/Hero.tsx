@@ -3,6 +3,7 @@ import { ArrowRight, Play, ShieldCheck } from "lucide-react";
 import slide1 from "@/assets/hero-slide-1.jpg";
 import slide2 from "@/assets/hero-slide-2.jpg";
 import slide3 from "@/assets/hero-slide-3.jpg";
+import { SegmentBar } from "./SegmentSwitch";
 
 type Slide = {
   image: string;
@@ -62,6 +63,7 @@ const INTERVAL = 6000;
 
 export function Hero() {
   const [active, setActive] = useState(0);
+  const [segment, setSegment] = useState<"particulier" | "zakelijk">("particulier");
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -73,9 +75,10 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full overflow-hidden bg-background h-[92vh] min-h-[720px] max-h-[1000px]"
+      className="relative w-full overflow-hidden bg-background"
+      style={{ minHeight: "100vh" }}
     >
-      {/* Slides — fixed-size stage so every image renders at identical dimensions */}
+      {/* Slides */}
       <div className="absolute inset-0">
         {SLIDES.map((slide, i) => {
           const isActive = i === active;
@@ -102,17 +105,17 @@ export function Hero() {
             </div>
           );
         })}
-        {/* Cinematic gradients — strong left vignette for text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/55 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/85" />
+        {/* Cinematic gradients */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/92 via-background/55 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/90" />
         <div className="absolute inset-0 gradient-radial-glow opacity-60" />
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-32 pt-32 md:pb-40 md:pt-40">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-[140px] pb-[220px] md:pt-[160px]">
         <div key={active} className="max-w-2xl">
           <div
-            className="reveal-up mb-7 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[11px] uppercase tracking-[0.28em] text-primary"
+            className="reveal-up mb-7 inline-flex items-center gap-2 rounded-lg glass px-4 py-1.5 text-[11px] uppercase tracking-[0.28em] text-primary"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-glow" />
             {SLIDES[active].eyebrow}
@@ -140,12 +143,12 @@ export function Hero() {
           >
             <a
               href="#producten"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)]"
             >
               {SLIDES[active].primaryLabel}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
-            <button className="group inline-flex items-center gap-3 rounded-full px-2 py-2 text-[13px] font-medium uppercase tracking-[0.14em] text-foreground transition-all">
+            <button className="group inline-flex items-center gap-3 rounded-xl px-2 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground transition-all">
               <span className="grid h-10 w-10 place-items-center rounded-full glass ring-1 ring-white/15 transition-transform group-hover:scale-110">
                 <Play className="h-3.5 w-3.5 fill-primary text-primary" />
               </span>
@@ -154,10 +157,10 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Trust card — mid-right, overlapping image area */}
+        {/* Trust card */}
         <div
           key={`trust-${active}`}
-          className="fade-in pointer-events-none absolute right-6 bottom-44 hidden max-w-[300px] md:block"
+          className="fade-in pointer-events-none absolute right-6 bottom-[260px] hidden max-w-[300px] md:block"
           style={{ animationDelay: "600ms" }}
         >
           <div className="glass-strong pointer-events-auto rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
@@ -175,39 +178,37 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Pagination + progress */}
-        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {SLIDES.map((_, i) => {
-              const isActive = i === active;
-              return (
-                <button
-                  key={i}
-                  onClick={() => setActive(i)}
-                  aria-label={`Ga naar slide ${i + 1}`}
-                  className="group relative h-[2px] w-12 overflow-hidden rounded-full bg-white/15 transition-all md:w-16"
-                >
-                  <span
-                    className="absolute inset-y-0 left-0 bg-primary"
-                    style={{
-                      width: isActive ? "100%" : "0%",
-                      transition: isActive ? `width ${INTERVAL}ms linear` : "width 400ms ease",
-                    }}
-                  />
-                </button>
-              );
-            })}
-            <span className="ml-3 font-display text-xs tabular-nums text-muted-foreground">
-              {String(active + 1).padStart(2, "0")}
-              <span className="mx-1.5 opacity-50">/</span>
-              {String(SLIDES.length).padStart(2, "0")}
-            </span>
-          </div>
+        {/* Pagination */}
+        <div className="absolute left-6 right-6 bottom-[200px] flex items-center gap-3 md:bottom-[210px]">
+          {SLIDES.map((_, i) => {
+            const isActive = i === active;
+            return (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                aria-label={`Ga naar slide ${i + 1}`}
+                className="group relative h-[2px] w-12 overflow-hidden rounded-full bg-white/15 transition-all md:w-16"
+              >
+                <span
+                  className="absolute inset-y-0 left-0 bg-primary"
+                  style={{
+                    width: isActive ? "100%" : "0%",
+                    transition: isActive ? `width ${INTERVAL}ms linear` : "width 400ms ease",
+                  }}
+                />
+              </button>
+            );
+          })}
+          <span className="ml-2 font-display text-xs tabular-nums text-muted-foreground">
+            {String(active + 1).padStart(2, "0")}
+            <span className="mx-1.5 opacity-50">/</span>
+            {String(SLIDES.length).padStart(2, "0")}
+          </span>
+        </div>
 
-          <div className="hidden flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground md:flex">
-            <span>Scroll</span>
-            <span className="h-10 w-px bg-gradient-to-b from-muted-foreground/60 to-transparent" />
-          </div>
+        {/* Particulier / Zakelijk bottom bar */}
+        <div className="absolute left-4 right-4 bottom-8 md:left-6 md:right-6">
+          <SegmentBar active={segment} onChange={setSegment} />
         </div>
       </div>
     </section>
