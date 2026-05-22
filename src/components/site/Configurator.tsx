@@ -11,10 +11,10 @@ import {
   PanelTop,
   Maximize2,
 } from "lucide-react";
-import sceneImg from "@/assets/cfg-scene.jpg";
-import aluImg from "@/assets/cfg-aluminium.png";
-import houtImg from "@/assets/cfg-hout.png";
-import kunstImg from "@/assets/cfg-kunststof.png";
+import sceneSchuifpui from "@/assets/cfg-type-schuifpui.jpg";
+import sceneKozijn from "@/assets/cfg-type-kozijn.jpg";
+import sceneVoordeur from "@/assets/cfg-type-voordeur.jpg";
+import scenePanorama from "@/assets/cfg-type-panorama.jpg";
 
 /* ------------------------------------------------------------------ */
 /*  Config domain                                                      */
@@ -62,143 +62,15 @@ const GLASS = [
 const STEPS = ["Type", "Stijl", "Kleur", "Glas", "Details", "Samenvatting"] as const;
 
 /* ------------------------------------------------------------------ */
-/*  Photorealistic layered preview (Aluminium / Hout / Kunststof)       */
+/*  Photorealistic per-type scenes                                     */
 /* ------------------------------------------------------------------ */
 
-const MATERIAL_RENDERS: Record<Material, string> = {
-  Aluminium: aluImg,
-  Kunststof: kunstImg,
-  Hout: houtImg,
+const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
+  schuifpui: sceneSchuifpui,
+  kozijn: sceneKozijn,
+  voordeur: sceneVoordeur,
+  panorama: scenePanorama,
 };
-
-function RealisticPreview({
-  material, color, glass, parallax,
-}: {
-  material: Material;
-  color: { hex: string; sheen: string; name: string };
-  glass: typeof GLASS[number];
-  parallax: { x: number; y: number };
-}) {
-  // Per-material tonal calibration so color tint feels physically plausible.
-  const tintOpacity =
-    material === "Aluminium" ? 0.62 :
-    material === "Kunststof" ? 0.55 : 0.42;
-  const frameSaturate =
-    material === "Aluminium" ? 1.05 :
-    material === "Kunststof" ? 1.0  : 0.92;
-  const frameBrightness =
-    material === "Aluminium" ? 0.95 :
-    material === "Kunststof" ? 1.02 : 0.98;
-
-  return (
-    <div
-      className="relative h-full w-full"
-      style={{
-        transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0)`,
-        transition: "transform 600ms cubic-bezier(0.22,1,0.36,1)",
-        filter:
-          "drop-shadow(0 50px 60px rgba(0,0,0,0.55)) drop-shadow(0 18px 28px rgba(0,0,0,0.35))",
-      }}
-    >
-      {/* Crossfaded photorealistic material layers — identical composition */}
-      {(Object.keys(MATERIAL_RENDERS) as Material[]).map((m) => {
-        const active = m === material;
-        return (
-          <img
-            key={m}
-            src={MATERIAL_RENDERS[m]}
-            alt={`${m} kozijn render`}
-            loading="lazy"
-            width={1280}
-            height={896}
-            draggable={false}
-            className="absolute inset-0 h-full w-full select-none object-contain"
-            style={{
-              opacity: active ? 1 : 0,
-              transform: active ? "scale(1)" : "scale(1.015)",
-              transition:
-                "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1400ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
-              filter: active
-                ? `saturate(${frameSaturate}) brightness(${frameBrightness}) contrast(1.04)`
-                : undefined,
-              willChange: "opacity, transform",
-            }}
-          />
-        );
-      })}
-
-      {/* Color tint — multiplies frame to selected color, glass stays believable */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: color.hex,
-          opacity: tintOpacity,
-          mixBlendMode: "multiply",
-          maskImage: `url(${MATERIAL_RENDERS[material]})`,
-          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          transition: "background 900ms ease, opacity 900ms ease",
-        }}
-      />
-
-      {/* Specular sheen highlight — picks selected color's sheen */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `linear-gradient(160deg, ${color.sheen}cc 0%, transparent 40%)`,
-          opacity: material === "Aluminium" ? 0.18 : material === "Kunststof" ? 0.1 : 0.05,
-          mixBlendMode: "screen",
-          maskImage: `url(${MATERIAL_RENDERS[material]})`,
-          WebkitMaskImage: `url(${MATERIAL_RENDERS[material]})`,
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-          transition: "opacity 900ms ease, background 900ms ease",
-        }}
-      />
-
-      {/* Glass tint overlay — sits over central glass region */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[8%_9%_10%_9%] rounded-[2px]"
-        style={{
-          background: glass.tint,
-          opacity: glass.opacity * 0.75,
-          mixBlendMode: "multiply",
-          transition: "opacity 900ms ease, background 900ms ease",
-        }}
-      />
-
-      {/* Cinematic diagonal environment reflection across glass */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[8%_9%_10%_9%] overflow-hidden"
-        style={{
-          background: `linear-gradient(115deg, transparent 28%, rgba(255,255,255,${0.22 * glass.reflect}) 48%, rgba(255,255,255,${0.06 * glass.reflect}) 60%, transparent 72%)`,
-          mixBlendMode: "screen",
-          transition: "background 900ms ease",
-        }}
-      />
-
-      {/* HDR-style top edge bloom */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-1/4"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.10), transparent)",
-          mixBlendMode: "screen",
-        }}
-      />
-    </div>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -577,52 +449,126 @@ export function Configurator() {
               onMouseLeave={onStageLeave}
               className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10"
             >
-              {/* Background scene */}
+              {/* Cinematic per-type scene stack */}
               <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-[16/11]">
-                <img
-                  src={sceneImg}
-                  alt="Architectural scene"
-                  loading="lazy"
-                  width={1600}
-                  height={1024}
-                  className="absolute inset-0 h-full w-full scale-[1.12] object-cover ken-burns"
+                {/* Photorealistic scene layers — crossfade on TYPE change */}
+                {(Object.keys(TYPE_SCENES) as Array<keyof typeof TYPE_SCENES>).map((id) => {
+                  const active = id === typeId;
+                  // Material-driven atmosphere: warmer for hout, cooler/cleaner for aluminium
+                  const matFilter =
+                    mat.id === "Hout"
+                      ? "saturate(1.08) brightness(1.02) contrast(1.02) sepia(0.06)"
+                      : mat.id === "Kunststof"
+                      ? "saturate(0.95) brightness(1.03) contrast(1.0)"
+                      : "saturate(1.04) brightness(1.0) contrast(1.04)";
+                  return (
+                    <img
+                      key={id}
+                      src={TYPE_SCENES[id]}
+                      alt={`${id} architectuurfoto`}
+                      loading="lazy"
+                      width={1600}
+                      height={1088}
+                      draggable={false}
+                      className="absolute inset-0 h-full w-full select-none object-cover"
+                      style={{
+                        opacity: active ? 1 : 0,
+                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.03 : 1.07})`,
+                        filter: active ? matFilter : `${matFilter} blur(8px)`,
+                        transition:
+                          "opacity 900ms cubic-bezier(0.22,1,0.36,1), transform 1200ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
+                        willChange: "opacity, transform, filter",
+                      }}
+                    />
+                  );
+                })}
+
+                {/* FRAME COLOR CAST — repaints the dark frames in the photo.
+                    `color` blend preserves luminance, so dark frames pick up hue
+                    while the bright sky/grass through the glass barely shifts. */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-700"
                   style={{
-                    filter: "blur(3px) saturate(1.08) brightness(0.78)",
-                    transform: `translate3d(${parallax.x * 0.35}px, ${parallax.y * 0.35}px, 0) scale(1.12)`,
-                    transition: "transform 700ms cubic-bezier(0.22,1,0.36,1)",
+                    background: color.hex,
+                    mixBlendMode: "color",
+                    opacity: 0.55,
                   }}
                 />
-                {/* Cinematic vignette + depth */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,transparent_0%,oklch(0.08_0.012_240/0.7)_80%)]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                {/* Color-reactive ambient floor light */}
+                {/* Specular highlight that follows frame color */}
                 <div
-                  className="absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-700"
                   style={{
-                    background: `radial-gradient(80% 60% at 50% 100%, ${color.hex}30, transparent 70%)`,
+                    background: `linear-gradient(150deg, ${color.sheen}55 0%, transparent 35%)`,
+                    mixBlendMode: "screen",
+                    opacity: mat.id === "Aluminium" ? 0.7 : mat.id === "Kunststof" ? 0.45 : 0.25,
+                  }}
+                />
+
+                {/* GLASS atmosphere — tints daylight coming through the windows */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-700"
+                  style={{
+                    background: glass.tint,
+                    mixBlendMode: "multiply",
+                    opacity: glass.opacity * 0.65,
+                  }}
+                />
+                {/* Frosted privacy bloom */}
+                {glass.id === "privacy" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-all duration-700"
+                    style={{
+                      background:
+                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.28), transparent 75%)",
+                      mixBlendMode: "screen",
+                      backdropFilter: "blur(0.5px)",
+                    }}
+                  />
+                )}
+                {/* Panoramic crystal-clear coating bloom */}
+                {glass.id === "panoramic" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-all duration-700"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(200,230,255,0.18), transparent 40%)",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                )}
+
+                {/* Diagonal sweeping reflection across the glass */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 overflow-hidden"
+                  style={{
+                    background: `linear-gradient(115deg, transparent 35%, rgba(255,255,255,${0.08 * glass.reflect}) 50%, transparent 65%)`,
+                    mixBlendMode: "screen",
+                    transform: `translate3d(${parallax.x * 0.6}px, ${parallax.y * 0.4}px, 0)`,
+                    transition: "transform 700ms cubic-bezier(0.22,1,0.36,1), background 900ms ease",
+                  }}
+                />
+
+                {/* Cinematic vignette + bottom fade */}
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_30%,oklch(0.08_0.012_240/0.55)_95%)]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
+
+                {/* Color-reactive floor glow */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
+                  style={{
+                    background: `radial-gradient(70% 50% at 50% 100%, ${color.hex}30, transparent 70%)`,
                     mixBlendMode: "screen",
                   }}
                 />
-                {/* Subtle cyan top accent light */}
-                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-
-                {/* The configurable window — floats subtly */}
-                <div className="absolute inset-x-[7%] top-[8%] bottom-[16%] float-y">
-                  {/* Ground reflection of the window */}
-                  <div
-                    aria-hidden
-                    className="absolute -bottom-8 left-[6%] right-[6%] h-10 rounded-[50%] blur-2xl transition-all duration-700"
-                    style={{ background: `${color.hex}aa`, opacity: 0.7 }}
-                  />
-                  <div className="absolute inset-0">
-                    <RealisticPreview
-                      material={mat.id}
-                      color={color}
-                      glass={glass}
-                      parallax={parallax}
-                    />
-                  </div>
-                </div>
+                {/* Subtle cyan rim light */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
 
                 {/* HUD chips */}
                 <div className="absolute left-5 top-5 flex flex-wrap gap-2">
