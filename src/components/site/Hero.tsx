@@ -4,7 +4,7 @@ import slide1 from "@/assets/hero-slide-1.jpg";
 import slide2 from "@/assets/hero-slide-2.jpg";
 import slide3 from "@/assets/hero-slide-3.jpg";
 import { SegmentBar } from "./SegmentSwitch";
-import { useSegment } from "@/hooks/useSegment";
+
 
 
 type Slide = {
