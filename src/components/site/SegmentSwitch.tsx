@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Home } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Home } from "lucide-react";
 import particulierImg from "@/assets/particulier.jpg";
 import zakelijkImg from "@/assets/zakelijk.jpg";
 import { useSegment, type Segment } from "@/hooks/useSegment";
