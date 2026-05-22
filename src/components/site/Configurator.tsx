@@ -171,7 +171,7 @@ function WindowPreview({
 
 export function Configurator() {
   const [step, setStep]       = useState(0);
-  const [typeId, setTypeId]   = useState(TYPES[0].id);
+  const [typeId, setTypeId]   = useState<typeof TYPES[number]["id"]>(TYPES[0].id);
   const [styleId, setStyleId] = useState<StyleName>("Modern");
   const [colorIx, setColorIx] = useState(0);
   const [matIx, setMatIx]     = useState(0);
