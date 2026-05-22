@@ -26,7 +26,7 @@ export function Projects() {
           </div>
           <a
             href="#"
-            className="border-warm group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors hover:border-transparent hover:bg-foreground hover:text-background"
+            className="border-warm group inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors hover:border-transparent hover:bg-foreground hover:text-background"
           >
             Bekijk alle projecten
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

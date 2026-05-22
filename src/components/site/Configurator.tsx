@@ -35,7 +35,7 @@ export function Configurator() {
 
           <a
             href="#contact"
-            className="group mt-10 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
+            className="group mt-10 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.7)]"
           >
             Start configurator
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -66,7 +66,7 @@ export function Configurator() {
               <button
                 key={s}
                 onClick={() => setStep(i)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
+                className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all ${
                   i === step
                     ? "bg-white/10 text-foreground ring-1 ring-primary/40"
                     : "text-muted-foreground hover:text-foreground"
@@ -155,7 +155,7 @@ export function Configurator() {
                     1× Schuifpui · {materials[material]} · 4500 × 2200 mm
                   </p>
                 </div>
-                <button className="rounded-full bg-gradient-to-br from-primary to-primary-glow px-4 py-2 text-xs font-semibold text-primary-foreground">
+                <button className="rounded-lg bg-gradient-to-br from-primary to-primary-glow px-4 py-2 text-xs font-semibold text-primary-foreground">
                   Offerte aanvragen
                 </button>
               </div>
