@@ -897,6 +897,7 @@ export function Configurator() {
                   <Chip label="LIVE" dot />
                   <Chip label={type.name} />
                   <Chip label={mood.tag} />
+                  <Chip label={`Stijl · ${styleId}`} />
                 </div>
 
                 {/* Material/Glass HUD — right side */}
