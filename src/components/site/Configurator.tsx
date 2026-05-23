@@ -672,6 +672,72 @@ export function Configurator() {
                   }}
                 />
 
+                {/* STIJL wash — architectural personality re-tint.
+                    Preserves TYPE composition; only changes lighting & tonality. */}
+                <div
+                  key={`style-wash-${styleId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-[1100ms]"
+                  style={{
+                    background: styleMood.wash,
+                    mixBlendMode: styleMood.washBlend,
+                    opacity: styleMood.washOpacity,
+                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                  }}
+                />
+
+                {/* STIJL signature overlays — same product, different personality */}
+                {styleMood.signature === "industrial-grid" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-opacity duration-[1100ms]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(rgba(8,7,6,0.42) 1px, transparent 1px), linear-gradient(90deg, rgba(8,7,6,0.42) 1px, transparent 1px)",
+                      backgroundSize: "33.33% 50%, 33.33% 50%",
+                      mixBlendMode: "multiply",
+                      opacity: 0.55,
+                      maskImage:
+                        "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
+                      WebkitMaskImage:
+                        "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
+                    }}
+                  />
+                )}
+                {styleMood.signature === "classic-curtain" && (
+                  <>
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 w-[18%]"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, rgba(255,225,180,0.32), transparent)",
+                        mixBlendMode: "screen",
+                      }}
+                    />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 right-0 w-[18%]"
+                      style={{
+                        background:
+                          "linear-gradient(-90deg, rgba(255,225,180,0.32), transparent)",
+                        mixBlendMode: "screen",
+                      }}
+                    />
+                  </>
+                )}
+                {styleMood.signature === "modern-sheen" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(110deg, transparent 30%, rgba(220,235,245,0.12) 50%, transparent 70%)",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                )}
+
                 {/* Cinematic transition flash on type change */}
                 <div
                   key={`flash-${typeId}`}
