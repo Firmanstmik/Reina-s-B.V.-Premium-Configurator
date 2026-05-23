@@ -103,15 +103,15 @@ const TYPE_MOODS: Record<
   },
   kozijn: {
     tag: "Soft morning · intiem",
-    ambient: "#e8c79a",
-    warm: "#f1e2c4",
-    filter: "saturate(1.0) contrast(1.05) brightness(1.02)",
-    sunColor: "rgba(255,235,200,0.38)",
-    sunAngle: 18,
-    sunOpacity: 0.7,
-    driftSec: 28,
-    vignette: 0.35,
-    haloOpacity: 0.7,
+    ambient: "#f1d6a8",
+    warm: "#fbeacc",
+    filter: "saturate(1.02) contrast(1.03) brightness(1.04)",
+    sunColor: "rgba(255,240,210,0.5)",
+    sunAngle: 16,
+    sunOpacity: 0.85,
+    driftSec: 30,
+    vignette: 0.18,
+    haloOpacity: 0.85,
   },
   voordeur: {
     tag: "Twilight · entree",
@@ -714,6 +714,36 @@ export function Configurator() {
                       filter: "blur(28px)",
                       opacity: mood.sunOpacity,
                       animation: "cfgSunSweep 14s ease-in-out infinite",
+                    }}
+                  />
+                </div>
+
+                {/* Ambient luminous dust — drifting sunlight particles.
+                    Two layers with different scales/durations for parallax depth. */}
+                <div
+                  key={`dust-a-${typeId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 overflow-hidden"
+                  style={{ mixBlendMode: "screen", opacity: 0.55 }}
+                >
+                  <div
+                    className="absolute -inset-[10%]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(circle at 20% 30%, rgba(255,235,200,0.9) 0.6px, transparent 1.4px), radial-gradient(circle at 70% 60%, rgba(255,220,180,0.7) 0.5px, transparent 1.2px), radial-gradient(circle at 40% 80%, rgba(255,245,220,0.8) 0.7px, transparent 1.6px), radial-gradient(circle at 85% 20%, rgba(255,230,190,0.6) 0.4px, transparent 1px)",
+                      backgroundSize: "180px 180px, 220px 220px, 260px 260px, 200px 200px",
+                      filter: "blur(0.4px)",
+                      animation: "cfgDust 22s ease-in-out infinite alternate",
+                    }}
+                  />
+                  <div
+                    className="absolute -inset-[10%]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(circle at 35% 45%, rgba(255,240,210,0.55) 0.4px, transparent 1px), radial-gradient(circle at 80% 75%, rgba(255,225,180,0.5) 0.5px, transparent 1.2px)",
+                      backgroundSize: "320px 320px, 380px 380px",
+                      filter: "blur(0.6px)",
+                      animation: "cfgDust 34s ease-in-out infinite alternate-reverse",
                     }}
                   />
                 </div>
