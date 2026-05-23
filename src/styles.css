@@ -272,6 +272,11 @@
     0%   { opacity: 0; transform: translateX(48px); filter: blur(8px); }
     100% { opacity: 1; transform: translateX(0); filter: blur(0); }
   }
+  @keyframes cfgFlash {
+    0%   { opacity: 0; }
+    25%  { opacity: 0.55; }
+    100% { opacity: 0; }
+  }
   .pulse-glow { animation: pulseGlow 2.4s ease-out infinite; }
 }
 
