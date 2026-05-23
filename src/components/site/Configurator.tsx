@@ -300,23 +300,23 @@ export function Configurator() {
                                 }`}
                               />
                             </div>
-                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
+                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all duration-500 ${sel ? "bg-primary/20 text-primary ring-primary/35" : "bg-background/55 text-foreground/80 ring-white/12"}`}>
                               <Icon className="h-4 w-4" />
                             </div>
                             {sel && (
-                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_18px_oklch(0.78_0.13_215/0.7)]">
+                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_0_14px_-2px_oklch(0.78_0.13_215/0.55)] ring-1 ring-primary/40">
                                 <Check className="h-3.5 w-3.5" />
                               </span>
                             )}
                           </div>
-                          <div className="relative p-3.5">
-                            <p className="text-sm font-semibold tracking-tight">{t.name}</p>
-                            <p className="mt-0.5 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground">{m.tag}</p>
-                            <p className="mt-1.5 text-[11px] text-muted-foreground/80">{t.dim}</p>
+                          <div className="relative p-4">
+                            <p className="text-[13.5px] font-semibold tracking-[-0.005em]">{t.name}</p>
+                            <p className="mt-1 text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground/85">{m.tag}</p>
+                            <p className="mt-2 text-[11px] tabular-nums tracking-tight text-muted-foreground/70">{t.dim}</p>
                           </div>
-                          {/* Luxury neon edge on active */}
+                          {/* Refined inset edge on active — thin, sophisticated */}
                           {sel && (
-                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/40" />
+                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/25" />
                           )}
                         </button>
                       );
