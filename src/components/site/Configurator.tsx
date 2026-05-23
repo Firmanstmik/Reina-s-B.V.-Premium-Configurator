@@ -30,10 +30,10 @@ const TYPES = [
   { id: "panorama",  name: "Panorama",  icon: Maximize2,dim: "6000 × 2400 mm", cols: 6, rows: 1 },
 ] as const;
 
-const STYLES: { id: StyleName; desc: string }[] = [
-  { id: "Modern",       desc: "Strakke smalle profielen" },
-  { id: "Klassiek",     desc: "Warme, tijdloze indeling" },
-  { id: "Industrieel",  desc: "Stalen-look met raster" },
+const STYLES: { id: StyleName; desc: string; tag: string }[] = [
+  { id: "Modern",      desc: "Slank aluminium · koel daglicht · minimal villa", tag: "Minimal villa" },
+  { id: "Klassiek",    desc: "Warme tinten · gordijnen · tijdloze indeling",    tag: "Refined warmth" },
+  { id: "Industrieel", desc: "Stalen raster · cinematic schaduw · loft",        tag: "Loft architecture" },
 ];
 
 const COLORS = [
