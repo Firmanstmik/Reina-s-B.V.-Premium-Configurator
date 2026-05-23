@@ -72,6 +72,38 @@ const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
   panorama: scenePanorama,
 };
 
+/* Per-type cinematic "mood" — ambient color, tagline & atmosphere tuning.
+   Each type triggers a unique lighting morph in the live preview. */
+const TYPE_MOODS: Record<
+  typeof TYPES[number]["id"],
+  { tag: string; ambient: string; warm: string; filter: string }
+> = {
+  schuifpui: {
+    tag: "Golden hour · tuin",
+    ambient: "#f6b66b",
+    warm: "#ffd9a8",
+    filter: "saturate(1.06) contrast(1.04) brightness(1.0)",
+  },
+  kozijn: {
+    tag: "Soft morning · intiem",
+    ambient: "#e8c79a",
+    warm: "#f1e2c4",
+    filter: "saturate(1.0) contrast(1.05) brightness(1.02)",
+  },
+  voordeur: {
+    tag: "Twilight · entree",
+    ambient: "#ff8a4c",
+    warm: "#ffb37a",
+    filter: "saturate(1.1) contrast(1.1) brightness(0.96)",
+  },
+  panorama: {
+    tag: "Cinematic · horizon",
+    ambient: "#7fb7d8",
+    warm: "#cfe3ee",
+    filter: "saturate(1.05) contrast(1.05) brightness(1.02)",
+  },
+};
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
