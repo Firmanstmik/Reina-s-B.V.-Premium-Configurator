@@ -280,7 +280,7 @@ export function Configurator() {
                               className={`absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-[1.04]"}`}
                               style={{ filter: sel ? "saturate(1.06) contrast(1.02) brightness(1.04)" : "saturate(0.88) brightness(0.9)" }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/30 to-transparent" />
                             <div
                               className="pointer-events-none absolute inset-0 transition-opacity duration-700"
                               style={{
