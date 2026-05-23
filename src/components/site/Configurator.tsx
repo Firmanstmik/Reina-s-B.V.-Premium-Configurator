@@ -30,10 +30,10 @@ const TYPES = [
   { id: "panorama",  name: "Panorama",  icon: Maximize2,dim: "6000 × 2400 mm", cols: 6, rows: 1 },
 ] as const;
 
-const STYLES: { id: StyleName; desc: string }[] = [
-  { id: "Modern",       desc: "Strakke smalle profielen" },
-  { id: "Klassiek",     desc: "Warme, tijdloze indeling" },
-  { id: "Industrieel",  desc: "Stalen-look met raster" },
+const STYLES: { id: StyleName; desc: string; tag: string }[] = [
+  { id: "Modern",      desc: "Slank aluminium · koel daglicht · minimal villa", tag: "Minimal villa" },
+  { id: "Klassiek",    desc: "Warme tinten · gordijnen · tijdloze indeling",    tag: "Refined warmth" },
+  { id: "Industrieel", desc: "Stalen raster · cinematic schaduw · loft",        tag: "Loft architecture" },
 ];
 
 const COLORS = [
@@ -139,6 +139,61 @@ const TYPE_MOODS: Record<
   },
 };
 
+/* --- STYLE moods ---------------------------------------------------
+   STIJL does NOT replace the TYPE composition. It only reinterprets
+   the same scene with a different architectural personality:
+   lighting, tonality, materials feeling, vignette, grain.
+   The base photo (same geometry / camera / proportions) is preserved. */
+const STYLE_MOODS: Record<
+  StyleName,
+  {
+    tag: string;
+    /* CSS filter appended after the type filter on the base photo */
+    filter: string;
+    /* Ambient color wash blended over the scene */
+    wash: string;
+    washOpacity: number;
+    washBlend: "screen" | "multiply" | "overlay" | "soft-light";
+    /* Multiplier on the type's vignette intensity */
+    vignetteMul: number;
+    /* Subtle accent edge color (cool / warm / amber) */
+    edge: string;
+    /* Style-specific signature overlay */
+    signature: "modern-sheen" | "classic-curtain" | "industrial-grid";
+  }
+> = {
+  Modern: {
+    tag: "Minimal villa · cool daylight",
+    filter: "saturate(0.93) contrast(1.06) brightness(1.05) hue-rotate(-6deg)",
+    wash: "linear-gradient(180deg, rgba(210,228,238,0.18), transparent 55%)",
+    washOpacity: 0.7,
+    washBlend: "screen",
+    vignetteMul: 0.7,
+    edge: "rgba(200,220,235,0.5)",
+    signature: "modern-sheen",
+  },
+  Klassiek: {
+    tag: "Refined warmth · soft sunlight",
+    filter: "saturate(1.08) contrast(0.98) brightness(1.04) sepia(0.1) hue-rotate(-4deg)",
+    wash: "radial-gradient(80% 60% at 50% 30%, rgba(255,225,180,0.28), transparent 65%)",
+    washOpacity: 0.85,
+    washBlend: "screen",
+    vignetteMul: 0.95,
+    edge: "rgba(220,185,140,0.55)",
+    signature: "classic-curtain",
+  },
+  Industrieel: {
+    tag: "Loft architecture · cinematic shadow",
+    filter: "saturate(0.82) contrast(1.18) brightness(0.88) hue-rotate(6deg)",
+    wash: "radial-gradient(70% 55% at 50% 45%, rgba(20,18,14,0.0), rgba(15,12,10,0.45) 95%)",
+    washOpacity: 0.9,
+    washBlend: "multiply",
+    vignetteMul: 1.55,
+    edge: "rgba(255,165,90,0.45)",
+    signature: "industrial-grid",
+  },
+};
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -170,6 +225,7 @@ export function Configurator() {
   const mat     = MATERIALS[matIx];
   const glass   = GLASS[glassIx];
   const mood    = TYPE_MOODS[typeId];
+  const styleMood = STYLE_MOODS[styleId];
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
@@ -326,31 +382,94 @@ export function Configurator() {
               )}
 
               {step === 1 && (
-                <ControlGroup title="Kies een stijl" subtitle="Bepaalt de profieldikte en sfeer">
-                  <div className="space-y-3">
+                <ControlGroup
+                  title="Kies een stijl"
+                  subtitle={`Architecturale personality · zelfde ${type.name.toLowerCase()}, andere taal`}
+                >
+                  <div className="grid grid-cols-1 gap-3">
                     {STYLES.map((s) => {
                       const sel = s.id === styleId;
+                      const sm = STYLE_MOODS[s.id];
                       return (
                         <button
                           key={s.id}
                           onClick={() => setStyleId(s.id)}
-                          className={`flex w-full items-center justify-between rounded-2xl p-4 text-left ring-1 transition-all ${
+                          className={`group relative flex items-stretch gap-3 overflow-hidden rounded-2xl p-2 text-left ring-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             sel
-                              ? "bg-primary/10 ring-primary shadow-[0_0_30px_-12px_oklch(0.78_0.13_215/0.7)]"
-                              : "bg-white/[0.03] ring-white/10 hover:bg-white/[0.06]"
+                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.3),0_20px_50px_-24px_oklch(0.78_0.13_215/0.5)] -translate-y-0.5"
+                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
                           }`}
                         >
-                          <div>
-                            <p className="text-sm font-semibold">{s.id}</p>
-                            <p className="mt-0.5 text-[12px] text-muted-foreground">{s.desc}</p>
+                          {/* Mini reinterpretation of the active TYPE scene */}
+                          <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10">
+                            <img
+                              src={TYPE_SCENES[typeId]}
+                              alt={`${type.name} · ${s.id}`}
+                              loading="lazy"
+                              draggable={false}
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
+                              style={{ filter: sm.filter }}
+                            />
+                            <div
+                              aria-hidden
+                              className="pointer-events-none absolute inset-0"
+                              style={{
+                                background: sm.wash,
+                                mixBlendMode: sm.washBlend,
+                                opacity: sm.washOpacity * 0.9,
+                              }}
+                            />
+                            {sm.signature === "industrial-grid" && (
+                              <div
+                                aria-hidden
+                                className="pointer-events-none absolute inset-0"
+                                style={{
+                                  backgroundImage:
+                                    "linear-gradient(rgba(8,7,6,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(8,7,6,0.5) 1px, transparent 1px)",
+                                  backgroundSize: "33.33% 50%, 33.33% 50%",
+                                  mixBlendMode: "multiply",
+                                  opacity: 0.6,
+                                }}
+                              />
+                            )}
+                            <div
+                              className="pointer-events-none absolute inset-0"
+                              style={{
+                                background: `radial-gradient(circle at 50% 45%, transparent 40%, oklch(0.10 0.012 240 / 0.55) 100%)`,
+                              }}
+                            />
+                            {sel && (
+                              <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_12px_-2px_oklch(0.78_0.13_215/0.7)]">
+                                <Check className="h-3 w-3" />
+                              </span>
+                            )}
                           </div>
-                          <span className={`grid h-6 w-6 place-items-center rounded-full transition-colors ${sel ? "bg-primary text-primary-foreground" : "bg-white/10 text-muted-foreground"}`}>
-                            {sel ? <Check className="h-3.5 w-3.5" /> : ""}
-                          </span>
+                          {/* Copy */}
+                          <div className="flex min-w-0 flex-1 flex-col justify-center pr-3">
+                            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground/80">
+                              {sm.tag}
+                            </p>
+                            <p className="mt-1 text-[14px] font-semibold tracking-tight">
+                              {s.id}
+                            </p>
+                            <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
+                              {s.desc}
+                            </p>
+                          </div>
+                          {sel && (
+                            <span
+                              aria-hidden
+                              className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/25"
+                            />
+                          )}
                         </button>
                       );
                     })}
                   </div>
+                  <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground/80">
+                    De compositie van uw <span className="text-foreground">{type.name.toLowerCase()}</span> blijft identiek.
+                    Alleen materiaaltaal, licht en sfeer veranderen — hetzelfde product, een andere ziel.
+                  </p>
                 </ControlGroup>
               )}
 
@@ -595,7 +714,7 @@ export function Configurator() {
                         draggable={false}
                         className="absolute inset-0 h-full w-full select-none object-cover"
                         style={{
-                          filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
+                          filter: active ? `${matFilter} ${typeFilter} ${styleMood.filter}` : `${matFilter} ${typeFilter} ${styleMood.filter} blur(14px)`,
                           transition: "filter 1100ms ease",
                           animation: active ? `cfgDrift ${m.driftSec}s ease-in-out infinite alternate` : undefined,
                           transform: active ? undefined : "scale(1.12)",
@@ -615,6 +734,72 @@ export function Configurator() {
                     mixBlendMode: "screen",
                   }}
                 />
+
+                {/* STIJL wash — architectural personality re-tint.
+                    Preserves TYPE composition; only changes lighting & tonality. */}
+                <div
+                  key={`style-wash-${styleId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-[1100ms]"
+                  style={{
+                    background: styleMood.wash,
+                    mixBlendMode: styleMood.washBlend,
+                    opacity: styleMood.washOpacity,
+                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                  }}
+                />
+
+                {/* STIJL signature overlays — same product, different personality */}
+                {styleMood.signature === "industrial-grid" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-opacity duration-[1100ms]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(rgba(8,7,6,0.42) 1px, transparent 1px), linear-gradient(90deg, rgba(8,7,6,0.42) 1px, transparent 1px)",
+                      backgroundSize: "33.33% 50%, 33.33% 50%",
+                      mixBlendMode: "multiply",
+                      opacity: 0.55,
+                      maskImage:
+                        "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
+                      WebkitMaskImage:
+                        "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
+                    }}
+                  />
+                )}
+                {styleMood.signature === "classic-curtain" && (
+                  <>
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 w-[18%]"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, rgba(255,225,180,0.32), transparent)",
+                        mixBlendMode: "screen",
+                      }}
+                    />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 right-0 w-[18%]"
+                      style={{
+                        background:
+                          "linear-gradient(-90deg, rgba(255,225,180,0.32), transparent)",
+                        mixBlendMode: "screen",
+                      }}
+                    />
+                  </>
+                )}
+                {styleMood.signature === "modern-sheen" && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(110deg, transparent 30%, rgba(220,235,245,0.12) 50%, transparent 70%)",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                )}
 
                 {/* Cinematic transition flash on type change */}
                 <div
@@ -753,7 +938,7 @@ export function Configurator() {
                   style={{
                     background:
                       "radial-gradient(circle at 50% 42%, transparent 35%, oklch(0.12 0.012 240 / 0.7) 100%)",
-                    opacity: mood.vignette,
+                    opacity: Math.min(1, mood.vignette * styleMood.vignetteMul),
                   }}
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/70 via-background/15 to-transparent" />
@@ -775,6 +960,7 @@ export function Configurator() {
                   <Chip label="LIVE" dot />
                   <Chip label={type.name} />
                   <Chip label={mood.tag} />
+                  <Chip label={`Stijl · ${styleId}`} />
                 </div>
 
                 {/* Material/Glass HUD — right side */}
