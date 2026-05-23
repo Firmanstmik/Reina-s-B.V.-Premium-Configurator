@@ -503,9 +503,9 @@ export function Configurator() {
             {/* Outer ambient halo — reacts to selected color */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-70 blur-3xl transition-all duration-1000"
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-80 blur-3xl transition-all duration-1000"
               style={{
-                background: `radial-gradient(60% 60% at 30% 30%, ${color.hex}55, transparent 70%), radial-gradient(50% 50% at 80% 70%, oklch(0.78 0.13 215 / 0.35), transparent 70%)`,
+                background: `radial-gradient(55% 55% at 25% 30%, ${mood.ambient}55, transparent 70%), radial-gradient(60% 60% at 80% 75%, ${color.hex}44, transparent 70%), radial-gradient(40% 40% at 50% 50%, oklch(0.78 0.13 215 / 0.28), transparent 70%)`,
               }}
             />
             <div
@@ -519,13 +519,13 @@ export function Configurator() {
                 {/* Photorealistic scene layers — crossfade on TYPE change */}
                 {(Object.keys(TYPE_SCENES) as Array<keyof typeof TYPE_SCENES>).map((id) => {
                   const active = id === typeId;
-                  // Material-driven atmosphere: warmer for hout, cooler/cleaner for aluminium
                   const matFilter =
                     mat.id === "Hout"
                       ? "saturate(1.08) brightness(1.02) contrast(1.02) sepia(0.06)"
                       : mat.id === "Kunststof"
                       ? "saturate(0.95) brightness(1.03) contrast(1.0)"
                       : "saturate(1.04) brightness(1.0) contrast(1.04)";
+                  const typeFilter = TYPE_MOODS[id].filter;
                   return (
                     <img
                       key={id}
@@ -538,15 +538,37 @@ export function Configurator() {
                       className="absolute inset-0 h-full w-full select-none object-cover"
                       style={{
                         opacity: active ? 1 : 0,
-                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.03 : 1.07})`,
-                        filter: active ? matFilter : `${matFilter} blur(8px)`,
+                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.04 : 1.12})`,
+                        filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
                         transition:
-                          "opacity 900ms cubic-bezier(0.22,1,0.36,1), transform 1200ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
+                          "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1), filter 1100ms ease",
                         willChange: "opacity, transform, filter",
                       }}
                     />
                   );
                 })}
+
+                {/* Per-type ambient atmosphere — morphs lighting mood */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-[1100ms]"
+                  style={{
+                    background: `radial-gradient(80% 60% at 50% 0%, ${mood.warm}33, transparent 60%), radial-gradient(70% 55% at 50% 100%, ${mood.ambient}40, transparent 70%)`,
+                    mixBlendMode: "screen",
+                  }}
+                />
+
+                {/* Cinematic transition flash on type change */}
+                <div
+                  key={`flash-${typeId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background: `radial-gradient(60% 50% at 50% 50%, ${mood.warm}, transparent 70%)`,
+                    mixBlendMode: "screen",
+                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                  }}
+                />
 
                 {/* FRAME COLOR CAST — repaints the dark frames in the photo.
                     `color` blend preserves luminance, so dark frames pick up hue
@@ -639,7 +661,7 @@ export function Configurator() {
                 <div className="absolute left-5 top-5 flex flex-wrap gap-2">
                   <Chip label="LIVE" dot />
                   <Chip label={type.name} />
-                  <Chip label={styleId} />
+                  <Chip label={mood.tag} />
                 </div>
 
                 {/* Material/Glass HUD — right side */}
