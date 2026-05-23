@@ -264,10 +264,10 @@ export function Configurator() {
                         <button
                           key={t.id}
                           onClick={() => setTypeId(t.id)}
-                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-500 ${
+                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             sel
-                              ? "ring-primary shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.55),0_20px_60px_-18px_oklch(0.78_0.13_215/0.75)] -translate-y-0.5"
-                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
+                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.35),0_24px_60px_-28px_oklch(0.78_0.13_215/0.5),0_8px_24px_-12px_oklch(0_0_0/0.5)] -translate-y-0.5"
+                              : "ring-white/10 hover:ring-white/20 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-22px_oklch(0_0_0/0.6)]"
                           }`}
                         >
                           {/* Mini cinematic thumbnail */}
