@@ -277,8 +277,8 @@ export function Configurator() {
                               alt={t.name}
                               loading="lazy"
                               draggable={false}
-                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-105"}`}
-                              style={{ filter: sel ? "saturate(1.08) contrast(1.04)" : "saturate(0.85) brightness(0.85)" }}
+                              className={`absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-[1.04]"}`}
+                              style={{ filter: sel ? "saturate(1.06) contrast(1.02) brightness(1.04)" : "saturate(0.88) brightness(0.9)" }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                             <div
