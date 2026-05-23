@@ -225,6 +225,7 @@ export function Configurator() {
   const mat     = MATERIALS[matIx];
   const glass   = GLASS[glassIx];
   const mood    = TYPE_MOODS[typeId];
+  const styleMood = STYLE_MOODS[styleId];
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
