@@ -293,10 +293,10 @@ export function Configurator() {
                             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                               <div
                                 aria-hidden
-                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent ${
+                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent ${
                                   sel
-                                    ? "[animation:cfgCardSheen_3.6s_ease-in-out_infinite]"
-                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.4s_ease-out_forwards]"
+                                    ? "[animation:cfgCardSheen_5s_ease-in-out_infinite]"
+                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.6s_ease-out_forwards]"
                                 }`}
                               />
                             </div>
