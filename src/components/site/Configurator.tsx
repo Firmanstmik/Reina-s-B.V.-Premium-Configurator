@@ -93,49 +93,49 @@ const TYPE_MOODS: Record<
     tag: "Golden hour · tuin",
     ambient: "#f6b66b",
     warm: "#ffd9a8",
-    filter: "saturate(1.06) contrast(1.04) brightness(1.0)",
-    sunColor: "rgba(255,210,150,0.45)",
+    filter: "saturate(1.04) contrast(1.0) brightness(1.06)",
+    sunColor: "rgba(255,215,160,0.32)",
     sunAngle: 10,
-    sunOpacity: 0.85,
-    driftSec: 22,
-    vignette: 0.45,
-    haloOpacity: 0.8,
+    sunOpacity: 0.6,
+    driftSec: 24,
+    vignette: 0.28,
+    haloOpacity: 0.65,
   },
   kozijn: {
     tag: "Soft morning · intiem",
     ambient: "#f1d6a8",
     warm: "#fbeacc",
-    filter: "saturate(1.02) contrast(1.03) brightness(1.04)",
-    sunColor: "rgba(255,240,210,0.5)",
+    filter: "saturate(1.01) contrast(1.0) brightness(1.08)",
+    sunColor: "rgba(255,240,210,0.38)",
     sunAngle: 16,
-    sunOpacity: 0.85,
-    driftSec: 30,
-    vignette: 0.18,
-    haloOpacity: 0.85,
+    sunOpacity: 0.65,
+    driftSec: 32,
+    vignette: 0.12,
+    haloOpacity: 0.7,
   },
   voordeur: {
     tag: "Twilight · entree",
     ambient: "#ff8a4c",
     warm: "#ffb37a",
-    filter: "saturate(1.1) contrast(1.1) brightness(0.96)",
-    sunColor: "rgba(255,150,90,0.55)",
+    filter: "saturate(1.05) contrast(1.04) brightness(1.02)",
+    sunColor: "rgba(255,170,110,0.4)",
     sunAngle: 4,
-    sunOpacity: 0.95,
-    driftSec: 26,
-    vignette: 0.75,
-    haloOpacity: 1,
+    sunOpacity: 0.7,
+    driftSec: 28,
+    vignette: 0.42,
+    haloOpacity: 0.8,
   },
   panorama: {
     tag: "Cinematic · horizon",
     ambient: "#7fb7d8",
     warm: "#cfe3ee",
-    filter: "saturate(1.05) contrast(1.05) brightness(1.02)",
-    sunColor: "rgba(255,225,190,0.42)",
+    filter: "saturate(1.03) contrast(1.02) brightness(1.06)",
+    sunColor: "rgba(255,230,200,0.32)",
     sunAngle: 14,
-    sunOpacity: 0.9,
-    driftSec: 32,
-    vignette: 0.3,
-    haloOpacity: 0.85,
+    sunOpacity: 0.65,
+    driftSec: 34,
+    vignette: 0.2,
+    haloOpacity: 0.7,
   },
 };
 
@@ -220,7 +220,7 @@ export function Configurator() {
                     onClick={() => setStep(i)}
                     className={`group relative flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-[11.5px] font-medium tracking-[0.04em] transition-all md:px-3 md:text-[12.5px] ${
                       active
-                        ? "bg-gradient-to-br from-primary/25 to-primary/5 text-foreground ring-1 ring-primary/50 shadow-[0_0_30px_-8px_oklch(0.78_0.13_215/0.6)]"
+                        ? "bg-gradient-to-br from-primary/18 to-primary/[0.03] text-foreground ring-1 ring-primary/35 shadow-[0_0_24px_-12px_oklch(0.78_0.13_215/0.45)]"
                         : done
                         ? "text-foreground/80 hover:text-foreground"
                         : "text-muted-foreground hover:text-foreground"
@@ -264,10 +264,10 @@ export function Configurator() {
                         <button
                           key={t.id}
                           onClick={() => setTypeId(t.id)}
-                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-500 ${
+                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             sel
-                              ? "ring-primary shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.55),0_20px_60px_-18px_oklch(0.78_0.13_215/0.75)] -translate-y-0.5"
-                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
+                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.35),0_24px_60px_-28px_oklch(0.78_0.13_215/0.5),0_8px_24px_-12px_oklch(0_0_0/0.5)] -translate-y-0.5"
+                              : "ring-white/10 hover:ring-white/20 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-22px_oklch(0_0_0/0.6)]"
                           }`}
                         >
                           {/* Mini cinematic thumbnail */}
@@ -277,10 +277,10 @@ export function Configurator() {
                               alt={t.name}
                               loading="lazy"
                               draggable={false}
-                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-105"}`}
-                              style={{ filter: sel ? "saturate(1.08) contrast(1.04)" : "saturate(0.85) brightness(0.85)" }}
+                              className={`absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-[1.04]"}`}
+                              style={{ filter: sel ? "saturate(1.06) contrast(1.02) brightness(1.04)" : "saturate(0.88) brightness(0.9)" }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/30 to-transparent" />
                             <div
                               className="pointer-events-none absolute inset-0 transition-opacity duration-700"
                               style={{
@@ -293,30 +293,30 @@ export function Configurator() {
                             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                               <div
                                 aria-hidden
-                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent ${
+                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent ${
                                   sel
-                                    ? "[animation:cfgCardSheen_3.6s_ease-in-out_infinite]"
-                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.4s_ease-out_forwards]"
+                                    ? "[animation:cfgCardSheen_5s_ease-in-out_infinite]"
+                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.6s_ease-out_forwards]"
                                 }`}
                               />
                             </div>
-                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
+                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all duration-500 ${sel ? "bg-primary/20 text-primary ring-primary/35" : "bg-background/55 text-foreground/80 ring-white/12"}`}>
                               <Icon className="h-4 w-4" />
                             </div>
                             {sel && (
-                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_18px_oklch(0.78_0.13_215/0.7)]">
+                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_0_14px_-2px_oklch(0.78_0.13_215/0.55)] ring-1 ring-primary/40">
                                 <Check className="h-3.5 w-3.5" />
                               </span>
                             )}
                           </div>
-                          <div className="relative p-3.5">
-                            <p className="text-sm font-semibold tracking-tight">{t.name}</p>
-                            <p className="mt-0.5 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground">{m.tag}</p>
-                            <p className="mt-1.5 text-[11px] text-muted-foreground/80">{t.dim}</p>
+                          <div className="relative p-4">
+                            <p className="text-[13.5px] font-semibold tracking-[-0.005em]">{t.name}</p>
+                            <p className="mt-1 text-[9.5px] uppercase tracking-[0.22em] text-muted-foreground/85">{m.tag}</p>
+                            <p className="mt-2 text-[11px] tabular-nums tracking-tight text-muted-foreground/70">{t.dim}</p>
                           </div>
-                          {/* Luxury neon edge on active */}
+                          {/* Refined inset edge on active — thin, sophisticated */}
                           {sel && (
-                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/40" />
+                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/25" />
                           )}
                         </button>
                       );
@@ -637,7 +637,7 @@ export function Configurator() {
                   style={{
                     background: color.hex,
                     mixBlendMode: "color",
-                    opacity: 0.55,
+                    opacity: 0.48,
                   }}
                 />
                 {/* Specular highlight that follows frame color */}
@@ -645,9 +645,9 @@ export function Configurator() {
                   aria-hidden
                   className="pointer-events-none absolute inset-0 transition-all duration-700"
                   style={{
-                    background: `linear-gradient(150deg, ${color.sheen}55 0%, transparent 35%)`,
+                    background: `linear-gradient(150deg, ${color.sheen}44 0%, transparent 38%)`,
                     mixBlendMode: "screen",
-                    opacity: mat.id === "Aluminium" ? 0.7 : mat.id === "Kunststof" ? 0.45 : 0.25,
+                    opacity: mat.id === "Aluminium" ? 0.55 : mat.id === "Kunststof" ? 0.35 : 0.2,
                   }}
                 />
 
@@ -658,7 +658,7 @@ export function Configurator() {
                   style={{
                     background: glass.tint,
                     mixBlendMode: "multiply",
-                    opacity: glass.opacity * 0.65,
+                    opacity: glass.opacity * 0.5,
                   }}
                 />
                 {/* Frosted privacy bloom */}
@@ -668,9 +668,8 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.28), transparent 75%)",
+                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.22), transparent 75%)",
                       mixBlendMode: "screen",
-                      backdropFilter: "blur(0.5px)",
                     }}
                   />
                 )}
@@ -681,21 +680,21 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "linear-gradient(180deg, rgba(200,230,255,0.18), transparent 40%)",
+                        "linear-gradient(180deg, rgba(200,230,255,0.14), transparent 40%)",
                       mixBlendMode: "screen",
                     }}
                   />
                 )}
 
-                {/* Diagonal sweeping reflection across the glass */}
+                {/* Refined low-iron glass reflection — subtle environmental streak */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 overflow-hidden"
                   style={{
-                    background: `linear-gradient(115deg, transparent 35%, rgba(255,255,255,${0.08 * glass.reflect}) 50%, transparent 65%)`,
+                    background: `linear-gradient(118deg, transparent 38%, rgba(255,255,255,${0.05 * glass.reflect}) 50%, transparent 62%)`,
                     mixBlendMode: "screen",
-                    transform: `translate3d(${parallax.x * 0.6}px, ${parallax.y * 0.4}px, 0)`,
-                    transition: "transform 700ms cubic-bezier(0.22,1,0.36,1), background 900ms ease",
+                    transform: `translate3d(${parallax.x * 0.5}px, ${parallax.y * 0.35}px, 0)`,
+                    transition: "transform 900ms cubic-bezier(0.22,1,0.36,1), background 1100ms ease",
                   }}
                 />
 
@@ -748,28 +747,28 @@ export function Configurator() {
                   />
                 </div>
 
-                {/* Cinematic vignette + bottom fade */}
+                {/* Cinematic vignette + bottom fade — lifted blacks */}
                 <div
                   className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
                   style={{
                     background:
-                      "radial-gradient(circle at 50% 40%, transparent 30%, oklch(0.08 0.012 240 / 0.85) 95%)",
+                      "radial-gradient(circle at 50% 42%, transparent 35%, oklch(0.12 0.012 240 / 0.7) 100%)",
                     opacity: mood.vignette,
                   }}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/70 via-background/15 to-transparent" />
 
                 {/* Color-reactive floor glow */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
                   style={{
-                    background: `radial-gradient(70% 50% at 50% 100%, ${color.hex}30, transparent 70%)`,
+                    background: `radial-gradient(70% 50% at 50% 100%, ${color.hex}24, transparent 70%)`,
                     mixBlendMode: "screen",
                   }}
                 />
-                {/* Subtle cyan rim light */}
-                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
+                {/* Subtle cyan rim light — sophisticated, not neon */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
 
                 {/* HUD chips */}
                 <div className="absolute left-5 top-5 flex flex-wrap gap-2">
