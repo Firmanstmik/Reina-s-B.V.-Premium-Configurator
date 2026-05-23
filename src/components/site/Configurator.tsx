@@ -289,6 +289,17 @@ export function Configurator() {
                                 mixBlendMode: "screen",
                               }}
                             />
+                            {/* Reflection sheen — sweeps across on hover/active */}
+                            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                              <div
+                                aria-hidden
+                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent ${
+                                  sel
+                                    ? "[animation:cfgCardSheen_3.6s_ease-in-out_infinite]"
+                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.4s_ease-out_forwards]"
+                                }`}
+                              />
+                            </div>
                             <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
                               <Icon className="h-4 w-4" />
                             </div>
