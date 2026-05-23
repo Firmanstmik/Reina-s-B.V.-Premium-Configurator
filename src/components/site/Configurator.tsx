@@ -747,28 +747,28 @@ export function Configurator() {
                   />
                 </div>
 
-                {/* Cinematic vignette + bottom fade */}
+                {/* Cinematic vignette + bottom fade — lifted blacks */}
                 <div
                   className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
                   style={{
                     background:
-                      "radial-gradient(circle at 50% 40%, transparent 30%, oklch(0.08 0.012 240 / 0.85) 95%)",
+                      "radial-gradient(circle at 50% 42%, transparent 35%, oklch(0.12 0.012 240 / 0.7) 100%)",
                     opacity: mood.vignette,
                   }}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/70 via-background/15 to-transparent" />
 
                 {/* Color-reactive floor glow */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 transition-all duration-1000"
                   style={{
-                    background: `radial-gradient(70% 50% at 50% 100%, ${color.hex}30, transparent 70%)`,
+                    background: `radial-gradient(70% 50% at 50% 100%, ${color.hex}24, transparent 70%)`,
                     mixBlendMode: "screen",
                   }}
                 />
-                {/* Subtle cyan rim light */}
-                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
+                {/* Subtle cyan rim light — sophisticated, not neon */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
 
                 {/* HUD chips */}
                 <div className="absolute left-5 top-5 flex flex-wrap gap-2">
