@@ -134,6 +134,7 @@ export function Configurator() {
   const color   = COLORS[colorIx];
   const mat     = MATERIALS[matIx];
   const glass   = GLASS[glassIx];
+  const mood    = TYPE_MOODS[typeId];
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
@@ -223,22 +224,54 @@ export function Configurator() {
                     {TYPES.map((t) => {
                       const sel = t.id === typeId;
                       const Icon = t.icon;
+                      const m = TYPE_MOODS[t.id];
                       return (
                         <button
                           key={t.id}
                           onClick={() => setTypeId(t.id)}
-                          className={`group relative overflow-hidden rounded-2xl p-4 text-left ring-1 transition-all ${
+                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-500 ${
                             sel
-                              ? "bg-primary/10 ring-primary shadow-[0_0_30px_-10px_oklch(0.78_0.13_215/0.65)]"
-                              : "bg-white/[0.03] ring-white/10 hover:bg-white/[0.06] hover:ring-white/20"
+                              ? "ring-primary shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.55),0_20px_60px_-18px_oklch(0.78_0.13_215/0.75)] -translate-y-0.5"
+                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
                           }`}
                         >
-                          <div className={`grid h-10 w-10 place-items-center rounded-xl transition-colors ${sel ? "bg-primary/20 text-primary" : "bg-white/5 text-foreground/70"}`}>
-                            <Icon className="h-5 w-5" />
+                          {/* Mini cinematic thumbnail */}
+                          <div className="relative aspect-[4/3] w-full overflow-hidden">
+                            <img
+                              src={TYPE_SCENES[t.id]}
+                              alt={t.name}
+                              loading="lazy"
+                              draggable={false}
+                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-105"}`}
+                              style={{ filter: sel ? "saturate(1.08) contrast(1.04)" : "saturate(0.85) brightness(0.85)" }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                            <div
+                              className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+                              style={{
+                                background: `radial-gradient(80% 60% at 50% 100%, ${m.ambient}55, transparent 70%)`,
+                                opacity: sel ? 1 : 0.4,
+                                mixBlendMode: "screen",
+                              }}
+                            />
+                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            {sel && (
+                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_18px_oklch(0.78_0.13_215/0.7)]">
+                                <Check className="h-3.5 w-3.5" />
+                              </span>
+                            )}
                           </div>
-                          <p className="mt-3 text-sm font-semibold">{t.name}</p>
-                          <p className="mt-0.5 text-[11px] text-muted-foreground">{t.dim}</p>
-                          {sel && <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="h-3 w-3" /></span>}
+                          <div className="relative p-3.5">
+                            <p className="text-sm font-semibold tracking-tight">{t.name}</p>
+                            <p className="mt-0.5 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground">{m.tag}</p>
+                            <p className="mt-1.5 text-[11px] text-muted-foreground/80">{t.dim}</p>
+                          </div>
+                          {/* Luxury neon edge on active */}
+                          {sel && (
+                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/40" />
+                          )}
                         </button>
                       );
                     })}
