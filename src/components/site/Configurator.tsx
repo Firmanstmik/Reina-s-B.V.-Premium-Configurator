@@ -637,7 +637,7 @@ export function Configurator() {
                   style={{
                     background: color.hex,
                     mixBlendMode: "color",
-                    opacity: 0.55,
+                    opacity: 0.48,
                   }}
                 />
                 {/* Specular highlight that follows frame color */}
@@ -645,9 +645,9 @@ export function Configurator() {
                   aria-hidden
                   className="pointer-events-none absolute inset-0 transition-all duration-700"
                   style={{
-                    background: `linear-gradient(150deg, ${color.sheen}55 0%, transparent 35%)`,
+                    background: `linear-gradient(150deg, ${color.sheen}44 0%, transparent 38%)`,
                     mixBlendMode: "screen",
-                    opacity: mat.id === "Aluminium" ? 0.7 : mat.id === "Kunststof" ? 0.45 : 0.25,
+                    opacity: mat.id === "Aluminium" ? 0.55 : mat.id === "Kunststof" ? 0.35 : 0.2,
                   }}
                 />
 
@@ -658,7 +658,7 @@ export function Configurator() {
                   style={{
                     background: glass.tint,
                     mixBlendMode: "multiply",
-                    opacity: glass.opacity * 0.65,
+                    opacity: glass.opacity * 0.5,
                   }}
                 />
                 {/* Frosted privacy bloom */}
@@ -668,9 +668,8 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.28), transparent 75%)",
+                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.22), transparent 75%)",
                       mixBlendMode: "screen",
-                      backdropFilter: "blur(0.5px)",
                     }}
                   />
                 )}
@@ -681,21 +680,21 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "linear-gradient(180deg, rgba(200,230,255,0.18), transparent 40%)",
+                        "linear-gradient(180deg, rgba(200,230,255,0.14), transparent 40%)",
                       mixBlendMode: "screen",
                     }}
                   />
                 )}
 
-                {/* Diagonal sweeping reflection across the glass */}
+                {/* Refined low-iron glass reflection — subtle environmental streak */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 overflow-hidden"
                   style={{
-                    background: `linear-gradient(115deg, transparent 35%, rgba(255,255,255,${0.08 * glass.reflect}) 50%, transparent 65%)`,
+                    background: `linear-gradient(118deg, transparent 38%, rgba(255,255,255,${0.05 * glass.reflect}) 50%, transparent 62%)`,
                     mixBlendMode: "screen",
-                    transform: `translate3d(${parallax.x * 0.6}px, ${parallax.y * 0.4}px, 0)`,
-                    transition: "transform 700ms cubic-bezier(0.22,1,0.36,1), background 900ms ease",
+                    transform: `translate3d(${parallax.x * 0.5}px, ${parallax.y * 0.35}px, 0)`,
+                    transition: "transform 900ms cubic-bezier(0.22,1,0.36,1), background 1100ms ease",
                   }}
                 />
 
