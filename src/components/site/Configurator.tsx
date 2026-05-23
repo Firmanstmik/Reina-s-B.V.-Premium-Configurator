@@ -875,7 +875,7 @@ export function Configurator() {
                   style={{
                     background:
                       "radial-gradient(circle at 50% 42%, transparent 35%, oklch(0.12 0.012 240 / 0.7) 100%)",
-                    opacity: mood.vignette,
+                    opacity: Math.min(1, mood.vignette * styleMood.vignetteMul),
                   }}
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/70 via-background/15 to-transparent" />
