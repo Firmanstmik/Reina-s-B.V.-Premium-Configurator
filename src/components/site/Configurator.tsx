@@ -549,9 +549,10 @@ export function Configurator() {
             {/* Outer ambient halo — reacts to selected color */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-80 blur-3xl transition-all duration-1000"
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] blur-3xl transition-all duration-1000 [animation:cfgHaloBreathe_9s_ease-in-out_infinite]"
               style={{
                 background: `radial-gradient(55% 55% at 25% 30%, ${mood.ambient}55, transparent 70%), radial-gradient(60% 60% at 80% 75%, ${color.hex}44, transparent 70%), radial-gradient(40% 40% at 50% 50%, oklch(0.78 0.13 215 / 0.28), transparent 70%)`,
+                opacity: mood.haloOpacity,
               }}
             />
             <div
@@ -571,26 +572,37 @@ export function Configurator() {
                       : mat.id === "Kunststof"
                       ? "saturate(0.95) brightness(1.03) contrast(1.0)"
                       : "saturate(1.04) brightness(1.0) contrast(1.04)";
-                  const typeFilter = TYPE_MOODS[id].filter;
+                  const m = TYPE_MOODS[id];
+                  const typeFilter = m.filter;
                   return (
-                    <img
+                    <div
                       key={id}
-                      src={TYPE_SCENES[id]}
-                      alt={`${id} architectuurfoto`}
-                      loading="lazy"
-                      width={1600}
-                      height={1088}
-                      draggable={false}
-                      className="absolute inset-0 h-full w-full select-none object-cover"
+                      aria-hidden={!active}
+                      className="absolute inset-0 h-full w-full overflow-hidden"
                       style={{
                         opacity: active ? 1 : 0,
-                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.04 : 1.12})`,
-                        filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
-                        transition:
-                          "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1), filter 1100ms ease",
-                        willChange: "opacity, transform, filter",
+                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0)`,
+                        transition: "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1)",
+                        willChange: "opacity, transform",
                       }}
-                    />
+                    >
+                      <img
+                        src={TYPE_SCENES[id]}
+                        alt={`${id} architectuurfoto`}
+                        loading="lazy"
+                        width={1600}
+                        height={1088}
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full select-none object-cover"
+                        style={{
+                          filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
+                          transition: "filter 1100ms ease",
+                          animation: active ? `cfgDrift ${m.driftSec}s ease-in-out infinite alternate` : undefined,
+                          transform: active ? undefined : "scale(1.12)",
+                          willChange: "transform, filter",
+                        }}
+                      />
+                    </div>
                   );
                 })}
 
@@ -687,8 +699,34 @@ export function Configurator() {
                   }}
                 />
 
+                {/* Animated cinematic sunlight glare — slowly sweeps across glass.
+                    Re-keyed per-type so it restarts with new angle/color/intensity. */}
+                <div
+                  key={`sun-${typeId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 overflow-hidden"
+                  style={{ mixBlendMode: "screen" }}
+                >
+                  <div
+                    className="absolute -inset-1/4 h-[150%] w-[50%]"
+                    style={{
+                      background: `linear-gradient(${mood.sunAngle + 90}deg, transparent 0%, ${mood.sunColor} 45%, rgba(255,255,255,0.6) 50%, ${mood.sunColor} 55%, transparent 100%)`,
+                      filter: "blur(28px)",
+                      opacity: mood.sunOpacity,
+                      animation: "cfgSunSweep 14s ease-in-out infinite",
+                    }}
+                  />
+                </div>
+
                 {/* Cinematic vignette + bottom fade */}
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_30%,oklch(0.08_0.012_240/0.55)_95%)]" />
+                <div
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 40%, transparent 30%, oklch(0.08 0.012 240 / 0.85) 95%)",
+                    opacity: mood.vignette,
+                  }}
+                />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
 
                 {/* Color-reactive floor glow */}
