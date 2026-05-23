@@ -220,7 +220,7 @@ export function Configurator() {
                     onClick={() => setStep(i)}
                     className={`group relative flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-[11.5px] font-medium tracking-[0.04em] transition-all md:px-3 md:text-[12.5px] ${
                       active
-                        ? "bg-gradient-to-br from-primary/25 to-primary/5 text-foreground ring-1 ring-primary/50 shadow-[0_0_30px_-8px_oklch(0.78_0.13_215/0.6)]"
+                        ? "bg-gradient-to-br from-primary/18 to-primary/[0.03] text-foreground ring-1 ring-primary/35 shadow-[0_0_24px_-12px_oklch(0.78_0.13_215/0.45)]"
                         : done
                         ? "text-foreground/80 hover:text-foreground"
                         : "text-muted-foreground hover:text-foreground"
