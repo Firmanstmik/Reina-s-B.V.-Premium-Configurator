@@ -72,6 +72,38 @@ const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
   panorama: scenePanorama,
 };
 
+/* Per-type cinematic "mood" — ambient color, tagline & atmosphere tuning.
+   Each type triggers a unique lighting morph in the live preview. */
+const TYPE_MOODS: Record<
+  typeof TYPES[number]["id"],
+  { tag: string; ambient: string; warm: string; filter: string }
+> = {
+  schuifpui: {
+    tag: "Golden hour · tuin",
+    ambient: "#f6b66b",
+    warm: "#ffd9a8",
+    filter: "saturate(1.06) contrast(1.04) brightness(1.0)",
+  },
+  kozijn: {
+    tag: "Soft morning · intiem",
+    ambient: "#e8c79a",
+    warm: "#f1e2c4",
+    filter: "saturate(1.0) contrast(1.05) brightness(1.02)",
+  },
+  voordeur: {
+    tag: "Twilight · entree",
+    ambient: "#ff8a4c",
+    warm: "#ffb37a",
+    filter: "saturate(1.1) contrast(1.1) brightness(0.96)",
+  },
+  panorama: {
+    tag: "Cinematic · horizon",
+    ambient: "#7fb7d8",
+    warm: "#cfe3ee",
+    filter: "saturate(1.05) contrast(1.05) brightness(1.02)",
+  },
+};
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -102,6 +134,7 @@ export function Configurator() {
   const color   = COLORS[colorIx];
   const mat     = MATERIALS[matIx];
   const glass   = GLASS[glassIx];
+  const mood    = TYPE_MOODS[typeId];
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
@@ -191,22 +224,54 @@ export function Configurator() {
                     {TYPES.map((t) => {
                       const sel = t.id === typeId;
                       const Icon = t.icon;
+                      const m = TYPE_MOODS[t.id];
                       return (
                         <button
                           key={t.id}
                           onClick={() => setTypeId(t.id)}
-                          className={`group relative overflow-hidden rounded-2xl p-4 text-left ring-1 transition-all ${
+                          className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-500 ${
                             sel
-                              ? "bg-primary/10 ring-primary shadow-[0_0_30px_-10px_oklch(0.78_0.13_215/0.65)]"
-                              : "bg-white/[0.03] ring-white/10 hover:bg-white/[0.06] hover:ring-white/20"
+                              ? "ring-primary shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.55),0_20px_60px_-18px_oklch(0.78_0.13_215/0.75)] -translate-y-0.5"
+                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
                           }`}
                         >
-                          <div className={`grid h-10 w-10 place-items-center rounded-xl transition-colors ${sel ? "bg-primary/20 text-primary" : "bg-white/5 text-foreground/70"}`}>
-                            <Icon className="h-5 w-5" />
+                          {/* Mini cinematic thumbnail */}
+                          <div className="relative aspect-[4/3] w-full overflow-hidden">
+                            <img
+                              src={TYPE_SCENES[t.id]}
+                              alt={t.name}
+                              loading="lazy"
+                              draggable={false}
+                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-105"}`}
+                              style={{ filter: sel ? "saturate(1.08) contrast(1.04)" : "saturate(0.85) brightness(0.85)" }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                            <div
+                              className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+                              style={{
+                                background: `radial-gradient(80% 60% at 50% 100%, ${m.ambient}55, transparent 70%)`,
+                                opacity: sel ? 1 : 0.4,
+                                mixBlendMode: "screen",
+                              }}
+                            />
+                            <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            {sel && (
+                              <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_18px_oklch(0.78_0.13_215/0.7)]">
+                                <Check className="h-3.5 w-3.5" />
+                              </span>
+                            )}
                           </div>
-                          <p className="mt-3 text-sm font-semibold">{t.name}</p>
-                          <p className="mt-0.5 text-[11px] text-muted-foreground">{t.dim}</p>
-                          {sel && <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="h-3 w-3" /></span>}
+                          <div className="relative p-3.5">
+                            <p className="text-sm font-semibold tracking-tight">{t.name}</p>
+                            <p className="mt-0.5 text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground">{m.tag}</p>
+                            <p className="mt-1.5 text-[11px] text-muted-foreground/80">{t.dim}</p>
+                          </div>
+                          {/* Luxury neon edge on active */}
+                          {sel && (
+                            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/40" />
+                          )}
                         </button>
                       );
                     })}
@@ -438,9 +503,9 @@ export function Configurator() {
             {/* Outer ambient halo — reacts to selected color */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-70 blur-3xl transition-all duration-1000"
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-80 blur-3xl transition-all duration-1000"
               style={{
-                background: `radial-gradient(60% 60% at 30% 30%, ${color.hex}55, transparent 70%), radial-gradient(50% 50% at 80% 70%, oklch(0.78 0.13 215 / 0.35), transparent 70%)`,
+                background: `radial-gradient(55% 55% at 25% 30%, ${mood.ambient}55, transparent 70%), radial-gradient(60% 60% at 80% 75%, ${color.hex}44, transparent 70%), radial-gradient(40% 40% at 50% 50%, oklch(0.78 0.13 215 / 0.28), transparent 70%)`,
               }}
             />
             <div
@@ -454,13 +519,13 @@ export function Configurator() {
                 {/* Photorealistic scene layers — crossfade on TYPE change */}
                 {(Object.keys(TYPE_SCENES) as Array<keyof typeof TYPE_SCENES>).map((id) => {
                   const active = id === typeId;
-                  // Material-driven atmosphere: warmer for hout, cooler/cleaner for aluminium
                   const matFilter =
                     mat.id === "Hout"
                       ? "saturate(1.08) brightness(1.02) contrast(1.02) sepia(0.06)"
                       : mat.id === "Kunststof"
                       ? "saturate(0.95) brightness(1.03) contrast(1.0)"
                       : "saturate(1.04) brightness(1.0) contrast(1.04)";
+                  const typeFilter = TYPE_MOODS[id].filter;
                   return (
                     <img
                       key={id}
@@ -473,15 +538,37 @@ export function Configurator() {
                       className="absolute inset-0 h-full w-full select-none object-cover"
                       style={{
                         opacity: active ? 1 : 0,
-                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.03 : 1.07})`,
-                        filter: active ? matFilter : `${matFilter} blur(8px)`,
+                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.04 : 1.12})`,
+                        filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
                         transition:
-                          "opacity 900ms cubic-bezier(0.22,1,0.36,1), transform 1200ms cubic-bezier(0.22,1,0.36,1), filter 900ms ease",
+                          "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1), filter 1100ms ease",
                         willChange: "opacity, transform, filter",
                       }}
                     />
                   );
                 })}
+
+                {/* Per-type ambient atmosphere — morphs lighting mood */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 transition-all duration-[1100ms]"
+                  style={{
+                    background: `radial-gradient(80% 60% at 50% 0%, ${mood.warm}33, transparent 60%), radial-gradient(70% 55% at 50% 100%, ${mood.ambient}40, transparent 70%)`,
+                    mixBlendMode: "screen",
+                  }}
+                />
+
+                {/* Cinematic transition flash on type change */}
+                <div
+                  key={`flash-${typeId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background: `radial-gradient(60% 50% at 50% 50%, ${mood.warm}, transparent 70%)`,
+                    mixBlendMode: "screen",
+                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                  }}
+                />
 
                 {/* FRAME COLOR CAST — repaints the dark frames in the photo.
                     `color` blend preserves luminance, so dark frames pick up hue
@@ -574,7 +661,7 @@ export function Configurator() {
                 <div className="absolute left-5 top-5 flex flex-wrap gap-2">
                   <Chip label="LIVE" dot />
                   <Chip label={type.name} />
-                  <Chip label={styleId} />
+                  <Chip label={mood.tag} />
                 </div>
 
                 {/* Material/Glass HUD — right side */}
