@@ -277,6 +277,29 @@
     25%  { opacity: 0.55; }
     100% { opacity: 0; }
   }
+  /* Cinematic slow breathing — gives the active scene a living, drifting camera. */
+  @keyframes cfgDrift {
+    0%   { transform: scale(1.04) translate3d(0%, 0%, 0); }
+    50%  { transform: scale(1.075) translate3d(-1.2%, -0.8%, 0); }
+    100% { transform: scale(1.05) translate3d(0.8%, 0.4%, 0); }
+  }
+  /* Slow diagonal sunlight sweep across the glass — luxury cinema feel. */
+  @keyframes cfgSunSweep {
+    0%   { transform: translate3d(-35%, -25%, 0) rotate(8deg); opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translate3d(45%, 30%, 0) rotate(8deg); opacity: 0; }
+  }
+  /* Reflection sheen sweeping across a card on hover/active. */
+  @keyframes cfgCardSheen {
+    0%   { transform: translateX(-120%) skewX(-18deg); }
+    100% { transform: translateX(220%) skewX(-18deg); }
+  }
+  /* Slow ambient halo pulse behind the preview — barely perceptible. */
+  @keyframes cfgHaloBreathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 0.95; transform: scale(1.04); }
+  }
   .pulse-glow { animation: pulseGlow 2.4s ease-out infinite; }
 }
 
