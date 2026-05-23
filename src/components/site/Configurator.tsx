@@ -139,6 +139,61 @@ const TYPE_MOODS: Record<
   },
 };
 
+/* --- STYLE moods ---------------------------------------------------
+   STIJL does NOT replace the TYPE composition. It only reinterprets
+   the same scene with a different architectural personality:
+   lighting, tonality, materials feeling, vignette, grain.
+   The base photo (same geometry / camera / proportions) is preserved. */
+const STYLE_MOODS: Record<
+  StyleName,
+  {
+    tag: string;
+    /* CSS filter appended after the type filter on the base photo */
+    filter: string;
+    /* Ambient color wash blended over the scene */
+    wash: string;
+    washOpacity: number;
+    washBlend: "screen" | "multiply" | "overlay" | "soft-light";
+    /* Multiplier on the type's vignette intensity */
+    vignetteMul: number;
+    /* Subtle accent edge color (cool / warm / amber) */
+    edge: string;
+    /* Style-specific signature overlay */
+    signature: "modern-sheen" | "classic-curtain" | "industrial-grid";
+  }
+> = {
+  Modern: {
+    tag: "Minimal villa · cool daylight",
+    filter: "saturate(0.93) contrast(1.06) brightness(1.05) hue-rotate(-6deg)",
+    wash: "linear-gradient(180deg, rgba(210,228,238,0.18), transparent 55%)",
+    washOpacity: 0.7,
+    washBlend: "screen",
+    vignetteMul: 0.7,
+    edge: "rgba(200,220,235,0.5)",
+    signature: "modern-sheen",
+  },
+  Klassiek: {
+    tag: "Refined warmth · soft sunlight",
+    filter: "saturate(1.08) contrast(0.98) brightness(1.04) sepia(0.1) hue-rotate(-4deg)",
+    wash: "radial-gradient(80% 60% at 50% 30%, rgba(255,225,180,0.28), transparent 65%)",
+    washOpacity: 0.85,
+    washBlend: "screen",
+    vignetteMul: 0.95,
+    edge: "rgba(220,185,140,0.55)",
+    signature: "classic-curtain",
+  },
+  Industrieel: {
+    tag: "Loft architecture · cinematic shadow",
+    filter: "saturate(0.82) contrast(1.18) brightness(0.88) hue-rotate(6deg)",
+    wash: "radial-gradient(70% 55% at 50% 45%, rgba(20,18,14,0.0), rgba(15,12,10,0.45) 95%)",
+    washOpacity: 0.9,
+    washBlend: "multiply",
+    vignetteMul: 1.55,
+    edge: "rgba(255,165,90,0.45)",
+    signature: "industrial-grid",
+  },
+};
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
