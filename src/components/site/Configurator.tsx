@@ -76,31 +76,66 @@ const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
    Each type triggers a unique lighting morph in the live preview. */
 const TYPE_MOODS: Record<
   typeof TYPES[number]["id"],
-  { tag: string; ambient: string; warm: string; filter: string }
+  {
+    tag: string;
+    ambient: string;
+    warm: string;
+    filter: string;
+    sunColor: string;   // sun glare hue
+    sunAngle: number;   // degrees for the sun-sweep diagonal
+    sunOpacity: number; // intensity of sun sweep
+    driftSec: number;   // seconds for slow camera drift
+    vignette: number;   // 0..1 — strength of cinematic vignette
+    haloOpacity: number;
+  }
 > = {
   schuifpui: {
     tag: "Golden hour · tuin",
     ambient: "#f6b66b",
     warm: "#ffd9a8",
     filter: "saturate(1.06) contrast(1.04) brightness(1.0)",
+    sunColor: "rgba(255,210,150,0.45)",
+    sunAngle: 10,
+    sunOpacity: 0.85,
+    driftSec: 22,
+    vignette: 0.45,
+    haloOpacity: 0.8,
   },
   kozijn: {
     tag: "Soft morning · intiem",
     ambient: "#e8c79a",
     warm: "#f1e2c4",
     filter: "saturate(1.0) contrast(1.05) brightness(1.02)",
+    sunColor: "rgba(255,235,200,0.38)",
+    sunAngle: 18,
+    sunOpacity: 0.7,
+    driftSec: 28,
+    vignette: 0.35,
+    haloOpacity: 0.7,
   },
   voordeur: {
     tag: "Twilight · entree",
     ambient: "#ff8a4c",
     warm: "#ffb37a",
     filter: "saturate(1.1) contrast(1.1) brightness(0.96)",
+    sunColor: "rgba(255,150,90,0.55)",
+    sunAngle: 4,
+    sunOpacity: 0.95,
+    driftSec: 26,
+    vignette: 0.75,
+    haloOpacity: 1,
   },
   panorama: {
     tag: "Cinematic · horizon",
     ambient: "#7fb7d8",
     warm: "#cfe3ee",
     filter: "saturate(1.05) contrast(1.05) brightness(1.02)",
+    sunColor: "rgba(255,225,190,0.42)",
+    sunAngle: 14,
+    sunOpacity: 0.9,
+    driftSec: 32,
+    vignette: 0.3,
+    haloOpacity: 0.85,
   },
 };
 
