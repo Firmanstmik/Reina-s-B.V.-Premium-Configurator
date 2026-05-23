@@ -651,7 +651,7 @@ export function Configurator() {
                         draggable={false}
                         className="absolute inset-0 h-full w-full select-none object-cover"
                         style={{
-                          filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
+                          filter: active ? `${matFilter} ${typeFilter} ${styleMood.filter}` : `${matFilter} ${typeFilter} ${styleMood.filter} blur(14px)`,
                           transition: "filter 1100ms ease",
                           animation: active ? `cfgDrift ${m.driftSec}s ease-in-out infinite alternate` : undefined,
                           transform: active ? undefined : "scale(1.12)",
