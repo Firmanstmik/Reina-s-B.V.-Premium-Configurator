@@ -76,31 +76,66 @@ const TYPE_SCENES: Record<typeof TYPES[number]["id"], string> = {
    Each type triggers a unique lighting morph in the live preview. */
 const TYPE_MOODS: Record<
   typeof TYPES[number]["id"],
-  { tag: string; ambient: string; warm: string; filter: string }
+  {
+    tag: string;
+    ambient: string;
+    warm: string;
+    filter: string;
+    sunColor: string;   // sun glare hue
+    sunAngle: number;   // degrees for the sun-sweep diagonal
+    sunOpacity: number; // intensity of sun sweep
+    driftSec: number;   // seconds for slow camera drift
+    vignette: number;   // 0..1 — strength of cinematic vignette
+    haloOpacity: number;
+  }
 > = {
   schuifpui: {
     tag: "Golden hour · tuin",
     ambient: "#f6b66b",
     warm: "#ffd9a8",
     filter: "saturate(1.06) contrast(1.04) brightness(1.0)",
+    sunColor: "rgba(255,210,150,0.45)",
+    sunAngle: 10,
+    sunOpacity: 0.85,
+    driftSec: 22,
+    vignette: 0.45,
+    haloOpacity: 0.8,
   },
   kozijn: {
     tag: "Soft morning · intiem",
     ambient: "#e8c79a",
     warm: "#f1e2c4",
     filter: "saturate(1.0) contrast(1.05) brightness(1.02)",
+    sunColor: "rgba(255,235,200,0.38)",
+    sunAngle: 18,
+    sunOpacity: 0.7,
+    driftSec: 28,
+    vignette: 0.35,
+    haloOpacity: 0.7,
   },
   voordeur: {
     tag: "Twilight · entree",
     ambient: "#ff8a4c",
     warm: "#ffb37a",
     filter: "saturate(1.1) contrast(1.1) brightness(0.96)",
+    sunColor: "rgba(255,150,90,0.55)",
+    sunAngle: 4,
+    sunOpacity: 0.95,
+    driftSec: 26,
+    vignette: 0.75,
+    haloOpacity: 1,
   },
   panorama: {
     tag: "Cinematic · horizon",
     ambient: "#7fb7d8",
     warm: "#cfe3ee",
     filter: "saturate(1.05) contrast(1.05) brightness(1.02)",
+    sunColor: "rgba(255,225,190,0.42)",
+    sunAngle: 14,
+    sunOpacity: 0.9,
+    driftSec: 32,
+    vignette: 0.3,
+    haloOpacity: 0.85,
   },
 };
 
@@ -254,6 +289,17 @@ export function Configurator() {
                                 mixBlendMode: "screen",
                               }}
                             />
+                            {/* Reflection sheen — sweeps across on hover/active */}
+                            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                              <div
+                                aria-hidden
+                                className={`absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent ${
+                                  sel
+                                    ? "[animation:cfgCardSheen_3.6s_ease-in-out_infinite]"
+                                    : "opacity-0 group-hover:opacity-100 group-hover:[animation:cfgCardSheen_1.4s_ease-out_forwards]"
+                                }`}
+                              />
+                            </div>
                             <div className={`absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-lg backdrop-blur-md ring-1 transition-all ${sel ? "bg-primary/25 text-primary ring-primary/50" : "bg-background/60 text-foreground/80 ring-white/15"}`}>
                               <Icon className="h-4 w-4" />
                             </div>
@@ -503,9 +549,10 @@ export function Configurator() {
             {/* Outer ambient halo — reacts to selected color */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] opacity-80 blur-3xl transition-all duration-1000"
+              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] blur-3xl transition-all duration-1000 [animation:cfgHaloBreathe_9s_ease-in-out_infinite]"
               style={{
                 background: `radial-gradient(55% 55% at 25% 30%, ${mood.ambient}55, transparent 70%), radial-gradient(60% 60% at 80% 75%, ${color.hex}44, transparent 70%), radial-gradient(40% 40% at 50% 50%, oklch(0.78 0.13 215 / 0.28), transparent 70%)`,
+                opacity: mood.haloOpacity,
               }}
             />
             <div
@@ -525,26 +572,37 @@ export function Configurator() {
                       : mat.id === "Kunststof"
                       ? "saturate(0.95) brightness(1.03) contrast(1.0)"
                       : "saturate(1.04) brightness(1.0) contrast(1.04)";
-                  const typeFilter = TYPE_MOODS[id].filter;
+                  const m = TYPE_MOODS[id];
+                  const typeFilter = m.filter;
                   return (
-                    <img
+                    <div
                       key={id}
-                      src={TYPE_SCENES[id]}
-                      alt={`${id} architectuurfoto`}
-                      loading="lazy"
-                      width={1600}
-                      height={1088}
-                      draggable={false}
-                      className="absolute inset-0 h-full w-full select-none object-cover"
+                      aria-hidden={!active}
+                      className="absolute inset-0 h-full w-full overflow-hidden"
                       style={{
                         opacity: active ? 1 : 0,
-                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0) scale(${active ? 1.04 : 1.12})`,
-                        filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
-                        transition:
-                          "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1), filter 1100ms ease",
-                        willChange: "opacity, transform, filter",
+                        transform: `translate3d(${parallax.x * 0.2}px, ${parallax.y * 0.2}px, 0)`,
+                        transition: "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1600ms cubic-bezier(0.22,1,0.36,1)",
+                        willChange: "opacity, transform",
                       }}
-                    />
+                    >
+                      <img
+                        src={TYPE_SCENES[id]}
+                        alt={`${id} architectuurfoto`}
+                        loading="lazy"
+                        width={1600}
+                        height={1088}
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full select-none object-cover"
+                        style={{
+                          filter: active ? `${matFilter} ${typeFilter}` : `${matFilter} ${typeFilter} blur(14px)`,
+                          transition: "filter 1100ms ease",
+                          animation: active ? `cfgDrift ${m.driftSec}s ease-in-out infinite alternate` : undefined,
+                          transform: active ? undefined : "scale(1.12)",
+                          willChange: "transform, filter",
+                        }}
+                      />
+                    </div>
                   );
                 })}
 
@@ -641,8 +699,34 @@ export function Configurator() {
                   }}
                 />
 
+                {/* Animated cinematic sunlight glare — slowly sweeps across glass.
+                    Re-keyed per-type so it restarts with new angle/color/intensity. */}
+                <div
+                  key={`sun-${typeId}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 overflow-hidden"
+                  style={{ mixBlendMode: "screen" }}
+                >
+                  <div
+                    className="absolute -inset-1/4 h-[150%] w-[50%]"
+                    style={{
+                      background: `linear-gradient(${mood.sunAngle + 90}deg, transparent 0%, ${mood.sunColor} 45%, rgba(255,255,255,0.6) 50%, ${mood.sunColor} 55%, transparent 100%)`,
+                      filter: "blur(28px)",
+                      opacity: mood.sunOpacity,
+                      animation: "cfgSunSweep 14s ease-in-out infinite",
+                    }}
+                  />
+                </div>
+
                 {/* Cinematic vignette + bottom fade */}
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_30%,oklch(0.08_0.012_240/0.55)_95%)]" />
+                <div
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 40%, transparent 30%, oklch(0.08 0.012 240 / 0.85) 95%)",
+                    opacity: mood.vignette,
+                  }}
+                />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
 
                 {/* Color-reactive floor glow */}
