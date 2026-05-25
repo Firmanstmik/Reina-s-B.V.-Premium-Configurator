@@ -28,8 +28,7 @@ const SLIDES: Slide[] = [
       "Maatwerk kozijnen, deuren en schuifpuien. Met vakmanschap, kwaliteit en oog voor detail realiseren wij duurzame oplossingen voor particuliere en zakelijke projecten.",
     primaryLabel: "Bekijk producten",
     trustTitle: "Betrouwbaar & duurzaam",
-    trustBody:
-      "Hoogwaardige materialen, vakkundige montage en betrouwbare service.",
+    trustBody: "Hoogwaardige materialen, vakkundige montage en betrouwbare service.",
   },
   {
     image: slide2,
@@ -54,8 +53,7 @@ const SLIDES: Slide[] = [
       "Kozijnen, rolluiken, horren, screens en poorten. Hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail. Persoonlijk geleverd, vakkundig geplaatst.",
     primaryLabel: "Vraag direct uw offerte aan",
     trustTitle: "Vakmanschap uit Limburg",
-    trustBody:
-      "Persoonlijk advies aan huis, scherpe offerte en oplevering volgens afspraak.",
+    trustBody: "Persoonlijk advies aan huis, scherpe offerte en oplevering volgens afspraak.",
   },
 ];
 
@@ -84,11 +82,7 @@ export function Hero() {
   const slide = SLIDES[active];
 
   return (
-    <section
-      id="home"
-      className="relative w-full overflow-hidden bg-background"
-      style={{ minHeight: "100svh" }}
-    >
+    <section id="home" className="relative min-h-[100svh] w-full overflow-hidden bg-background">
       {/* Slides — architectural "shutter" frame reveal */}
       <div className="absolute inset-0">
         {SLIDES.map((s, i) => {
@@ -97,12 +91,10 @@ export function Hero() {
           return (
             <div
               key={i}
-              className="absolute inset-0 overflow-hidden"
-              style={{
-                zIndex: isActive ? 2 : isPrev ? 1 : 0,
-                opacity: isActive || isPrev ? 1 : 0,
-              }}
-              aria-hidden={!isActive}
+              {...(!isActive ? { "aria-hidden": "true" } : {})}
+              className={`absolute inset-0 overflow-hidden ${
+                isActive ? "z-[2] opacity-100" : isPrev ? "z-[1] opacity-100" : "z-0 opacity-0"
+              }`}
             >
               <div
                 key={`${i}-${active}`}
@@ -126,59 +118,39 @@ export function Hero() {
         <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-b from-background/30 via-transparent to-background/95" />
         <div className="pointer-events-none absolute inset-0 z-[3] gradient-radial-glow opacity-60" />
         {/* Subtle architectural grid — evokes window mullions */}
-        <div
-          className="pointer-events-none absolute inset-0 z-[3] opacity-[0.08]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, oklch(1 0 0 / 0.7) 1px, transparent 1px), linear-gradient(to bottom, oklch(1 0 0 / 0.7) 1px, transparent 1px)",
-            backgroundSize: "120px 120px",
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0 z-[3] opacity-[0.08] [background-image:linear-gradient(to_right,oklch(1_0_0_/_0.7)_1px,transparent_1px),linear-gradient(to_bottom,oklch(1_0_0_/_0.7)_1px,transparent_1px)] [background-size:120px_120px]" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col px-5 pt-[140px] pb-[220px] sm:px-6 md:pt-[170px] md:pb-[240px] lg:pb-[260px]">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[82rem] flex-col px-5 pt-[140px] pb-[220px] sm:px-6 md:pt-[170px] md:pb-[240px] lg:pb-[260px]">
         <div className="flex flex-1 items-center">
           <div key={`grp-${active}`} className="max-w-2xl">
-            <div
-              className="hero-text-in mb-6 inline-flex items-center gap-2 rounded-lg glass px-3.5 py-1.5 text-[10.5px] uppercase tracking-[0.26em] text-primary sm:text-[11px]"
-              style={{ ["--delay" as string]: "120ms" }}
-            >
+            <div className="hero-text-in [--delay:120ms] mb-6 inline-flex items-center gap-2 rounded-lg glass px-3.5 py-1.5 text-[10.5px] uppercase tracking-[0.26em] text-primary sm:text-[11px]">
               <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-glow" />
               {slide.eyebrow}
             </div>
 
-            <h1
-              className="hero-text-in font-display text-[clamp(2.1rem,7.2vw,5.75rem)] font-medium leading-[1.04] tracking-[-0.02em] text-foreground"
-              style={{ ["--delay" as string]: "260ms" }}
-            >
+            <h1 className="hero-text-in [--delay:260ms] font-display text-[clamp(2.1rem,7.2vw,5.75rem)] font-medium leading-[1.04] tracking-[-0.02em] text-foreground">
               {slide.titleLead}{" "}
-              <span className="font-serif-italic gradient-text">
-                {slide.titleItalic}
-              </span>{" "}
+              <span className="font-serif-italic gradient-text">{slide.titleItalic}</span>{" "}
               {slide.titleTail}
             </h1>
 
-            <p
-              className="hero-text-in mt-6 max-w-lg text-[14.5px] leading-relaxed text-muted-foreground sm:text-[15px] md:text-base"
-              style={{ ["--delay" as string]: "420ms" }}
-            >
+            <p className="hero-text-in [--delay:420ms] mt-6 max-w-lg text-[14.5px] leading-relaxed text-muted-foreground sm:text-[15px] md:text-base">
               {slide.description}
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <a
                 href="#producten"
-                className="group hero-text-in inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)] sm:px-7 sm:text-[12px]"
-                style={{ ["--delay" as string]: "560ms" }}
+                className="group hero-text-in [--delay:560ms] inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)] sm:px-7 sm:text-[12px]"
               >
                 {slide.primaryLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="#contact"
-                className="hero-text-in inline-flex items-center gap-2 rounded-xl border border-white/15 px-5 py-3.5 text-[11.5px] font-semibold tracking-[0.06em] text-foreground/90 transition-all hover:border-primary/50 hover:text-primary sm:text-[12px]"
-                style={{ ["--delay" as string]: "680ms" }}
+                className="hero-text-in [--delay:680ms] inline-flex items-center gap-2 rounded-xl border border-white/15 px-5 py-3.5 text-[11.5px] font-semibold tracking-[0.06em] text-foreground/90 transition-all hover:border-primary/50 hover:text-primary sm:text-[12px]"
               >
                 Offerte aanvragen
               </a>
@@ -189,8 +161,7 @@ export function Hero() {
         {/* Trust card — desktop only */}
         <div
           key={`trust-${active}`}
-          className="hero-text-in pointer-events-none absolute right-6 bottom-[280px] hidden max-w-[300px] lg:block"
-          style={{ ["--delay" as string]: "780ms" }}
+          className="hero-text-in [--delay:780ms] pointer-events-none absolute right-6 bottom-[280px] hidden max-w-[300px] lg:block"
         >
           <div className="glass-strong pointer-events-auto rounded-2xl p-4 shadow-[var(--shadow-elevated)]">
             <div className="flex items-start gap-3">
@@ -214,18 +185,17 @@ export function Hero() {
             return (
               <button
                 key={i}
+                type="button"
                 onClick={() => go(i)}
                 aria-label={`Ga naar slide ${i + 1}`}
                 className="group relative h-[2px] w-10 overflow-hidden rounded-full bg-white/15 transition-all sm:w-14 md:w-16"
               >
                 <span
-                  className="absolute inset-y-0 left-0 bg-primary"
-                  style={{
-                    width: isActive ? "100%" : "0%",
-                    transition: isActive
-                      ? `width ${INTERVAL}ms linear`
-                      : "width 400ms ease",
-                  }}
+                  className={`absolute inset-y-0 left-0 bg-primary transition-[width] ${
+                    isActive
+                      ? "w-full duration-[6500ms] ease-linear"
+                      : "w-0 duration-[400ms] ease-out"
+                  }`}
                 />
               </button>
             );

@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import brandLogo from "../assets/LOGO-REINAS-BV.webp";
 
 function NotFoundComponent() {
   return (
@@ -72,19 +73,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Reina's B.V." },
+      {
+        name: "description",
+        content: "Reina's B.V. premium maatwerk kozijnen, deuren en schuifpuien.",
+      },
+      { name: "author", content: "Reina's B.V." },
+      { property: "og:title", content: "Reina's B.V." },
+      {
+        property: "og:description",
+        content: "Reina's B.V. premium maatwerk kozijnen, deuren en schuifpuien.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Reina's B.V." },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        type: "image/webp",
+        href: brandLogo,
+      },
+      {
+        rel: "apple-touch-icon",
+        href: brandLogo,
       },
     ],
   }),
