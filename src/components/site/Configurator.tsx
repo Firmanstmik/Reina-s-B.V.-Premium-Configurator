@@ -27,6 +27,7 @@ import voordeurIndustrieel from "@/assets/cfg-voordeur-industrieel.avif";
 import panoramaModern from "@/assets/cfg-panorama-modern.avif";
 import panoramaKlassiek from "@/assets/cfg-panorama-klassiek.avif";
 import panoramaIndustrieel from "@/assets/cfg-panorama-industrieel.avif";
+import { cn } from "@/lib/utils";
 import { ImagesBadge } from "./ImagesBadge";
 import { Reveal } from "./Reveal";
 
@@ -93,6 +94,8 @@ const COLORS = [
     accent: "Mediterranean warmth",
   },
 ] as const;
+
+type ColorId = (typeof COLORS)[number]["id"];
 
 const MATERIALS: {
   id: Material;
@@ -192,6 +195,12 @@ const GLASS = [
 
 const STEPS = ["Type", "Stijl", "Kleur", "Glas", "Details", "Samenvatting"] as const;
 
+const CONFIG_BUTTON_PRIMARY =
+  "inline-flex items-center gap-2 rounded-[0.95rem] bg-[linear-gradient(135deg,oklch(0.76_0.11_215),oklch(0.73_0.10_215))] px-5 py-2.5 text-[12.5px] font-semibold tracking-[0.01em] text-primary-foreground shadow-[0_14px_28px_-20px_oklch(0.78_0.13_215/0.52)] transition-all duration-200 ease-out hover:-translate-y-px hover:brightness-[1.02] active:scale-[0.99]";
+
+const CONFIG_BUTTON_SECONDARY =
+  "inline-flex items-center gap-2 rounded-[0.95rem] border border-white/10 bg-white/[0.03] px-4 py-2.5 text-[12.5px] font-medium tracking-[0.01em] text-foreground/78 shadow-[0_10px_24px_-22px_oklch(0_0_0/0.65)] transition-all duration-200 ease-out hover:-translate-y-px hover:border-white/16 hover:bg-white/[0.05] hover:text-foreground active:scale-[0.99]";
+
 /* ------------------------------------------------------------------ */
 /*  Photorealistic per-type scenes                                     */
 /* ------------------------------------------------------------------ */
@@ -238,6 +247,52 @@ const PREVIEW_FRAMING: Record<
   voordeur: { zoom: 1.04, position: "center center" },
   panorama: { zoom: 1.01, position: "center center" },
 };
+
+const STYLE_ASSET_TOKENS: Record<StyleName, string> = {
+  Modern: "modern",
+  Klassiek: "klassiek",
+  Industrieel: "industrieel",
+};
+
+const MATERIAL_ASSET_TOKENS: Record<Material, string> = {
+  Aluminium: "aluminium",
+  Kunststof: "kunststof",
+  Hout: "hout",
+};
+
+const COLOR_ASSET_TOKENS: Record<ColorId, string> = {
+  antraciet: "antraciet",
+  zwart: "zwart",
+  wit: "wit",
+  olive: "olive",
+  "creme-zand": "creme_zand",
+};
+
+const CONFIG_RENDER_MODULES = import.meta.glob("../../assets/cfg-*.avif", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const CONFIG_RENDER_MAP = new Map<string, string>();
+
+Object.entries(CONFIG_RENDER_MODULES).forEach(([assetPath, assetSrc]) => {
+  const fileName = assetPath.split("/").pop()?.replace(".avif", "");
+  if (!fileName) return;
+
+  const tokens = fileName.replace(/^cfg-/, "").split("-");
+  if (tokens.length !== 4) return;
+
+  const [typeToken, styleToken, materialToken, colorToken] = tokens;
+  CONFIG_RENDER_MAP.set(
+    [
+      normalizeAssetToken(typeToken),
+      normalizeAssetToken(styleToken),
+      normalizeAssetToken(materialToken),
+      normalizeAssetToken(colorToken),
+    ].join("|"),
+    assetSrc,
+  );
+});
 
 /* Per-type cinematic "mood" — ambient color, tagline & atmosphere tuning.
    Each type triggers a unique lighting morph in the live preview. */
@@ -523,9 +578,12 @@ export function Configurator() {
   const styleMood = STYLE_MOODS[styleId];
   const colorMood = COLOR_MOODS[color.id];
   const framing = PREVIEW_FRAMING[typeId];
-  const activeStyleImage = STYLE_IMAGES[typeId][styleId];
-  const finishKey = `${typeId}-${styleId}-${color.id}-${mat.id}`;
-  const [settledPreviewImage, setSettledPreviewImage] = useState(activeStyleImage);
+  const activePreviewImage = useMemo(
+    () => resolveConfigPreviewImage(typeId, styleId, mat.id, color.id),
+    [typeId, styleId, mat.id, color.id],
+  );
+  const finishKey = `${typeId}-${styleId}-${mat.id}-${color.id}-${glass.id}`;
+  const [settledPreviewImage, setSettledPreviewImage] = useState(activePreviewImage);
   const [incomingPreviewImage, setIncomingPreviewImage] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
@@ -535,12 +593,22 @@ export function Configurator() {
     STYLES.forEach((style) => {
       const img = new window.Image();
       img.decoding = "async";
-      img.src = STYLE_IMAGES[typeId][style.id];
+      img.src = resolveConfigPreviewImage(typeId, style.id, mat.id, color.id);
     });
-  }, [typeId]);
+  }, [typeId, mat.id, color.id]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || activeStyleImage === settledPreviewImage) return;
+    if (typeof window === "undefined") return;
+
+    COLORS.forEach((option) => {
+      const img = new window.Image();
+      img.decoding = "async";
+      img.src = resolveConfigPreviewImage(typeId, styleId, mat.id, option.id);
+    });
+  }, [typeId, styleId, mat.id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || activePreviewImage === settledPreviewImage) return;
 
     const img = new window.Image();
     let cancelled = false;
@@ -548,18 +616,18 @@ export function Configurator() {
 
     setPreviewLoading(true);
     img.decoding = "async";
-    img.src = activeStyleImage;
+    img.src = activePreviewImage;
 
     const finishSwap = () => {
       if (cancelled) return;
-      setIncomingPreviewImage(activeStyleImage);
+      setIncomingPreviewImage(activePreviewImage);
 
       timeoutId = window.setTimeout(() => {
         if (cancelled) return;
-        setSettledPreviewImage(activeStyleImage);
+        setSettledPreviewImage(activePreviewImage);
         setIncomingPreviewImage(null);
         setPreviewLoading(false);
-      }, 920);
+      }, 380);
     };
 
     if (img.complete) {
@@ -575,7 +643,7 @@ export function Configurator() {
       img.onerror = null;
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, [activeStyleImage, settledPreviewImage]);
+  }, [activePreviewImage, settledPreviewImage]);
 
   // Indicative price estimate (richt-prijs)
   const price = useMemo(() => {
@@ -635,7 +703,7 @@ export function Configurator() {
                     onClick={() => setStep(i)}
                     className={`group relative flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-[11.5px] font-medium tracking-[0.04em] transition-all md:px-3 md:text-[12.5px] ${
                       active
-                        ? "bg-gradient-to-br from-primary/18 to-primary/[0.03] text-foreground ring-1 ring-primary/35 shadow-[0_0_24px_-12px_oklch(0.78_0.13_215/0.45)]"
+                        ? "bg-white/[0.05] text-foreground ring-1 ring-white/12 shadow-[0_18px_28px_-26px_oklch(0_0_0/0.8)]"
                         : done
                           ? "text-foreground/80 hover:text-foreground"
                           : "text-muted-foreground hover:text-foreground"
@@ -644,9 +712,9 @@ export function Configurator() {
                     <span
                       className={`grid h-5 w-5 place-items-center rounded-full text-[10px] transition-all ${
                         active
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-primary/16 text-primary ring-1 ring-primary/18"
                           : done
-                            ? "bg-primary/30 text-primary"
+                            ? "bg-white/[0.08] text-foreground/78"
                             : "bg-white/5 text-muted-foreground"
                       }`}
                     >
@@ -666,7 +734,10 @@ export function Configurator() {
           <Reveal
             variant="slide-left"
             delay={1}
-            className="glass-strong relative flex flex-col overflow-hidden rounded-3xl p-7 shadow-[var(--shadow-elevated)] md:p-9"
+            className={cn(
+              "glass-strong relative flex flex-col overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)]",
+              step === 2 ? "p-6 md:p-7" : "p-7 md:p-9",
+            )}
           >
             <div key={step} className="slide-pull-left flex-1">
               {step === 0 && (
@@ -852,73 +923,73 @@ export function Configurator() {
                 <ControlGroup
                   title="Kleur & materiaal"
                   subtitle="Zelfde architectuur · andere premium finish"
+                  subtitleClassName="max-w-[16rem] text-[10px] uppercase tracking-[0.22em] text-primary"
                 >
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground/78">
                       Kleur
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-2.5">
+                    <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
                       {COLORS.map((c, i) => {
                         const sel = i === colorIx;
-                        const cm = COLOR_MOODS[c.id];
                         return (
                           <button
                             key={c.code}
                             type="button"
                             onClick={() => setColorIx(i)}
                             aria-label={c.name}
-                            className={`group relative flex w-[4.75rem] flex-col items-center gap-2 rounded-[1.35rem] px-2 py-2.5 text-center transition-all duration-500 ${
+                            className={`group relative flex min-h-[104px] flex-col items-center justify-start rounded-[1.2rem] border px-3.5 pb-3.5 pt-4 text-center transition-all duration-250 ${
                               sel
-                                ? "bg-white/[0.045] ring-1 ring-primary/45 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.22),0_18px_40px_-24px_oklch(0.78_0.13_215/0.75)]"
-                                : "ring-1 ring-white/10 hover:-translate-y-0.5 hover:ring-white/22 hover:bg-white/[0.03]"
+                                ? "border-primary/70 bg-white/[0.035] shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.25),0_18px_30px_-26px_oklch(0.78_0.13_215/0.45)]"
+                                : "border-white/10 bg-white/[0.02] hover:border-white/16 hover:bg-white/[0.03]"
                             }`}
                           >
                             <span
-                              className="relative grid h-12 w-12 place-items-center rounded-full transition-all duration-500"
-                              style={{ boxShadow: sel ? cm.swatchGlow : "none" }}
+                              className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full"
+                              style={{
+                                background: `radial-gradient(circle at 30% 28%, ${c.sheen} 0%, ${c.hex} 58%, ${c.hex} 100%)`,
+                                boxShadow:
+                                  "inset 0 1px 1px rgba(255,255,255,0.18), inset 0 -8px 14px rgba(0,0,0,0.24)",
+                              }}
                             >
-                              <span
-                                className="absolute inset-0 rounded-full"
-                                style={{
-                                  background: `radial-gradient(circle at 30% 28%, ${c.sheen} 0%, ${c.hex} 58%, ${c.hex} 100%)`,
-                                  boxShadow: `inset 0 1px 1px rgba(255,255,255,0.22), inset 0 -9px 16px rgba(0,0,0,0.26)`,
-                                }}
-                              />
                               <span
                                 aria-hidden="true"
                                 className="absolute inset-[1px] rounded-full"
                                 style={{
                                   background:
-                                    "linear-gradient(145deg, rgba(255,255,255,0.22), transparent 38%, rgba(0,0,0,0.08) 100%)",
+                                    "linear-gradient(145deg, rgba(255,255,255,0.22), transparent 38%, rgba(0,0,0,0.1) 100%)",
                                 }}
                               />
                               {sel && (
-                                <span className="relative z-10 grid h-5 w-5 place-items-center rounded-full bg-background/82 text-primary ring-1 ring-white/12 backdrop-blur-md">
-                                  <Check className="h-3.5 w-3.5" />
+                                <span className="relative z-10 grid h-5.5 w-5.5 place-items-center rounded-full bg-black/55 text-primary ring-1 ring-white/10">
+                                  <Check className="h-3 w-3" />
                                 </span>
                               )}
                             </span>
-                            <span className="block text-[10.5px] font-semibold leading-none tracking-[0.01em] text-foreground">
+                            <span className="mt-3 text-[12.5px] font-semibold leading-tight text-foreground">
                               {c.name}
                             </span>
+                            {sel && (
+                              <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute inset-0 rounded-[1.2rem] ring-1 ring-inset ring-primary/22"
+                              />
+                            )}
                           </button>
                         );
                       })}
                     </div>
-                    <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">
-                      <span className="font-medium text-foreground">{color.name}</span>
-                      {" · "}
-                      {color.code}
-                      {" · "}
-                      <span className="text-foreground/85">{colorMood.tag}</span>
+                    <p className="mt-3 text-[12.5px] text-foreground/92">
+                      <span className="font-semibold">{color.name}</span> · {color.code} ·{" "}
+                      {color.accent}
                     </p>
                   </div>
 
-                  <div className="mt-7">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="mt-5">
+                    <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground/78">
                       Materiaal
                     </p>
-                    <div className="mt-3 grid grid-cols-3 gap-2.5">
+                    <div className="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-3">
                       {MATERIALS.map((m, i) => {
                         const sel = i === matIx;
                         return (
@@ -926,58 +997,41 @@ export function Configurator() {
                             key={m.id}
                             type="button"
                             onClick={() => setMatIx(i)}
-                            className={`group relative overflow-hidden rounded-2xl p-3.5 text-left ring-1 transition-all duration-500 ${
+                            className={`group relative overflow-hidden rounded-[1.3rem] border p-3.5 text-left transition-all duration-250 ${
                               sel
-                                ? "bg-white/[0.045] ring-primary/45 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.2),0_18px_42px_-24px_oklch(0.78_0.13_215/0.45)]"
-                                : "bg-white/[0.03] ring-white/10 hover:-translate-y-0.5 hover:bg-white/[0.05] hover:ring-white/20"
+                                ? "border-primary/70 bg-white/[0.04] shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.25),0_20px_30px_-28px_oklch(0.78_0.13_215/0.35)]"
+                                : "border-white/10 bg-white/[0.02] hover:border-white/16 hover:bg-white/[0.03]"
                             }`}
                           >
                             <div
-                              aria-hidden="true"
-                              className="absolute inset-x-0 top-0 h-px"
-                              style={{
-                                background: sel
-                                  ? `linear-gradient(90deg, transparent, ${m.accent}88, transparent)`
-                                  : "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
-                              }}
-                            />
-                            <div
-                              className="absolute inset-0 opacity-80 transition-opacity duration-500"
+                              className="absolute inset-0 opacity-50 transition-opacity duration-300"
                               style={{
                                 background: m.surface,
                                 mixBlendMode: "screen",
                               }}
                             />
                             <div className="relative">
-                              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/78">
+                              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground/72">
                                 {m.tag}
                               </p>
-                              <p className="mt-1 text-[13.5px] font-semibold tracking-[-0.01em]">
+                              <p className="mt-1.5 text-[13.5px] font-semibold tracking-tight">
                                 {m.id}
                               </p>
-                              <p className="mt-1.5 text-[10.5px] leading-snug text-muted-foreground">
+                              <p className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground/85">
                                 {m.desc}
                               </p>
                             </div>
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                              style={{
-                                background:
-                                  "linear-gradient(135deg, rgba(255,255,255,0.08), transparent 35%, transparent 65%, rgba(255,255,255,0.05))",
-                              }}
-                            />
                             {sel && (
                               <span
                                 aria-hidden="true"
-                                className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/22"
+                                className="pointer-events-none absolute inset-0 rounded-[1.3rem] ring-1 ring-inset ring-primary/22"
                               />
                             )}
                           </button>
                         );
                       })}
                     </div>
-                    <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground/82">
+                    <p className="mt-3 max-w-[32rem] text-[11.5px] leading-relaxed text-muted-foreground/82">
                       Materiaal verfijnt reflectie, warmte en schaduw zonder de architectuur of
                       camera te veranderen.
                     </p>
@@ -1099,30 +1153,28 @@ export function Configurator() {
             </div>
 
             {/* Nav buttons */}
-            <div className="mt-8 flex items-center justify-between gap-3">
+            <div
+              className={cn(
+                "flex items-center justify-between gap-3",
+                step === 2 ? "mt-6" : "mt-8",
+              )}
+            >
               <button
                 type="button"
                 onClick={goPrev}
                 disabled={step === 0}
-                className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-all hover:text-foreground disabled:opacity-30"
+                className={`${CONFIG_BUTTON_SECONDARY} disabled:pointer-events-none disabled:opacity-35`}
               >
                 <ArrowLeft className="h-3.5 w-3.5" /> Vorige
               </button>
 
               {step < STEPS.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={goNext}
-                  className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_18px_50px_-12px_oklch(0.78_0.13_215/0.75)]"
-                >
+                <button type="button" onClick={goNext} className={`group ${CONFIG_BUTTON_PRIMARY}`}>
                   Volgende
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </button>
               ) : (
-                <a
-                  href="#contact"
-                  className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_22px_60px_-14px_oklch(0.78_0.13_215/0.8)] pulse-glow"
-                >
+                <a href="#contact" className={`group relative ${CONFIG_BUTTON_PRIMARY}`}>
                   Offerte aanvragen
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </a>
@@ -1135,10 +1187,10 @@ export function Configurator() {
             {/* Outer ambient halo — reacts to selected color */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] blur-3xl transition-all duration-1000 [animation:cfgHaloBreathe_9s_ease-in-out_infinite]"
+              className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] blur-2xl transition-all duration-1000 [animation:cfgHaloBreathe_11s_ease-in-out_infinite]"
               style={{
-                background: `radial-gradient(55% 55% at 25% 30%, ${mood.ambient}55, transparent 70%), radial-gradient(60% 60% at 80% 75%, ${colorMood.previewGlow}, transparent 70%), radial-gradient(40% 40% at 50% 50%, oklch(0.78 0.13 215 / 0.24), transparent 70%)`,
-                opacity: mood.haloOpacity,
+                background: `radial-gradient(48% 48% at 26% 30%, ${mood.ambient}30, transparent 72%), radial-gradient(52% 52% at 78% 74%, ${colorMood.previewGlow}, transparent 74%), radial-gradient(34% 34% at 50% 50%, oklch(0.78 0.13 215 / 0.1), transparent 74%)`,
+                opacity: mood.haloOpacity * 0.42,
               }}
             />
             <div
@@ -1147,7 +1199,7 @@ export function Configurator() {
               onMouseLeave={onStageLeave}
               className="glass-strong relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] ring-1 ring-white/10"
               style={{
-                boxShadow: `0 30px 80px -20px oklch(0 0 0 / 0.5), 0 8px 24px -8px oklch(0 0 0 / 0.4), 0 0 0 1px ${color.hex}16`,
+                boxShadow: `0 24px 52px -28px oklch(0 0 0 / 0.62), 0 8px 22px -14px oklch(0 0 0 / 0.34), 0 0 0 1px ${color.hex}10`,
               }}
             >
               {/* Cinematic per-type scene stack */}
@@ -1155,9 +1207,11 @@ export function Configurator() {
                 {/* Photorealistic scene layers — crossfade on TYPE change */}
                 {(Object.keys(TYPE_SCENES) as Array<keyof typeof TYPE_SCENES>).map((id) => {
                   const active = id === typeId;
-                  const layerSrc = active ? settledPreviewImage : STYLE_IMAGES[id][styleId];
+                  const layerSrc = active
+                    ? settledPreviewImage
+                    : resolveConfigPreviewImage(id, styleId, mat.id, color.id);
                   const m = TYPE_MOODS[id];
-                  const finishFilter = `${m.filter} ${styleMood.filter} ${mat.filter} ${colorMood.filter}`;
+                  const finishFilter = "saturate(1.01) contrast(1.02) brightness(1.01)";
                   return (
                     <div
                       key={id}
@@ -1191,7 +1245,9 @@ export function Configurator() {
                             objectPosition: active
                               ? framing.position
                               : PREVIEW_FRAMING[id].position,
-                            filter: active ? finishFilter : `${finishFilter} blur(14px)`,
+                            filter: active
+                              ? finishFilter
+                              : "saturate(0.92) contrast(0.96) brightness(0.76) blur(10px)",
                             transition: "filter 1100ms ease",
                             animation: active
                               ? `cfgDrift ${m.driftSec}s ease-in-out infinite alternate`
@@ -1202,9 +1258,9 @@ export function Configurator() {
                         />
                         {active && incomingPreviewImage && (
                           <img
-                            key={`${typeId}-${styleId}-incoming`}
+                            key={`${typeId}-${styleId}-${mat.id}-${color.id}-incoming`}
                             src={incomingPreviewImage}
-                            alt={`${type.name} · ${styleId}`}
+                            alt={`${type.name} · ${styleId} · ${mat.id} · ${color.name}`}
                             loading="eager"
                             fetchPriority="high"
                             width={1600}
@@ -1228,8 +1284,9 @@ export function Configurator() {
                   aria-hidden
                   className="pointer-events-none absolute inset-0 transition-all duration-[1100ms]"
                   style={{
-                    background: `radial-gradient(80% 60% at 50% 0%, ${mood.warm}33, transparent 60%), radial-gradient(70% 55% at 50% 100%, ${mood.ambient}40, transparent 70%)`,
+                    background: `radial-gradient(80% 60% at 50% 0%, ${mood.warm}18, transparent 60%), radial-gradient(70% 55% at 50% 100%, ${mood.ambient}18, transparent 70%)`,
                     mixBlendMode: "screen",
+                    opacity: 0.75,
                   }}
                 />
 
@@ -1241,7 +1298,7 @@ export function Configurator() {
                   style={{
                     background: styleMood.wash,
                     mixBlendMode: styleMood.washBlend,
-                    opacity: styleMood.washOpacity,
+                    opacity: styleMood.washOpacity * 0.42,
                     animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
                   }}
                 />
@@ -1256,7 +1313,7 @@ export function Configurator() {
                         "linear-gradient(rgba(8,7,6,0.42) 1px, transparent 1px), linear-gradient(90deg, rgba(8,7,6,0.42) 1px, transparent 1px)",
                       backgroundSize: "33.33% 50%, 33.33% 50%",
                       mixBlendMode: "multiply",
-                      opacity: 0.55,
+                      opacity: 0.22,
                       maskImage: "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
                       WebkitMaskImage:
                         "radial-gradient(75% 65% at 50% 50%, black 60%, transparent 100%)",
@@ -1271,6 +1328,7 @@ export function Configurator() {
                       style={{
                         background: "linear-gradient(90deg, rgba(255,225,180,0.32), transparent)",
                         mixBlendMode: "screen",
+                        opacity: 0.45,
                       }}
                     />
                     <div
@@ -1279,6 +1337,7 @@ export function Configurator() {
                       style={{
                         background: "linear-gradient(-90deg, rgba(255,225,180,0.32), transparent)",
                         mixBlendMode: "screen",
+                        opacity: 0.45,
                       }}
                     />
                   </>
@@ -1289,7 +1348,7 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0"
                     style={{
                       background:
-                        "linear-gradient(110deg, transparent 30%, rgba(220,235,245,0.12) 50%, transparent 70%)",
+                        "linear-gradient(110deg, transparent 34%, rgba(220,235,245,0.08) 50%, transparent 66%)",
                       mixBlendMode: "screen",
                     }}
                   />
@@ -1301,9 +1360,10 @@ export function Configurator() {
                   aria-hidden
                   className="pointer-events-none absolute inset-0"
                   style={{
-                    background: `radial-gradient(60% 50% at 50% 50%, ${mood.warm}, transparent 70%)`,
+                    background: `radial-gradient(60% 50% at 50% 50%, ${mood.warm}66, transparent 72%)`,
                     mixBlendMode: "screen",
-                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                    opacity: 0.38,
+                    animation: "cfgFlash 900ms cubic-bezier(0.22,1,0.36,1) both",
                   }}
                 />
 
@@ -1315,7 +1375,7 @@ export function Configurator() {
                   style={{
                     background: colorMood.ambientWash,
                     mixBlendMode: colorMood.ambientBlend,
-                    opacity: colorMood.ambientOpacity * mat.warmthMul,
+                    opacity: colorMood.ambientOpacity * mat.warmthMul * 0.34,
                     animation: "cfgFlash 900ms cubic-bezier(0.22,1,0.36,1) both",
                   }}
                 />
@@ -1325,7 +1385,7 @@ export function Configurator() {
                   style={{
                     background: colorMood.shadowWash,
                     mixBlendMode: "multiply",
-                    opacity: colorMood.shadowOpacity * mat.shadowMul,
+                    opacity: colorMood.shadowOpacity * mat.shadowMul * 0.42,
                   }}
                 />
                 <div
@@ -1334,7 +1394,7 @@ export function Configurator() {
                   style={{
                     background: `linear-gradient(180deg, ${color.sheen}26 0%, ${color.hex}18 45%, ${color.hex}10 100%)`,
                     mixBlendMode: "soft-light",
-                    opacity: 0.72,
+                    opacity: 0.24,
                   }}
                 />
                 <div
@@ -1343,7 +1403,7 @@ export function Configurator() {
                   style={{
                     background: color.hex,
                     mixBlendMode: "color",
-                    opacity: colorMood.frameOpacity,
+                    opacity: colorMood.frameOpacity * 0.16,
                   }}
                 />
                 <div
@@ -1353,7 +1413,7 @@ export function Configurator() {
                   style={{
                     background: colorMood.exposure,
                     mixBlendMode: "screen",
-                    opacity: colorMood.exposureOpacity,
+                    opacity: colorMood.exposureOpacity * 0.28,
                     animation: "cfgFlash 1000ms cubic-bezier(0.22,1,0.36,1) both",
                   }}
                 />
@@ -1363,7 +1423,7 @@ export function Configurator() {
                   style={{
                     background: `linear-gradient(148deg, ${color.sheen}50 0%, transparent 34%, transparent 62%, ${mat.accent}1f 100%)`,
                     mixBlendMode: "screen",
-                    opacity: mat.sheen * 0.56,
+                    opacity: mat.sheen * 0.22,
                   }}
                 />
 
@@ -1374,7 +1434,7 @@ export function Configurator() {
                   style={{
                     background: glass.tint,
                     mixBlendMode: "multiply",
-                    opacity: glass.opacity * 0.5,
+                    opacity: glass.opacity * 0.24,
                   }}
                 />
                 {/* Frosted privacy bloom */}
@@ -1384,7 +1444,7 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.22), transparent 75%)",
+                        "radial-gradient(60% 50% at 50% 45%, rgba(255,255,255,0.14), transparent 75%)",
                       mixBlendMode: "screen",
                     }}
                   />
@@ -1396,7 +1456,7 @@ export function Configurator() {
                     className="pointer-events-none absolute inset-0 transition-all duration-700"
                     style={{
                       background:
-                        "linear-gradient(180deg, rgba(200,230,255,0.14), transparent 40%)",
+                        "linear-gradient(180deg, rgba(200,230,255,0.08), transparent 42%)",
                       mixBlendMode: "screen",
                     }}
                   />
@@ -1412,7 +1472,7 @@ export function Configurator() {
                     transform: `translate3d(${parallax.x * 0.5}px, ${parallax.y * 0.35}px, 0)`,
                     transition:
                       "transform 900ms cubic-bezier(0.22,1,0.36,1), background 1100ms ease, opacity 1100ms ease",
-                    opacity: colorMood.reflectionOpacity * glass.reflect * mat.reflectionMul,
+                    opacity: colorMood.reflectionOpacity * glass.reflect * mat.reflectionMul * 0.54,
                   }}
                 />
                 <div
@@ -1420,7 +1480,7 @@ export function Configurator() {
                   aria-hidden
                   className="cfg-preview-reflection pointer-events-none absolute inset-0 overflow-hidden"
                   style={{
-                    opacity: (previewLoading ? 0.6 : 0.34) * mat.reflectionMul,
+                    opacity: (previewLoading ? 0.22 : 0.14) * mat.reflectionMul,
                     transform: `translate3d(${parallax.x * 0.15}px, ${parallax.y * 0.1}px, 0)`,
                   }}
                 />
@@ -1437,9 +1497,9 @@ export function Configurator() {
                     className="absolute -inset-1/4 h-[150%] w-[50%]"
                     style={{
                       background: `linear-gradient(${mood.sunAngle + 90}deg, transparent 0%, ${mood.sunColor} 45%, rgba(255,255,255,0.6) 50%, ${mood.sunColor} 55%, transparent 100%)`,
-                      filter: "blur(28px)",
-                      opacity: mood.sunOpacity,
-                      animation: "cfgSunSweep 14s ease-in-out infinite",
+                      filter: "blur(20px)",
+                      opacity: mood.sunOpacity * 0.36,
+                      animation: "cfgSunSweep 18s ease-in-out infinite",
                     }}
                   />
                 </div>
@@ -1450,7 +1510,7 @@ export function Configurator() {
                   key={`dust-a-${typeId}`}
                   aria-hidden
                   className="pointer-events-none absolute inset-0 overflow-hidden"
-                  style={{ mixBlendMode: "screen", opacity: 0.55 }}
+                  style={{ mixBlendMode: "screen", opacity: 0.16 }}
                 >
                   <div
                     className="absolute -inset-[10%]"
@@ -1458,8 +1518,8 @@ export function Configurator() {
                       backgroundImage:
                         "radial-gradient(circle at 20% 30%, rgba(255,235,200,0.9) 0.6px, transparent 1.4px), radial-gradient(circle at 70% 60%, rgba(255,220,180,0.7) 0.5px, transparent 1.2px), radial-gradient(circle at 40% 80%, rgba(255,245,220,0.8) 0.7px, transparent 1.6px), radial-gradient(circle at 85% 20%, rgba(255,230,190,0.6) 0.4px, transparent 1px)",
                       backgroundSize: "180px 180px, 220px 220px, 260px 260px, 200px 200px",
-                      filter: "blur(0.4px)",
-                      animation: "cfgDust 22s ease-in-out infinite alternate",
+                      filter: "blur(0.35px)",
+                      animation: "cfgDust 28s ease-in-out infinite alternate",
                     }}
                   />
                   <div
@@ -1468,8 +1528,8 @@ export function Configurator() {
                       backgroundImage:
                         "radial-gradient(circle at 35% 45%, rgba(255,240,210,0.55) 0.4px, transparent 1px), radial-gradient(circle at 80% 75%, rgba(255,225,180,0.5) 0.5px, transparent 1.2px)",
                       backgroundSize: "320px 320px, 380px 380px",
-                      filter: "blur(0.6px)",
-                      animation: "cfgDust 34s ease-in-out infinite alternate-reverse",
+                      filter: "blur(0.45px)",
+                      animation: "cfgDust 40s ease-in-out infinite alternate-reverse",
                     }}
                   />
                 </div>
@@ -1479,11 +1539,11 @@ export function Configurator() {
                   className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
                   style={{
                     background:
-                      "radial-gradient(circle at 50% 42%, transparent 35%, oklch(0.12 0.012 240 / 0.7) 100%)",
-                    opacity: Math.min(1, mood.vignette * styleMood.vignetteMul),
+                      "radial-gradient(circle at 50% 42%, transparent 40%, oklch(0.12 0.012 240 / 0.58) 100%)",
+                    opacity: Math.min(0.5, mood.vignette * styleMood.vignetteMul * 0.72),
                   }}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/70 via-background/15 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/46 via-background/8 to-transparent" />
 
                 {/* Color-reactive floor glow */}
                 <div
@@ -1492,19 +1552,19 @@ export function Configurator() {
                   style={{
                     background: `radial-gradient(70% 50% at 50% 100%, ${colorMood.floorGlow}, transparent 70%)`,
                     mixBlendMode: "screen",
-                    opacity: colorMood.floorOpacity,
+                    opacity: colorMood.floorOpacity * 0.34,
                   }}
                 />
                 {/* Subtle cyan rim light — sophisticated, not neon */}
-                <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-40 w-2/3 -translate-x-1/2 rounded-full bg-primary/4 blur-3xl" />
                 <div
                   aria-hidden
                   className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ${
                     previewLoading ? "opacity-100" : "opacity-0"
                   }`}
                 >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,oklch(0.85_0.16_210_/_0.12),transparent_58%)] mix-blend-screen" />
-                  <div className="absolute inset-x-[18%] top-[12%] h-px bg-gradient-to-r from-transparent via-white/75 to-transparent blur-sm [animation:cfgPreviewPulse_1.15s_ease-in-out_infinite]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,oklch(0.85_0.16_210_/_0.06),transparent_58%)] mix-blend-screen" />
+                  <div className="absolute inset-x-[18%] top-[12%] h-px bg-gradient-to-r from-transparent via-white/45 to-transparent blur-sm [animation:cfgPreviewPulse_1.4s_ease-in-out_infinite]" />
                 </div>
 
                 {/* HUD chips */}
@@ -1517,26 +1577,21 @@ export function Configurator() {
 
                 {/* Material/Glass HUD — right side */}
                 <div className="absolute right-5 top-5 flex flex-col items-end gap-2">
-                  <Chip label={color.name} />
-                  <Chip label={mat.id} />
-                  <Chip label={glass.name} />
+                  <Chip label={`Kleur · ${color.name}`} />
+                  <Chip label={`Materiaal · ${mat.id}`} />
+                  <Chip label={`Glas · ${glass.name}`} />
                 </div>
 
                 {/* Summary card */}
                 <div
-                  className="absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-4 py-3.5 backdrop-blur-2xl"
+                  className="absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-[1.15rem] px-4 py-3 backdrop-blur-xl"
                   style={{
-                    background: `linear-gradient(135deg, oklch(0.14 0.012 240 / 0.78), oklch(0.14 0.012 240 / 0.64)), radial-gradient(80% 130% at 0% 100%, ${color.hex}22, transparent 55%)`,
-                    border: "1px solid oklch(1 0 0 / 0.08)",
+                    background: `linear-gradient(135deg, oklch(0.14 0.012 240 / 0.68), oklch(0.14 0.012 240 / 0.58)), radial-gradient(80% 130% at 0% 100%, ${color.hex}16, transparent 55%)`,
+                    border: "1px solid oklch(1 0 0 / 0.06)",
                   }}
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <ImagesBadge
-                      className="hidden shrink-0 md:flex"
-                      eyebrow="Architectuur previews"
-                      title="Live combinaties"
-                      caption="4 recente beelden"
-                    />
+                    <ImagesBadge className="hidden shrink-0 md:flex" title="Live combinaties" />
                     <span
                       className="h-10 w-10 rounded-lg ring-1 ring-white/20 transition-all duration-700"
                       style={{
@@ -1545,18 +1600,18 @@ export function Configurator() {
                       }}
                     />
                     <div className="min-w-0">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      <p className="text-[10px] tracking-[0.08em] text-muted-foreground/78">
                         Uw samenstelling ·{" "}
                         <span className="text-primary">€ {price.toLocaleString("nl-NL")}</span>
                       </p>
                       <p className="mt-0.5 truncate text-[12.5px] font-medium">
-                        {type.name} · {mat.id} · {color.name} · {glass.name}
+                        {type.name} · {styleId} · {mat.id} · {color.name} · {glass.name}
                       </p>
                     </div>
                   </div>
                   <a
                     href="#contact"
-                    className="hidden shrink-0 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-4 py-2 text-[12px] font-semibold text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.78_0.13_215/0.6)] sm:inline-flex"
+                    className={`hidden shrink-0 sm:inline-flex ${CONFIG_BUTTON_SECONDARY}`}
                   >
                     Offerte
                   </a>
@@ -1573,9 +1628,9 @@ export function Configurator() {
               ].map((s) => (
                 <div
                   key={s.t}
-                  className="glass flex items-center gap-4 rounded-[1.6rem] border border-white/8 px-5 py-4 transition-all duration-500 hover:border-primary/18 hover:bg-white/[0.045]"
+                  className="glass flex items-center gap-4 rounded-[1.2rem] border border-white/7 px-5 py-4 transition-all duration-300 hover:border-white/12 hover:bg-white/[0.035]"
                 >
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(180deg,oklch(0.78_0.13_215_/_0.16),oklch(0.78_0.13_215_/_0.08))] text-primary ring-1 ring-primary/22 shadow-[inset_0_1px_0_oklch(1_0_0_/_0.14),0_14px_30px_-18px_oklch(0.78_0.13_215_/_0.6)]">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[0.95rem] bg-[linear-gradient(180deg,oklch(0.78_0.13_215_/_0.08),oklch(0.78_0.13_215_/_0.04))] text-primary ring-1 ring-primary/14 shadow-[inset_0_1px_0_oklch(1_0_0_/_0.08),0_12px_22px_-18px_oklch(0.78_0.13_215_/_0.26)]">
                     <s.icon className="h-4.5 w-4.5" />
                   </div>
                   <div className="min-w-0">
@@ -1600,18 +1655,65 @@ export function Configurator() {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
+function normalizeAssetToken(value: string) {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[/\s]+/g, "_")
+    .replace(/-/g, "_");
+
+  if (normalized === "klasieek") return "klassiek";
+  if (normalized === "creem_zand") return "creme_zand";
+
+  return normalized;
+}
+
+function getConfigRenderKey(
+  typeId: TypeId,
+  styleId: StyleName,
+  materialId: Material,
+  colorId: ColorId,
+) {
+  return [
+    normalizeAssetToken(typeId),
+    normalizeAssetToken(STYLE_ASSET_TOKENS[styleId]),
+    normalizeAssetToken(MATERIAL_ASSET_TOKENS[materialId]),
+    normalizeAssetToken(COLOR_ASSET_TOKENS[colorId]),
+  ].join("|");
+}
+
+function resolveConfigPreviewImage(
+  typeId: TypeId,
+  styleId: StyleName,
+  materialId: Material,
+  colorId: ColorId,
+) {
+  return (
+    CONFIG_RENDER_MAP.get(getConfigRenderKey(typeId, styleId, materialId, colorId)) ??
+    STYLE_IMAGES[typeId][styleId]
+  );
+}
+
 function ControlGroup({
   title,
   subtitle,
   children,
+  subtitleClassName,
 }: {
   title: string;
   subtitle: string;
   children: React.ReactNode;
+  subtitleClassName?: string;
 }) {
   return (
     <div>
-      <p className="text-[11px] uppercase tracking-[0.22em] text-primary">{subtitle}</p>
+      <p
+        className={cn(
+          "text-[11px] font-medium tracking-[0.08em] text-primary/82",
+          subtitleClassName,
+        )}
+      >
+        {subtitle}
+      </p>
       <h3 className="font-display mt-2 text-[1.5rem] font-medium leading-tight tracking-tight">
         {title}
       </h3>
@@ -1622,11 +1724,11 @@ function ControlGroup({
 
 function Chip({ label, dot }: { label: string; dot?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-background/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-foreground/90 ring-1 ring-white/15 backdrop-blur-md">
+    <span className="inline-flex items-center gap-1.5 rounded-[0.8rem] bg-background/42 px-2.5 py-1 text-[9.5px] font-medium tracking-[0.08em] text-foreground/76 ring-1 ring-white/10 backdrop-blur-xl">
       {dot && (
         <span className="relative grid h-1.5 w-1.5 place-items-center">
-          <span className="absolute inset-0 animate-ping rounded-full bg-primary/70" />
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <span className="absolute inset-0 rounded-full bg-primary/18 blur-[2px]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary/80" />
         </span>
       )}
       {label}
