@@ -139,7 +139,7 @@ export function Hero() {
               {slide.description}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-10 flex flex-wrap items-center gap-4 md:mt-12">
               <a
                 href="#producten"
                 className="group hero-text-in [--delay:560ms] inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)] sm:px-7 sm:text-[12px]"
@@ -178,7 +178,7 @@ export function Hero() {
         </div>
 
         {/* Pagination */}
-        <div className="absolute left-5 right-5 bottom-[180px] flex items-center gap-2.5 sm:left-6 sm:right-6 md:bottom-[200px]">
+        <div className="absolute left-5 right-5 bottom-[230px] flex items-center gap-2.5 sm:left-6 sm:right-6 md:bottom-[248px]">
           {SLIDES.map((_, i) => {
             const isActive = i === active;
             return (
