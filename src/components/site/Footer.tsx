@@ -28,6 +28,7 @@ import { FloatingDock, type FloatingDockItem } from "@/components/ui/floating-do
 import { Reveal } from "./Reveal";
 
 const COMPANY_ADDRESS = "Hoogstraat 41b, 6102 XS Echt, Nederland";
+const COMPANY_MAPS_URL = "https://maps.app.goo.gl/fFZaZzkNuSLoRZ8d9";
 
 const dockItems: FloatingDockItem[] = [
   {
@@ -217,7 +218,7 @@ export function Footer() {
             </a>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Specialist in maatwerk kozijnen, deuren, schuifpuien en meer. Voor particulieren en
-              bedrijven in heel Limburg en omgeving.
+              bedrijven in heel Nederland.
             </p>
           </div>
         </Reveal>
@@ -291,7 +292,15 @@ export function Footer() {
             </p>
             <ul className="space-y-3 text-sm text-foreground/85">
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 text-primary" /> {COMPANY_ADDRESS}
+                <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+                <a
+                  href={COMPANY_MAPS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-colors hover:text-primary"
+                >
+                  {COMPANY_ADDRESS}
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-primary" /> +31 6 12 34 56 78

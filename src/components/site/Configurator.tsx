@@ -627,7 +627,7 @@ export function Configurator() {
         setSettledPreviewImage(activePreviewImage);
         setIncomingPreviewImage(null);
         setPreviewLoading(false);
-      }, 380);
+      }, 300);
     };
 
     if (img.complete) {
@@ -754,8 +754,8 @@ export function Configurator() {
                           onClick={() => setTypeId(t.id)}
                           className={`group relative overflow-hidden rounded-2xl text-left ring-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             sel
-                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.35),0_24px_60px_-28px_oklch(0.78_0.13_215/0.5),0_8px_24px_-12px_oklch(0_0_0/0.5)] -translate-y-0.5"
-                              : "ring-white/10 hover:ring-white/20 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-22px_oklch(0_0_0/0.6)]"
+                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.35),0_24px_60px_-28px_oklch(0.78_0.13_215/0.5),0_8px_24px_-12px_oklch(0_0_0/0.5)]"
+                              : "ring-white/10 hover:ring-white/20 hover:shadow-[0_18px_40px_-22px_oklch(0_0_0/0.6)]"
                           }`}
                         >
                           {/* Mini cinematic thumbnail */}
@@ -765,7 +765,7 @@ export function Configurator() {
                               alt={t.name}
                               loading="lazy"
                               draggable={false}
-                              className={`absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-110" : "scale-100 group-hover:scale-[1.04]"}`}
+                              className={`absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${sel ? "scale-[1.04]" : "scale-100 group-hover:scale-[1.02]"}`}
                               style={{
                                 filter: sel
                                   ? "saturate(1.06) contrast(1.02) brightness(1.04)"
@@ -777,7 +777,7 @@ export function Configurator() {
                               className="pointer-events-none absolute inset-0 transition-opacity duration-700"
                               style={{
                                 background: `radial-gradient(80% 60% at 50% 100%, ${m.ambient}55, transparent 70%)`,
-                                opacity: sel ? 1 : 0.4,
+                                opacity: sel ? 0.86 : 0.36,
                                 mixBlendMode: "screen",
                               }}
                             />
@@ -844,8 +844,8 @@ export function Configurator() {
                           onClick={() => setStyleId(s.id)}
                           className={`group relative flex items-stretch gap-3 overflow-hidden rounded-2xl p-2 text-left ring-1 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             sel
-                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.3),0_20px_50px_-24px_oklch(0.78_0.13_215/0.5)] -translate-y-0.5"
-                              : "ring-white/10 hover:ring-white/25 hover:-translate-y-0.5"
+                              ? "ring-primary/70 shadow-[0_0_0_1px_oklch(0.78_0.13_215/0.3),0_20px_50px_-24px_oklch(0.78_0.13_215/0.5)]"
+                              : "ring-white/10 hover:ring-white/25"
                           }`}
                         >
                           {/* Mini reinterpretation of the active TYPE scene */}
@@ -1140,7 +1140,7 @@ export function Configurator() {
                           € {price.toLocaleString("nl-NL")}
                         </p>
                         <p className="mt-1 text-[11px] text-muted-foreground">
-                          Excl. BTW, incl. montage in Limburg
+                          Excl. BTW, incl. montage in heel Nederland
                         </p>
                       </div>
                       <span className="rounded-full bg-primary/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary ring-1 ring-primary/40">
@@ -1298,8 +1298,7 @@ export function Configurator() {
                   style={{
                     background: styleMood.wash,
                     mixBlendMode: styleMood.washBlend,
-                    opacity: styleMood.washOpacity * 0.42,
-                    animation: "cfgFlash 1100ms cubic-bezier(0.22,1,0.36,1) both",
+                    opacity: styleMood.washOpacity * 0.34,
                   }}
                 />
 
@@ -1358,12 +1357,11 @@ export function Configurator() {
                 <div
                   key={`flash-${typeId}-${styleId}`}
                   aria-hidden
-                  className="pointer-events-none absolute inset-0"
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-[800ms]"
                   style={{
                     background: `radial-gradient(60% 50% at 50% 50%, ${mood.warm}66, transparent 72%)`,
                     mixBlendMode: "screen",
-                    opacity: 0.38,
-                    animation: "cfgFlash 900ms cubic-bezier(0.22,1,0.36,1) both",
+                    opacity: 0.16,
                   }}
                 />
 
@@ -1371,12 +1369,11 @@ export function Configurator() {
                 <div
                   key={`finish-ambient-${finishKey}`}
                   aria-hidden
-                  className="pointer-events-none absolute inset-0"
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-[800ms]"
                   style={{
                     background: colorMood.ambientWash,
                     mixBlendMode: colorMood.ambientBlend,
-                    opacity: colorMood.ambientOpacity * mat.warmthMul * 0.34,
-                    animation: "cfgFlash 900ms cubic-bezier(0.22,1,0.36,1) both",
+                    opacity: colorMood.ambientOpacity * mat.warmthMul * 0.24,
                   }}
                 />
                 <div
@@ -1409,12 +1406,11 @@ export function Configurator() {
                 <div
                   key={`finish-exposure-${finishKey}`}
                   aria-hidden
-                  className="pointer-events-none absolute inset-0"
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-[900ms]"
                   style={{
                     background: colorMood.exposure,
                     mixBlendMode: "screen",
-                    opacity: colorMood.exposureOpacity * 0.28,
-                    animation: "cfgFlash 1000ms cubic-bezier(0.22,1,0.36,1) both",
+                    opacity: colorMood.exposureOpacity * 0.14,
                   }}
                 />
                 <div
@@ -1563,7 +1559,7 @@ export function Configurator() {
                     previewLoading ? "opacity-100" : "opacity-0"
                   }`}
                 >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,oklch(0.85_0.16_210_/_0.06),transparent_58%)] mix-blend-screen" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,oklch(0.85_0.16_210_/_0.04),transparent_58%)] mix-blend-screen" />
                   <div className="absolute inset-x-[18%] top-[12%] h-px bg-gradient-to-r from-transparent via-white/45 to-transparent blur-sm [animation:cfgPreviewPulse_1.4s_ease-in-out_infinite]" />
                 </div>
 

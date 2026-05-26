@@ -124,9 +124,13 @@ export function SegmentSwitch() {
 export function SegmentBar({
   active: _active,
   onChange: _onChange,
+  compact = false,
+  className = "",
 }: {
   active?: Segment;
   onChange?: (v: Segment) => void;
+  compact?: boolean;
+  className?: string;
 }) {
   const [active, setSeg] = useSegment();
   const select = (v: Segment) => {
@@ -134,8 +138,84 @@ export function SegmentBar({
     _onChange?.(v);
   };
 
+  if (compact) {
+    return (
+      <div
+        className={`glass-strong inline-flex items-center gap-1 rounded-[1rem] border border-white/10 p-1.5 shadow-[0_18px_50px_-32px_oklch(0_0_0/0.72)] ${className}`}
+      >
+        <button
+          type="button"
+          onClick={() => select("particulier")}
+          className={`group inline-flex items-center gap-2 rounded-[0.85rem] px-2.5 py-2 text-left transition-all duration-300 ${
+            active === "particulier"
+              ? "bg-primary/12 text-primary"
+              : "text-foreground/76 hover:bg-white/[0.04] hover:text-foreground"
+          }`}
+        >
+          <span
+            className={`grid h-7 w-7 place-items-center rounded-[0.8rem] ring-1 transition-all duration-300 ${
+              active === "particulier"
+                ? "bg-primary/16 ring-primary/35 text-primary"
+                : "bg-white/[0.03] ring-white/10 text-foreground/70"
+            }`}
+          >
+            <Home className="h-3.5 w-3.5" />
+          </span>
+          <span className="hidden text-[10.5px] font-semibold uppercase tracking-[0.18em] 2xl:inline">
+            Particulier
+          </span>
+        </button>
+
+        <div className="relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-[0.9rem] border border-white/10 bg-background/55 ring-1 ring-white/10 backdrop-blur">
+          <div className="pointer-events-none absolute inset-0 grid grid-cols-2">
+            <div className={active === "particulier" ? "bg-primary/16" : "bg-transparent"} />
+            <div className={active === "zakelijk" ? "bg-white/10" : "bg-transparent"} />
+          </div>
+          <div className="pointer-events-none relative z-10 flex items-center gap-1">
+            <ArrowLeft
+              className={`h-3 w-3 transition-colors duration-300 ${
+                active === "particulier" ? "text-primary" : "text-foreground/62"
+              }`}
+            />
+            <ArrowRight
+              className={`h-3 w-3 transition-colors duration-300 ${
+                active === "zakelijk" ? "text-foreground" : "text-foreground/62"
+              }`}
+            />
+          </div>
+          <span className="pointer-events-none absolute bottom-1 top-1 left-1/2 w-px -translate-x-1/2 bg-white/14" />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => select("zakelijk")}
+          className={`group inline-flex items-center gap-2 rounded-[0.85rem] px-2.5 py-2 text-right transition-all duration-300 ${
+            active === "zakelijk"
+              ? "bg-primary/12 text-primary"
+              : "text-foreground/76 hover:bg-white/[0.04] hover:text-foreground"
+          }`}
+        >
+          <span className="hidden text-[10.5px] font-semibold uppercase tracking-[0.18em] 2xl:inline">
+            Zakelijk
+          </span>
+          <span
+            className={`grid h-7 w-7 place-items-center rounded-[0.8rem] ring-1 transition-all duration-300 ${
+              active === "zakelijk"
+                ? "bg-primary/16 ring-primary/35 text-primary"
+                : "bg-white/[0.03] ring-white/10 text-foreground/70"
+            }`}
+          >
+            <Building2 className="h-3.5 w-3.5" />
+          </span>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[1.1rem] px-3 py-3 shadow-[var(--shadow-elevated)] sm:gap-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+    <div
+      className={`glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[1.1rem] px-3 py-3 shadow-[var(--shadow-elevated)] sm:gap-4 sm:px-6 sm:py-5 md:px-8 md:py-6 ${className}`}
+    >
       {/* Particulier */}
       <button
         type="button"

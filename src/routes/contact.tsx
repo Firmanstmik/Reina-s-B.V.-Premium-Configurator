@@ -1,7 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Building2, Check, Clock3, Mail, MapPin, Phone } from "lucide-react";
-import projectVisual from "@/assets/official-projects/reinas-project-6.jpg";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { Reveal } from "@/components/site/Reveal";
@@ -14,10 +13,11 @@ type ContactForm = {
 };
 
 const COMPANY_ADDRESS = "Hoogstraat 41b, 6102 XS Echt, Nederland";
-const COMPANY_MAPS_URL =
-  "https://www.google.com/maps/place/Reina's+B.V/@51.0848322,5.8806288,17z/data=!4m17!1m8!3m7!1s0x47c0b6263468c78d:0x55bfda3d81bfcc0!2sHoogstraat+41b,+6102+XS+Echt,+Belanda!3b1!8m2!3d51.0848322!4d5.8832037!16s%2Fg%2F11x5kq_3cj!3m7!1s0x47c0b72c2d3cf76d:0x7404ac521f89d1e1!8m2!3d51.0850112!4d5.8831772!9m1!1b1!16s%2Fg%2F11lnvjzx8p?entry=ttu&g_ep=EgoyMDI2MDUyMC4wIKXMDSoASAFQAw%3D%3D";
+const COMPANY_MAPS_URL = "https://maps.app.goo.gl/fFZaZzkNuSLoRZ8d9";
 const COMPANY_MAPS_EMBED =
   "https://www.google.com/maps?q=Hoogstraat%2041b%206102%20XS%20Echt%20Nederland&z=15&output=embed";
+const CONTACT_VISUAL =
+  "https://primary.jwwb.nl/public/r/t/k/temp-lrigfpiduabdezijfjkl/lancering-high.jpg?enable-io=true&width=816";
 
 const contactHighlights = [
   {
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Neem contact op met Reina's B.V. voor premium maatwerk kozijnen, deuren, schuifpuien en projectadvies in Limburg.",
+          "Neem contact op met Reina's B.V. voor premium maatwerk kozijnen, deuren, schuifpuien en projectadvies in heel Nederland.",
       },
       { property: "og:title", content: "Contact, Reina's B.V." },
       {
@@ -166,7 +166,7 @@ function ContactPage() {
                 <div className="glass-strong relative overflow-hidden rounded-[2rem] border border-white/10 p-3">
                   <div className="absolute inset-0 bg-gradient-to-t from-background/55 via-transparent to-transparent" />
                   <img
-                    src={projectVisual}
+                    src={CONTACT_VISUAL}
                     alt="Premium project van Reina's B.V."
                     className="h-[22rem] w-full rounded-[1.4rem] object-cover md:h-[30rem]"
                   />
@@ -310,9 +310,14 @@ function ContactPage() {
                   <p className="text-[11px] uppercase tracking-[0.22em] text-primary">
                     Bezoeklocatie
                   </p>
-                  <h2 className="font-display mt-3 text-2xl font-medium tracking-tight">
+                  <a
+                    href={COMPANY_MAPS_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-display mt-3 inline-flex text-2xl font-medium tracking-tight transition-colors hover:text-primary"
+                  >
                     Hoogstraat 41b, Echt
-                  </h2>
+                  </a>
                 </div>
                 <iframe
                   title="Kaart van Reina's B.V."

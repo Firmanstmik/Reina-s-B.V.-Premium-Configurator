@@ -3,7 +3,6 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import slide1 from "@/assets/hero-slide-1.jpg";
 import slide2 from "@/assets/hero-slide-2.jpg";
 import slide3 from "@/assets/hero-slide-3.jpg";
-import { SegmentBar } from "./SegmentSwitch";
 
 type Slide = {
   image: string;
@@ -45,14 +44,14 @@ const SLIDES: Slide[] = [
   },
   {
     image: slide3,
-    eyebrow: "Vakmanschap uit Limburg",
+    eyebrow: "Vakmanschap in heel Nederland",
     titleLead: "Eén specialist voor",
     titleItalic: "uw complete",
     titleTail: "gevel & buitenruimte.",
     description:
       "Kozijnen, rolluiken, horren, screens en poorten. Hoogwaardige materialen, vakkundig advies en een afwerking tot in het laatste detail. Persoonlijk geleverd, vakkundig geplaatst.",
     primaryLabel: "Vraag direct uw offerte aan",
-    trustTitle: "Vakmanschap uit Limburg",
+    trustTitle: "Vakmanschap in heel Nederland",
     trustBody: "Persoonlijk advies aan huis, scherpe offerte en oplevering volgens afspraak.",
   },
 ];
@@ -122,7 +121,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[82rem] flex-col px-5 pt-[140px] pb-[220px] sm:px-6 md:pt-[170px] md:pb-[240px] lg:pb-[260px]">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[82rem] flex-col px-5 pt-[140px] pb-[140px] sm:px-6 md:pt-[170px] md:pb-[156px] lg:pb-[170px]">
         <div className="flex flex-1 items-center">
           <div key={`grp-${active}`} className="max-w-2xl">
             <div className="hero-text-in [--delay:120ms] mb-6 inline-flex items-center gap-2 rounded-lg glass px-3.5 py-1.5 text-[10.5px] uppercase tracking-[0.26em] text-primary sm:text-[11px]">
@@ -205,11 +204,6 @@ export function Hero() {
             <span className="mx-1.5 opacity-50">/</span>
             {String(SLIDES.length).padStart(2, "0")}
           </span>
-        </div>
-
-        {/* Particulier / Zakelijk bottom bar */}
-        <div className="absolute left-4 right-4 bottom-6 sm:bottom-8 md:left-6 md:right-6">
-          <SegmentBar />
         </div>
       </div>
     </section>

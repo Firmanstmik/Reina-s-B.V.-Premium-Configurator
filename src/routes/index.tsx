@@ -23,12 +23,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Luxe maatwerk kozijnen, deuren, schuifpuien en rolluiken in Limburg. Vakmanschap, duurzame kwaliteit en architecturaal design voor particulier en zakelijk.",
+          "Luxe maatwerk kozijnen, deuren, schuifpuien en rolluiken in Nederland. Vakmanschap, duurzame kwaliteit en architecturaal design voor particulier en zakelijk.",
       },
       { property: "og:title", content: "Reina's B.V., premium maatwerk kozijnen" },
       {
         property: "og:description",
-        content: "Architecturaal maatwerk in heel Limburg, kozijnen, deuren en schuifpuien.",
+        content: "Architecturaal maatwerk in heel Nederland, kozijnen, deuren en schuifpuien.",
       },
       { property: "og:type", content: "website" },
     ],

@@ -8,8 +8,7 @@ const PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places";
 const CACHE_TTL_MS = 1000 * 60 * 30;
 const FALLBACK_PLACE_NAME = "Reina's B.V.";
 const FALLBACK_PLACE_ADDRESS = "Hoogstraat 41b, 6102 XS Echt, Nederland";
-const FALLBACK_MAPS_URL =
-  "https://www.google.com/maps/place/Reina's+B.V/@51.0848322,5.8806288,17z/data=!4m17!1m8!3m7!1s0x47c0b6263468c78d:0x55bfda3d81bfcc0!2sHoogstraat+41b,+6102+XS+Echt,+Belanda!3b1!8m2!3d51.0848322!4d5.8832037!16s%2Fg%2F11x5kq_3cj!3m7!1s0x47c0b72c2d3cf76d:0x7404ac521f89d1e1!8m2!3d51.0850112!4d5.8831772!9m1!1b1!16s%2Fg%2F11lnvjzx8p?entry=ttu&g_ep=EgoyMDI2MDUyMC4wIKXMDSoASAFQAw%3D%3D";
+const FALLBACK_MAPS_URL = "https://maps.app.goo.gl/fFZaZzkNuSLoRZ8d9";
 
 type CacheBucket = {
   expiresAt: number;

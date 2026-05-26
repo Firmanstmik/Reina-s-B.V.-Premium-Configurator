@@ -1,7 +1,4 @@
 import { ArrowRight, Hammer, Leaf, ShieldCheck, Users } from "lucide-react";
-import detail from "@/assets/detail-handle.jpg";
-import p1 from "@/assets/project-1.jpg";
-import p2 from "@/assets/project-2.jpg";
 import { Reveal } from "./Reveal";
 
 const features = [
@@ -28,6 +25,13 @@ const features = [
 ];
 
 export function WhyUs() {
+  const collageImages = {
+    primary: "https://primary.jwwb.nl/pexels/57/5768284.jpeg?enable-io=true&width=816",
+    secondary: "https://primary.jwwb.nl/pexels/56/5691531.jpeg?enable-io=true&width=816",
+    tertiary:
+      "https://primary.jwwb.nl/public/r/t/k/temp-lrigfpiduabdezijfjkl/499788586_122180968256302681_6618338250902091886_n-high.jpg?enable-io=true&crop=1%3A1&width=532",
+  } as const;
+
   return (
     <section id="over" className="relative bg-warm px-4 py-28 md:px-6 md:py-40">
       <div className="mx-auto grid max-w-[82rem] gap-16 lg:grid-cols-2 lg:gap-20">
@@ -82,8 +86,8 @@ export function WhyUs() {
         <Reveal variant="bloom" delay={2} className="relative h-[520px] lg:h-[620px]">
           <Reveal variant="curtain" className="absolute left-0 top-0 h-[78%] w-[70%]">
             <img
-              src={detail}
-              alt="Premium aluminium kozijn detail"
+              src={collageImages.primary}
+              alt="Reina's B.V. premium gevelproject"
               className="h-full w-full rounded-2xl object-cover shadow-[var(--shadow-elevated)]"
               loading="lazy"
             />
@@ -94,8 +98,8 @@ export function WhyUs() {
             className="absolute right-0 top-[40%] h-[38%] w-[58%]"
           >
             <img
-              src={p1}
-              alt="Moderne villa"
+              src={collageImages.secondary}
+              alt="Reina's B.V. moderne woning met maatwerk kozijnen"
               className="float-y h-full w-full rounded-2xl object-cover shadow-[var(--shadow-elevated)]"
               loading="lazy"
             />
@@ -106,8 +110,8 @@ export function WhyUs() {
             className="absolute bottom-0 left-[18%] h-[34%] w-[46%]"
           >
             <img
-              src={p2}
-              alt="Nieuwbouwwoning"
+              src={collageImages.tertiary}
+              alt="Reina's B.V. nieuwbouwproject met premium afwerking"
               className="h-full w-full rounded-2xl object-cover shadow-[var(--shadow-elevated)] [animation-delay:1.5s]"
               loading="lazy"
             />

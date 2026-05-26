@@ -465,15 +465,15 @@
   @keyframes cfgPreviewImageIn {
     0% {
       opacity: 0;
-      transform: scale(1.045);
-      filter: blur(10px);
+      transform: scale(1.02);
+      filter: blur(6px);
     }
     55% {
       opacity: 1;
     }
     100% {
       opacity: 1;
-      transform: scale(1.01);
+      transform: scale(1.002);
       filter: blur(0);
     }
   }
@@ -502,7 +502,7 @@
     }
   }
   .cfg-preview-incoming {
-    animation: cfgPreviewImageIn 920ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: cfgPreviewImageIn 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
     will-change: opacity, transform, filter;
   }
   .cfg-preview-reflection::before {
