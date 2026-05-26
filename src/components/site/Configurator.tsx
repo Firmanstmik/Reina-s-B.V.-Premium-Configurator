@@ -27,6 +27,7 @@ import voordeurIndustrieel from "@/assets/cfg-voordeur-industrieel.avif";
 import panoramaModern from "@/assets/cfg-panorama-modern.avif";
 import panoramaKlassiek from "@/assets/cfg-panorama-klassiek.avif";
 import panoramaIndustrieel from "@/assets/cfg-panorama-industrieel.avif";
+import { ImagesBadge } from "./ImagesBadge";
 import { Reveal } from "./Reveal";
 
 /* ------------------------------------------------------------------ */
@@ -1507,7 +1508,7 @@ export function Configurator() {
                 </div>
 
                 {/* HUD chips */}
-                <div className="absolute left-5 top-5 flex flex-wrap gap-2">
+                <div className="absolute left-5 top-5 flex max-w-[calc(100%-9rem)] flex-wrap gap-2 sm:max-w-[calc(100%-11rem)]">
                   <Chip label="LIVE" dot />
                   <Chip label={type.name} />
                   <Chip label={mood.tag} />
@@ -1523,13 +1524,19 @@ export function Configurator() {
 
                 {/* Summary card */}
                 <div
-                  className="absolute inset-x-5 bottom-5 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 backdrop-blur-2xl"
+                  className="absolute inset-x-5 bottom-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-4 py-3.5 backdrop-blur-2xl"
                   style={{
                     background: `linear-gradient(135deg, oklch(0.14 0.012 240 / 0.78), oklch(0.14 0.012 240 / 0.64)), radial-gradient(80% 130% at 0% 100%, ${color.hex}22, transparent 55%)`,
                     border: "1px solid oklch(1 0 0 / 0.08)",
                   }}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <ImagesBadge
+                      className="hidden shrink-0 md:flex"
+                      eyebrow="Architectuur previews"
+                      title="Live combinaties"
+                      caption="4 recente beelden"
+                    />
                     <span
                       className="h-10 w-10 rounded-lg ring-1 ring-white/20 transition-all duration-700"
                       style={{

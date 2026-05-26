@@ -143,14 +143,14 @@ export function Hero() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <a
                 href="#producten"
-                className="group hero-text-in [--delay:560ms] inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)] sm:px-7 sm:text-[12px]"
+                className="group hero-text-in [--delay:560ms] inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_40px_-12px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_20px_60px_-15px_oklch(0.78_0.13_215/0.75)] sm:px-7 sm:text-[12px]"
               >
                 {slide.primaryLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="#contact"
-                className="hero-text-in [--delay:680ms] inline-flex items-center gap-2 rounded-xl border border-white/15 px-5 py-3.5 text-[11.5px] font-semibold tracking-[0.06em] text-foreground/90 transition-all hover:border-primary/50 hover:text-primary sm:text-[12px]"
+                className="hero-text-in [--delay:680ms] inline-flex items-center gap-2 rounded-lg border border-white/15 px-5 py-3.5 text-[11.5px] font-semibold tracking-[0.06em] text-foreground/90 transition-all hover:border-primary/50 hover:text-primary sm:text-[12px]"
               >
                 Offerte aanvragen
               </a>
@@ -188,7 +188,7 @@ export function Hero() {
                 type="button"
                 onClick={() => go(i)}
                 aria-label={`Ga naar slide ${i + 1}`}
-                className="group relative h-[2px] w-10 overflow-hidden rounded-full bg-white/15 transition-all sm:w-14 md:w-16"
+                className="group relative h-[2px] w-10 overflow-hidden rounded-sm bg-white/15 transition-all sm:w-14 md:w-16"
               >
                 <span
                   className={`absolute inset-y-0 left-0 bg-primary transition-[width] ${

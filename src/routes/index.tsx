@@ -6,22 +6,29 @@ import { WhyUs } from "@/components/site/WhyUs";
 import { Configurator } from "@/components/site/Configurator";
 import { Solutions } from "@/components/site/Solutions";
 import { Projects } from "@/components/site/Projects";
+import { ClientStories } from "@/components/site/ClientStories";
 import { Footer } from "@/components/site/Footer";
+import { getGoogleReviews } from "@/lib/google-reviews.server";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const reviewsFeed = await getGoogleReviews();
+
+    return { reviewsFeed };
+  },
   component: Index,
   head: () => ({
     meta: [
-      { title: "Reina's B.V. — Premium maatwerk kozijnen, deuren & schuifpuien" },
+      { title: "Reina's B.V., premium maatwerk kozijnen, deuren en schuifpuien" },
       {
         name: "description",
         content:
           "Luxe maatwerk kozijnen, deuren, schuifpuien en rolluiken in Limburg. Vakmanschap, duurzame kwaliteit en architecturaal design voor particulier en zakelijk.",
       },
-      { property: "og:title", content: "Reina's B.V. — Premium maatwerk kozijnen" },
+      { property: "og:title", content: "Reina's B.V., premium maatwerk kozijnen" },
       {
         property: "og:description",
-        content: "Architecturaal maatwerk in heel Limburg — kozijnen, deuren, schuifpuien.",
+        content: "Architecturaal maatwerk in heel Limburg, kozijnen, deuren en schuifpuien.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -29,6 +36,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { reviewsFeed } = Route.useLoaderData();
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -38,6 +47,7 @@ function Index() {
       <Configurator />
       <Solutions />
       <Projects />
+      <ClientStories feed={reviewsFeed} />
       <Footer />
     </main>
   );

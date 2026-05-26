@@ -6,6 +6,7 @@ import kunststofKozijnen from "@/assets/official-solutions/reinas-kunststof-kozi
 import schuifpuienImage from "@/assets/official-solutions/reinas-schuifpuien.jpeg";
 import voordeurenImage from "@/assets/official-solutions/reinas-voordeuren.jpeg";
 import zakelijkeGevelsystemen from "@/assets/official-solutions/reinas-zakelijke-gevelsystemen.jpeg";
+import { CometCard } from "@/components/ui/comet-card";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
 
@@ -175,82 +176,90 @@ function SolutionPanel({ solution }: { solution: SolutionCard }) {
   };
 
   return (
-    <motion.a
-      href={solution.href}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetTilt}
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        "group glass-strong relative block h-full overflow-hidden rounded-[2rem] border border-white/10",
-        "shadow-[0_28px_90px_-32px_oklch(0_0_0/0.82),0_0_0_1px_oklch(1_0_0/0.04)]",
-      )}
-      style={{
-        rotateX: smoothRotateX,
-        rotateY: smoothRotateY,
-        transformStyle: "preserve-3d",
-      }}
+    <CometCard
+      className="h-full"
+      rotateDepth={7.5}
+      translateDepth={7}
+      hoverScale={1}
+      glareOpacity={0.18}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,oklch(0.85_0.16_210_/_0.08),transparent_38%)] opacity-80" />
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+      <motion.a
+        href={solution.href}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={resetTilt}
+        whileHover={{ y: -6 }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(
+          "group glass-strong relative block h-full overflow-hidden rounded-[2rem] border border-white/10",
+          "shadow-[0_28px_90px_-32px_oklch(0_0_0/0.82),0_0_0_1px_oklch(1_0_0/0.04)]",
+        )}
         style={{
-          background: `linear-gradient(135deg, ${solution.accent}, transparent 34%, transparent 68%, rgba(255,255,255,0.05))`,
+          rotateX: smoothRotateX,
+          rotateY: smoothRotateY,
+          transformStyle: "preserve-3d",
         }}
-      />
-      <div className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
-        <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-primary/35" />
-      </div>
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,oklch(0.85_0.16_210_/_0.08),transparent_38%)] opacity-80" />
+        <div
+          className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+          style={{
+            background: `linear-gradient(135deg, ${solution.accent}, transparent 34%, transparent 68%, rgba(255,255,255,0.05))`,
+          }}
+        />
+        <div className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+          <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-primary/35" />
+        </div>
 
-      <motion.img
-        src={solution.image}
-        alt={solution.title}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{
-          x: imageX,
-          y: imageY,
-          objectPosition: solution.objectPosition,
-        }}
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      />
+        <motion.img
+          src={solution.image}
+          alt={solution.title}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            x: imageX,
+            y: imageY,
+            objectPosition: solution.objectPosition,
+          }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-background/92 via-background/62 to-background/14 md:via-background/48" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/12 to-transparent" />
-      <div className="absolute inset-y-0 left-0 w-[38%] bg-gradient-to-r from-primary/10 to-transparent opacity-70 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/92 via-background/62 to-background/14 md:via-background/48" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/12 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-[38%] bg-gradient-to-r from-primary/10 to-transparent opacity-70 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
 
-      <div className="relative flex h-full flex-col justify-between p-6 md:p-8 lg:p-10">
-        <div className="max-w-[36rem]">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-background/45 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-foreground/78 backdrop-blur-md">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_12px_oklch(0.85_0.16_210/0.9)]" />
-            {solution.eyebrow}
+        <div className="relative flex h-full flex-col justify-between p-6 md:p-8 lg:p-10">
+          <div className="max-w-[36rem]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-background/45 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-foreground/78 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_12px_oklch(0.85_0.16_210/0.9)]" />
+              {solution.eyebrow}
+            </div>
+            <h3 className="font-display mt-5 max-w-[14ch] text-[clamp(1.75rem,3vw,3.2rem)] font-medium leading-[1.02] tracking-tight text-white">
+              {solution.title}
+            </h3>
+            <p className="mt-4 max-w-[38rem] text-sm leading-relaxed text-white/74 md:text-[15px]">
+              {solution.description}
+            </p>
+            <p className="mt-5 text-[11px] uppercase tracking-[0.22em] text-primary/90">
+              {solution.feature}
+            </p>
           </div>
-          <h3 className="font-display mt-5 max-w-[14ch] text-[clamp(1.75rem,3vw,3.2rem)] font-medium leading-[1.02] tracking-tight text-white">
-            {solution.title}
-          </h3>
-          <p className="mt-4 max-w-[38rem] text-sm leading-relaxed text-white/74 md:text-[15px]">
-            {solution.description}
-          </p>
-          <p className="mt-5 text-[11px] uppercase tracking-[0.22em] text-primary/90">
-            {solution.feature}
-          </p>
+
+          <div className="mt-10 flex items-end justify-between gap-4">
+            <span className="text-[11px] uppercase tracking-[0.22em] text-white/42">
+              Premium architectural systems
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/14 px-4 py-2 text-[12px] font-semibold text-primary shadow-[0_12px_34px_-18px_oklch(0.78_0.13_215/0.9)] backdrop-blur-md transition-all duration-500 group-hover:border-primary/40 group-hover:bg-primary/18">
+              {solution.cta}
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </span>
+          </div>
         </div>
 
-        <div className="mt-10 flex items-end justify-between gap-4">
-          <span className="text-[11px] uppercase tracking-[0.22em] text-white/42">
-            Premium architectural systems
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/14 px-4 py-2 text-[12px] font-semibold text-primary shadow-[0_12px_34px_-18px_oklch(0.78_0.13_215/0.9)] backdrop-blur-md transition-all duration-500 group-hover:border-primary/40 group-hover:bg-primary/18">
-            {solution.cta}
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </span>
-        </div>
-      </div>
-
-      <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-80" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-24 w-24 rounded-full bg-primary/12 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
-      <div className="pointer-events-none absolute inset-y-0 right-5 hidden w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent md:block" />
-    </motion.a>
+        <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-80" />
+        <div className="pointer-events-none absolute bottom-0 right-0 h-24 w-24 rounded-full bg-primary/12 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-y-0 right-5 hidden w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent md:block" />
+      </motion.a>
+    </CometCard>
   );
 }

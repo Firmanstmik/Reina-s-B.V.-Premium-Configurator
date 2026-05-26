@@ -13,6 +13,12 @@ type ContactForm = {
   message: string;
 };
 
+const COMPANY_ADDRESS = "Hoogstraat 41b, 6102 XS Echt, Nederland";
+const COMPANY_MAPS_URL =
+  "https://www.google.com/maps/place/Reina's+B.V/@51.0848322,5.8806288,17z/data=!4m17!1m8!3m7!1s0x47c0b6263468c78d:0x55bfda3d81bfcc0!2sHoogstraat+41b,+6102+XS+Echt,+Belanda!3b1!8m2!3d51.0848322!4d5.8832037!16s%2Fg%2F11x5kq_3cj!3m7!1s0x47c0b72c2d3cf76d:0x7404ac521f89d1e1!8m2!3d51.0850112!4d5.8831772!9m1!1b1!16s%2Fg%2F11lnvjzx8p?entry=ttu&g_ep=EgoyMDI2MDUyMC4wIKXMDSoASAFQAw%3D%3D";
+const COMPANY_MAPS_EMBED =
+  "https://www.google.com/maps?q=Hoogstraat%2041b%206102%20XS%20Echt%20Nederland&z=15&output=embed";
+
 const contactHighlights = [
   {
     title: "Persoonlijk advies",
@@ -34,8 +40,8 @@ const contactHighlights = [
 const contactDetails = [
   {
     label: "Locatie",
-    value: "Markt 5, Echt, Limburg, Nederland",
-    href: "https://www.google.com/maps/search/?api=1&query=Markt+5+Echt+Limburg+Nederland",
+    value: COMPANY_ADDRESS,
+    href: COMPANY_MAPS_URL,
     icon: MapPin,
   },
   {
@@ -56,13 +62,13 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
-      { title: "Contact — Reina's B.V." },
+      { title: "Contact, Reina's B.V." },
       {
         name: "description",
         content:
           "Neem contact op met Reina's B.V. voor premium maatwerk kozijnen, deuren, schuifpuien en projectadvies in Limburg.",
       },
-      { property: "og:title", content: "Contact — Reina's B.V." },
+      { property: "og:title", content: "Contact, Reina's B.V." },
       {
         property: "og:description",
         content: "Persoonlijk advies, offerte op maat en direct contact met Reina's B.V.",
@@ -248,7 +254,7 @@ function ContactPage() {
                   </p>
                   <button
                     type="submit"
-                    className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_14px_40px_-14px_oklch(0.78_0.13_215/0.75)] transition-all hover:shadow-[0_20px_60px_-18px_oklch(0.78_0.13_215/0.85)]"
+                    className="group inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_14px_40px_-14px_oklch(0.78_0.13_215/0.75)] transition-all hover:shadow-[0_20px_60px_-18px_oklch(0.78_0.13_215/0.85)]"
                   >
                     Verstuur aanvraag
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -305,12 +311,12 @@ function ContactPage() {
                     Bezoeklocatie
                   </p>
                   <h2 className="font-display mt-3 text-2xl font-medium tracking-tight">
-                    Echt, Limburg
+                    Hoogstraat 41b, Echt
                   </h2>
                 </div>
                 <iframe
                   title="Kaart van Reina's B.V."
-                  src="https://www.google.com/maps?q=Markt%205%20Echt%20Limburg%20Nederland&z=15&output=embed"
+                  src={COMPANY_MAPS_EMBED}
                   className="h-[20rem] w-full border-0"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"

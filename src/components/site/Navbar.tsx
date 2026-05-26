@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import logo from "@/assets/LOGO-REINAS-BV.webp";
 
+const CONTACT_PHONE_DISPLAY = "+31612246431";
+const CONTACT_PHONE_HREF = "tel:+31612246431";
+
 const links = [
   { label: "Home", href: "/#home" },
   { label: "Producten", href: "/#producten", hasMenu: true },
@@ -68,11 +71,11 @@ export function Navbar() {
             info@reinas-bv.nl
           </a>
           <a
-            href="tel:+3161224631"
+            href={CONTACT_PHONE_HREF}
             className="hidden items-center gap-2 transition-colors hover:text-foreground sm:inline-flex"
           >
             <Phone className="h-3.5 w-3.5 text-primary" />
-            +31 (0) 00 000 0000
+            {CONTACT_PHONE_DISPLAY}
           </a>
         </div>
       </div>
@@ -110,7 +113,7 @@ export function Navbar() {
           {/* Desktop CTA */}
           <a
             href="/contact"
-            className="group hidden items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-5 py-2.5 text-[13px] font-semibold tracking-[0.01em] text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_18px_50px_-12px_oklch(0.78_0.13_215/0.75)] md:inline-flex"
+            className="group hidden items-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow px-5 py-2.5 text-[13px] font-semibold tracking-[0.01em] text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.78_0.13_215/0.55)] transition-all hover:shadow-[0_18px_50px_-12px_oklch(0.78_0.13_215/0.75)] md:inline-flex"
           >
             Offerte aanvragen
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -121,7 +124,7 @@ export function Navbar() {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Sluit menu" : "Open menu"}
-            className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-background/40 backdrop-blur-md transition-colors hover:border-primary/40 hover:text-primary lg:hidden"
+            className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-background/40 backdrop-blur-md transition-colors hover:border-primary/40 hover:text-primary lg:hidden"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -154,7 +157,7 @@ export function Navbar() {
           <a
             href="/contact"
             onClick={() => setOpen(false)}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow px-5 py-3.5 text-[13px] font-semibold text-primary-foreground"
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow px-5 py-3.5 text-[13px] font-semibold text-primary-foreground"
           >
             Offerte aanvragen
             <ArrowRight className="h-4 w-4" />
@@ -168,11 +171,11 @@ export function Navbar() {
               <span>info@reinas-bv.nl</span>
             </a>
             <a
-              href="tel:+31000000000"
+              href={CONTACT_PHONE_HREF}
               className="inline-flex items-center gap-2 hover:text-foreground"
             >
               <Phone className="h-3.5 w-3.5 text-primary" />
-              <span>+31 (0) 00 000 0000</span>
+              <span>{CONTACT_PHONE_DISPLAY}</span>
             </a>
           </div>
         </div>

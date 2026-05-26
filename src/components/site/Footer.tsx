@@ -1,6 +1,129 @@
-import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import {
+  ArrowRight,
+  DoorOpen,
+  FileText,
+  Frame,
+  Images,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  SlidersHorizontal,
+} from "lucide-react";
 import logo from "@/assets/LOGO-REINAS-BV.webp";
+import project1 from "@/assets/official-projects/reinas-project-1.jpg";
+import project2 from "@/assets/official-projects/reinas-project-2.jpg";
+import project3 from "@/assets/official-projects/reinas-project-3.jpg";
+import project4 from "@/assets/official-projects/reinas-project-4.jpg";
+import project5 from "@/assets/official-projects/reinas-project-5.jpg";
+import project6 from "@/assets/official-projects/reinas-project-6.jpg";
+import project7 from "@/assets/official-projects/reinas-project-7.jpg";
+import project8 from "@/assets/official-projects/reinas-project-8.jpg";
+import aluminiumKozijnen from "@/assets/official-solutions/reinas-aluminium-kozijnen.jpeg";
+import kunststofKozijnen from "@/assets/official-solutions/reinas-kunststof-kozijnen.jpeg";
+import schuifpuienImage from "@/assets/official-solutions/reinas-schuifpuien.jpeg";
+import voordeurenImage from "@/assets/official-solutions/reinas-voordeuren.jpeg";
+import zakelijkeGevelsystemen from "@/assets/official-solutions/reinas-zakelijke-gevelsystemen.jpeg";
+import { FloatingDock, type FloatingDockItem } from "@/components/ui/floating-dock";
 import { Reveal } from "./Reveal";
+
+const COMPANY_ADDRESS = "Hoogstraat 41b, 6102 XS Echt, Nederland";
+
+const dockItems: FloatingDockItem[] = [
+  {
+    title: "Configurator",
+    label: "Premium configurator",
+    href: "/#configurator",
+    icon: SlidersHorizontal,
+    description:
+      "Open direct de configurator en verfijn stijl, materiaal en afwerking in een showroomachtige flow.",
+    accent: "rgba(103, 196, 239, 0.22)",
+    previews: [
+      {
+        src: schuifpuienImage,
+        alt: "Reina's configurator preview",
+        objectPosition: "center center",
+      },
+      { src: project2, alt: "Reina's project detail", objectPosition: "center center" },
+      { src: project6, alt: "Reina's architectuur project", objectPosition: "center center" },
+    ],
+  },
+  {
+    title: "Schuifpuien",
+    label: "Moderne schuifpuien",
+    href: "/#oplossingen",
+    icon: DoorOpen,
+    description:
+      "Bekijk panoramische oplossingen met slanke profielen, royale lichtinval en een rustige architectonische lijn.",
+    accent: "rgba(92, 184, 234, 0.2)",
+    previews: [
+      { src: schuifpuienImage, alt: "Reina's schuifpuien", objectPosition: "center center" },
+      { src: project5, alt: "Reina's schuifpui project", objectPosition: "center center" },
+      { src: project8, alt: "Reina's moderne gevel", objectPosition: "center center" },
+    ],
+  },
+  {
+    title: "Kozijnen",
+    label: "Maatwerk kozijnen",
+    href: "/#oplossingen",
+    icon: Frame,
+    description:
+      "Direct naar aluminium en kunststof kozijnoplossingen met premium detaillering en duurzame prestaties.",
+    accent: "rgba(121, 196, 225, 0.18)",
+    previews: [
+      { src: aluminiumKozijnen, alt: "Reina's aluminium kozijnen", objectPosition: "78% 30%" },
+      {
+        src: kunststofKozijnen,
+        alt: "Reina's kunststof kozijnen",
+        objectPosition: "center center",
+      },
+      { src: project1, alt: "Reina's kozijnen project", objectPosition: "center center" },
+    ],
+  },
+  {
+    title: "Projecten",
+    label: "Vakmanschap projecten",
+    href: "/#projecten",
+    icon: Images,
+    description:
+      "Ga naar recent werk en ervaar hoe Reina's materialiteit, licht en afwerking in echte projecten samenkomen.",
+    accent: "rgba(107, 198, 248, 0.22)",
+    previews: [
+      { src: project3, alt: "Reina's villa project", objectPosition: "center center" },
+      { src: project4, alt: "Reina's woning project", objectPosition: "center center" },
+      { src: project7, alt: "Reina's gevel project", objectPosition: "center center" },
+    ],
+  },
+  {
+    title: "Advies",
+    label: "Persoonlijk advies",
+    href: "/contact",
+    icon: MessageSquare,
+    description:
+      "Plan een persoonlijk gesprek over materiaalkeuze, uitstraling en technische mogelijkheden voor uw project.",
+    accent: "rgba(103, 193, 227, 0.18)",
+    previews: [
+      { src: voordeurenImage, alt: "Reina's entree maatwerk", objectPosition: "center center" },
+      { src: zakelijkeGevelsystemen, alt: "Reina's projectadvies", objectPosition: "center top" },
+      { src: project6, alt: "Reina's adviesproject", objectPosition: "center center" },
+    ],
+  },
+  {
+    title: "Offerte aanvragen",
+    label: "Vrijblijvende offerte",
+    href: "https://wa.me/3161224631?text=Hallo%20Reina%27s%20B.V.,%20ik%20ontvang%20graag%20een%20vrijblijvende%20offerte.",
+    icon: FileText,
+    description:
+      "Start direct een vrijblijvende offerteaanvraag via WhatsApp en ontvang snel persoonlijk vervolgcontact.",
+    accent: "rgba(123, 205, 239, 0.22)",
+    external: true,
+    previews: [
+      { src: project2, alt: "Reina's offerte projectreferentie", objectPosition: "center center" },
+      { src: project5, alt: "Reina's detail project", objectPosition: "center center" },
+      { src: project8, alt: "Reina's premium maatwerk", objectPosition: "center center" },
+    ],
+  },
+];
 
 function WhatsAppIcon() {
   return (
@@ -32,14 +155,55 @@ export function Footer() {
               href="https://wa.me/3161224631"
               target="_blank"
               rel="noreferrer"
-              className="group inline-flex items-center gap-3 rounded-xl bg-gradient-to-br from-[oklch(0.63_0.2_149)] via-[oklch(0.61_0.21_156)] to-[oklch(0.57_0.18_162)] px-7 py-4 text-sm font-semibold text-white shadow-[0_18px_54px_-18px_oklch(0.58_0.18_156/0.8)] transition-all hover:shadow-[0_24px_70px_-18px_oklch(0.58_0.18_156/0.92)]"
+              className="group inline-flex items-center gap-3 rounded-lg bg-gradient-to-br from-[oklch(0.63_0.2_149)] via-[oklch(0.61_0.21_156)] to-[oklch(0.57_0.18_162)] px-7 py-4 text-sm font-semibold text-white shadow-[0_18px_54px_-18px_oklch(0.58_0.18_156/0.8)] transition-all hover:shadow-[0_24px_70px_-18px_oklch(0.58_0.18_156/0.92)]"
             >
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-white/16 ring-1 ring-white/18 backdrop-blur-md transition-transform duration-500 group-hover:scale-105">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/16 ring-1 ring-white/18 backdrop-blur-md transition-transform duration-500 group-hover:scale-105">
                 <WhatsAppIcon />
               </span>
               Neem contact op
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
+          </div>
+        </Reveal>
+      </div>
+
+      <div className="relative border-b border-white/5 px-4 py-16 md:px-6 md:py-20">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,8,13,0.96),rgba(5,9,15,0.78))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(104,202,255,0.12),transparent_34%),radial-gradient(circle_at_20%_50%,rgba(84,140,198,0.08),transparent_24%)]" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.13] [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
+
+        <Reveal variant="bloom" className="relative mx-auto max-w-[82rem]">
+          <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-[11px] uppercase tracking-[0.28em] text-primary/90">
+                  Premium quick access
+                </p>
+                <h3 className="mt-5 max-w-3xl font-display text-[clamp(2rem,4vw,3.55rem)] font-medium leading-[1.03] tracking-tight text-white/92">
+                  Een zwevende dock-ervaring voor snelle keuzes, echte projecten en direct advies.
+                </h3>
+                <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/56 md:text-[1.02rem]">
+                  Ontworpen als een digitale showroom: rustig, exact en cinematografisch, met
+                  directe toegang tot configuratie, materiaalcategorieen en offerteaanvraag.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3 lg:max-w-[30rem]">
+                {["Live configuratie", "Recente projectbeelden", "Persoonlijk vervolgcontact"].map(
+                  (item) => (
+                    <div
+                      key={item}
+                      className="rounded-[1.4rem] border border-white/8 bg-white/[0.03] px-4 py-3 text-[11px] uppercase tracking-[0.18em] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl"
+                    >
+                      {item}
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+
+            <FloatingDock items={dockItems} className="pt-1" />
           </div>
         </Reveal>
       </div>
@@ -65,8 +229,8 @@ export function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               {[
-                { label: "Producten", href: "/#producten" },
-                { label: "Diensten", href: "/#diensten" },
+                { label: "Producten", href: "/#oplossingen" },
+                { label: "Diensten", href: "/#oplossingen" },
                 { label: "Projecten", href: "/#projecten" },
                 { label: "Over ons", href: "/#over" },
                 { label: "Contact", href: "/contact" },
@@ -91,15 +255,25 @@ export function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               {[
-                { label: "Kozijnen", href: "/#producten" },
-                { label: "Deuren", href: "/#producten" },
-                { label: "Schuifpuien", href: "/#producten" },
-                { label: "Rolluiken", href: "/#producten" },
-                { label: "Garagedeuren", href: "/#producten" },
+                { label: "Kozijnen", href: "/#oplossingen" },
+                { label: "Deuren", href: "/#oplossingen" },
+                { label: "Schuifpuien", href: "/#oplossingen" },
+                {
+                  label: "Rolluiken",
+                  href: "https://www.reinas-bv.nl/onze-producten",
+                  external: true,
+                },
+                {
+                  label: "Garagedeuren",
+                  href: "https://www.reinas-bv.nl/onze-producten",
+                  external: true,
+                },
               ].map((l) => (
                 <li key={l.label}>
                   <a
                     href={l.href}
+                    target={l.external ? "_blank" : undefined}
+                    rel={l.external ? "noreferrer" : undefined}
                     className="text-foreground/85 transition-colors hover:text-primary"
                   >
                     {l.label}
@@ -117,7 +291,7 @@ export function Footer() {
             </p>
             <ul className="space-y-3 text-sm text-foreground/85">
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 text-primary" /> Markt 5, Echt, Limburg, Nederland
+                <MapPin className="mt-0.5 h-4 w-4 text-primary" /> {COMPANY_ADDRESS}
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-primary" /> +31 6 12 34 56 78

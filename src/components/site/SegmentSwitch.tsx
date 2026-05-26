@@ -8,7 +8,7 @@ const data = {
   particulier: {
     eyebrow: "Voor particulieren",
     title: "Voor uw droomwoning of renovatieproject.",
-    body: "Van maatwerk kozijnen en luxe schuifpuien tot energiezuinige voordeuren — wij realiseren oplossingen die uw woning mooier, warmer en waardevoller maken.",
+    body: "Van maatwerk kozijnen en luxe schuifpuien tot energiezuinige voordeuren, wij realiseren oplossingen die uw woning mooier, warmer en waardevoller maken.",
     cta: "Plan een adviesgesprek",
     img: particulierImg,
     points: ["Maatwerk per woning", "Persoonlijke begeleiding", "Premium materialen"],
@@ -16,7 +16,7 @@ const data = {
   zakelijk: {
     eyebrow: "Voor bedrijven",
     title: "Oplossingen voor bedrijven en projecten.",
-    body: "Van kantoorgebouwen tot bedrijfspanden en projectontwikkeling — wij leveren architecturale gevelsystemen op grote schaal, met strakke planning en betrouwbare oplevering.",
+    body: "Van kantoorgebouwen tot bedrijfspanden en projectontwikkeling, wij leveren architecturale gevelsystemen op grote schaal, met strakke planning en betrouwbare oplevering.",
     cta: "Bespreek uw project",
     img: zakelijkImg,
     points: ["Projectmanagement", "Schaalbare productie", "B2B partnerships"],
@@ -82,7 +82,7 @@ export function SegmentSwitch() {
               <Reveal key={`seg-cta-${active}`} variant="rise" delay={5} className="w-fit">
                 <a
                   href="#contact"
-                  className="group inline-flex w-fit items-center gap-2 rounded-xl bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all hover:bg-primary hover:text-primary-foreground"
+                  className="group inline-flex w-fit items-center gap-2 rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all hover:bg-primary hover:text-primary-foreground"
                 >
                   {d.cta}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -135,7 +135,7 @@ export function SegmentBar({
   };
 
   return (
-    <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-2xl px-3 py-3 shadow-[var(--shadow-elevated)] sm:gap-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+    <div className="glass-strong relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[1.1rem] px-3 py-3 shadow-[var(--shadow-elevated)] sm:gap-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
       {/* Particulier */}
       <button
         type="button"
@@ -168,16 +168,16 @@ export function SegmentBar({
       {/* Center toggle — original circle look, with split 2-color background */}
       <div className="relative flex items-center justify-center">
         <span
-          className={`absolute h-16 w-16 rounded-full border transition-colors duration-500 ${
+          className={`absolute h-16 w-16 rounded-[1rem] border transition-colors duration-500 ${
             active === "particulier" ? "border-primary/50" : "border-foreground/30"
           }`}
         />
         <span
-          className={`absolute h-16 w-16 rounded-full blur-md transition-colors duration-500 ${
+          className={`absolute h-16 w-16 rounded-[1rem] blur-md transition-colors duration-500 ${
             active === "particulier" ? "bg-primary/15" : "bg-foreground/10"
           }`}
         />
-        <div className="relative z-10 h-14 w-14 overflow-hidden rounded-full ring-1 ring-white/15 backdrop-blur">
+        <div className="relative z-10 h-14 w-14 overflow-hidden rounded-[0.95rem] ring-1 ring-white/15 backdrop-blur">
           {/* Split background halves */}
           <div className="absolute inset-0 grid grid-cols-2">
             <button
