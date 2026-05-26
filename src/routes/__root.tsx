@@ -8,7 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 
-import appCss from "../styles.pcss?url";
+import appCss from "../styles.css?url";
 import brandLogo from "../assets/LOGO-REINAS-BV.webp";
 
 function NotFoundComponent() {

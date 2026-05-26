@@ -137,16 +137,16 @@ export function Footer() {
   return (
     <footer id="contact" className="relative overflow-hidden">
       {/* Big CTA */}
-      <div className="relative border-b border-white/5 px-4 py-20 md:px-6 md:py-28">
-        <div className="absolute inset-0 gradient-radial-glow" />
+      <div className="relative overflow-hidden border-b border-black/6 bg-white px-4 py-20 md:px-6 md:py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_38%,rgba(74,194,255,0.12),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,248,252,0.96))]" />
         <Reveal variant="bloom" className="relative mx-auto max-w-[82rem]">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div className="max-w-2xl">
-              <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] tracking-tight">
+              <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] tracking-tight text-[oklch(0.22_0.014_240)]">
                 Klaar om uw project{" "}
                 <span className="font-serif-italic gradient-text">te starten?</span>
               </h2>
-              <p className="mt-4 max-w-lg text-muted-foreground">
+              <p className="mt-4 max-w-lg text-[oklch(0.44_0.012_240)]">
                 Neem contact met ons op voor persoonlijk advies en een vrijblijvende offerte op
                 maat.
               </p>

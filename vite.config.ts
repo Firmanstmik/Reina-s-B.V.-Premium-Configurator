@@ -1,4 +1,3 @@
-// @ts-ignore Nitro's vite export resolves correctly at build time in this setup.
 import { nitro } from "nitro/vite";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
