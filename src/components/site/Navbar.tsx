@@ -27,7 +27,7 @@ import houtenKozijnen from "@/assets/official-solutions/reinas-houten-kozijnen.j
 import kunststofKozijnen from "@/assets/official-solutions/reinas-kunststof-kozijnen.jpeg";
 import schuifpuienImage from "@/assets/official-solutions/reinas-schuifpuien.jpeg";
 import { cn } from "@/lib/utils";
-import { SegmentBar } from "./SegmentSwitch";
+import { useSegment } from "@/hooks/useSegment";
 
 const CONTACT_PHONE_DISPLAY = "+31612246431";
 const CONTACT_PHONE_HREF = "tel:+31612246431";
@@ -160,6 +160,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [segment, setSegment] = useSegment();
   const [activeProductId, setActiveProductId] = useState(PRODUCT_MENU_ITEMS[0].id);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -224,6 +225,12 @@ export function Navbar() {
     clearCloseTimer();
     closeTimerRef.current = setTimeout(() => setMegaOpen(false), 150);
   };
+
+  const toggleSegment = () => {
+    setSegment(segment === "particulier" ? "zakelijk" : "particulier");
+  };
+
+  const activeSegmentLabel = segment === "particulier" ? "Particulier" : "Zakelijk";
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50">
@@ -530,7 +537,17 @@ export function Navbar() {
           </ul>
 
           <div className="hidden items-center gap-3 md:flex">
-            <SegmentBar compact className="hidden xl:inline-flex" />
+            <button
+              type="button"
+              onClick={toggleSegment}
+              className="group hidden items-center rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/82 transition-all duration-300 hover:border-primary/32 hover:bg-white/[0.06] hover:text-primary xl:inline-flex"
+              aria-label={`Wissel segment, nu ${activeSegmentLabel}`}
+            >
+              <span className="relative">
+                {activeSegmentLabel}
+                <span className="absolute inset-x-0 -bottom-1 h-px scale-x-0 bg-primary/80 transition-transform duration-300 group-hover:scale-x-100" />
+              </span>
+            </button>
             <button
               type="button"
               aria-disabled="true"
@@ -564,7 +581,14 @@ export function Navbar() {
       >
         <div className="mx-4 mt-2 rounded-2xl glass-strong p-5 shadow-[var(--shadow-elevated)]">
           <div className="mb-4 flex justify-center border-b border-white/5 pb-4">
-            <SegmentBar compact />
+            <button
+              type="button"
+              onClick={toggleSegment}
+              className="inline-flex items-center rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/82 transition-all duration-300 hover:border-primary/32 hover:bg-white/[0.06] hover:text-primary"
+              aria-label={`Wissel segment, nu ${activeSegmentLabel}`}
+            >
+              {activeSegmentLabel}
+            </button>
           </div>
           <ul className="flex flex-col">
             {links.map((l) =>
