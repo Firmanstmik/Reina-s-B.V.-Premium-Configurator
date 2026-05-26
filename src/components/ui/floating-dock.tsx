@@ -249,7 +249,7 @@ function DockIcon({
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 4, x: "-50%" }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute -top-11 left-1/2 whitespace-nowrap rounded-xl border border-white/10 bg-[linear-gradient(180deg,rgba(20,25,34,0.96),rgba(10,14,20,0.9))] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-white/86 shadow-[0_16px_34px_-22px_rgba(0,0,0,0.95)] backdrop-blur-xl"
+            className="pointer-events-none absolute -top-11 left-1/2 whitespace-nowrap rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(20,25,34,0.96),rgba(10,14,20,0.9))] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-white/86 shadow-[0_16px_34px_-22px_rgba(0,0,0,0.95)] backdrop-blur-xl"
           >
             {item.title}
           </motion.div>
@@ -258,17 +258,17 @@ function DockIcon({
 
       <motion.div
         style={{ width: size, height: size }}
-        className="relative flex items-center justify-center rounded-[1.05rem] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.025))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+        className="relative flex items-center justify-center rounded-full border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.025))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
       >
         <motion.div
-          className="absolute inset-2 rounded-[0.95rem] bg-[radial-gradient(circle_at_50%_35%,rgba(104,202,255,0.2),transparent_64%)]"
+          className="absolute inset-2 rounded-full bg-[radial-gradient(circle_at_50%_35%,rgba(104,202,255,0.2),transparent_64%)]"
           style={{ opacity: glow }}
         />
-        <div className="absolute inset-0 rounded-[1.05rem] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.06),transparent_46%)]" />
+        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.06),transparent_46%)]" />
         <motion.div
           style={{ width: iconSize, height: iconSize }}
           className={cn(
-            "relative z-10 flex items-center justify-center rounded-[0.9rem] text-primary",
+            "relative z-10 flex items-center justify-center rounded-full text-primary",
             active && "drop-shadow-[0_0_14px_rgba(104,202,255,0.35)]",
           )}
         >
