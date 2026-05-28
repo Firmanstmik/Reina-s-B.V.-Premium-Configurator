@@ -36,6 +36,7 @@ type NavLink = {
   label: string;
   href: string;
   hasMenu?: boolean;
+  disabled?: boolean;
 };
 
 type ProductMenuItem = {
@@ -56,9 +57,9 @@ type ProductMenuItem = {
 const links: NavLink[] = [
   { label: "Home", href: "/#home" },
   { label: "Producten", href: "/#oplossingen", hasMenu: true },
-  { label: "Diensten", href: "/#diensten" },
-  { label: "Projecten", href: "/#projecten" },
-  { label: "Over ons", href: "/#over" },
+  { label: "Diensten", href: "/#diensten", disabled: true },
+  { label: "Projecten", href: "/#projecten", disabled: true },
+  { label: "Over ons", href: "/#over", disabled: true },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -524,13 +525,19 @@ export function Navbar() {
                 </li>
               ) : (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
-                    className="group relative inline-flex items-center gap-1 py-2 text-[13.5px] font-medium tracking-[0.01em] text-foreground/85 transition-colors hover:text-primary"
-                  >
-                    {l.label}
-                    <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-primary transition-all duration-300 group-hover:w-full" />
-                  </a>
+                  {l.disabled ? (
+                    <span className="inline-flex cursor-default items-center gap-1 py-2 text-[13.5px] font-medium tracking-[0.01em] text-foreground/38">
+                      {l.label}
+                    </span>
+                  ) : (
+                    <a
+                      href={l.href}
+                      className="group relative inline-flex items-center gap-1 py-2 text-[13.5px] font-medium tracking-[0.01em] text-foreground/85 transition-colors hover:text-primary"
+                    >
+                      {l.label}
+                      <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-primary transition-all duration-300 group-hover:w-full" />
+                    </a>
+                  )}
                 </li>
               ),
             )}
@@ -663,14 +670,21 @@ export function Navbar() {
                 </li>
               ) : (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center justify-between border-b border-white/5 py-3.5 text-[15px] font-medium text-foreground/90 transition-colors hover:text-primary"
-                  >
-                    {l.label}
-                    <ArrowRight className="h-4 w-4 opacity-60" />
-                  </a>
+                  {l.disabled ? (
+                    <span className="flex cursor-default items-center justify-between border-b border-white/5 py-3.5 text-[15px] font-medium text-foreground/38">
+                      {l.label}
+                      <ArrowRight className="h-4 w-4 opacity-25" />
+                    </span>
+                  ) : (
+                    <a
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-between border-b border-white/5 py-3.5 text-[15px] font-medium text-foreground/90 transition-colors hover:text-primary"
+                    >
+                      {l.label}
+                      <ArrowRight className="h-4 w-4 opacity-60" />
+                    </a>
+                  )}
                 </li>
               ),
             )}
